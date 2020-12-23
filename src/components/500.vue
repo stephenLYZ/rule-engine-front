@@ -9,7 +9,7 @@
         <li>没有网络,或者网络延迟比较高</li>
       </ul>
       <p>返回
-        <router-link to="/">首页</router-link>
+        <router-link to="/home">首页</router-link>
       </p>
     </div>
   </div>
