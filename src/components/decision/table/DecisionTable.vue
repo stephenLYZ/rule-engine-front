@@ -127,7 +127,7 @@
       }
     }, methods: {
       create() {
-        alert("敬请期待")
+          this.$router.push("/DecisionTableDefinition")
       },
       reset(formName) {
         this.search.form.status = null;
