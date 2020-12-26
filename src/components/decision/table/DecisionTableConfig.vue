@@ -85,7 +85,7 @@
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type,null)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -192,7 +192,7 @@
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
-                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,cch)}"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,cch.leftValue.valueType,cch.symbol)}"
                   :loading="leftSelect.loading"
                   @change="leftValueChange()">
                   <el-option
@@ -248,21 +248,40 @@
             <div>
               <br>
               <el-form label-width="70px">
+                <el-form-item label="类型">
+                  <el-select v-model="tableData.collResultHead.type" placeholder="请选择数据类型"
+                             @change="valueTypeChange(tableData.collResultHead)">
+                    <el-option label="字符串" :value="5"
+                               @click.native="tableData.collResultHead.valueType='STRING'"/>
+                    <el-option label="布尔" :value="6"
+                               @click.native="tableData.collResultHead.valueType='BOOLEAN'"/>
+                    <el-option label="数值" :value="7"
+                               @click.native="tableData.collResultHead.valueType='NUMBER'"/>
+                    <el-option label="集合" :value="8"
+                               @click.native="tableData.collResultHead.valueType='COLLECTION'"/>
+                  </el-select>
+                </el-form-item>
+
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
                              @change="valueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
+                               v-if="tableData.collResultHead.type===5"
                                @click.native="tableData.collResultHead.defaultAction.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
+                               v-if="tableData.collResultHead.type===6"
                                @click.native="tableData.collResultHead.defaultAction.valueType='BOOLEAN'"/>
                     <el-option label="数值" :value="7"
+                               v-if="tableData.collResultHead.type===7"
                                @click.native="tableData.collResultHead.defaultAction.valueType='NUMBER'"/>
                     <el-option label="集合" :value="8"
+                               v-if="tableData.collResultHead.type===8"
                                @click.native="tableData.collResultHead.defaultAction.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
+
                 <el-form-item label="默认值">
                   <el-input-number v-if="tableData.collResultHead.defaultAction.type===7"
                                    v-model="tableData.collResultHead.defaultAction.value"
@@ -283,7 +302,7 @@
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,null)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,tableData.collResultHead.valueType,null)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -294,7 +313,7 @@
                       @click.native="conditionCollSelectClick(item,tableData.collResultHead.defaultAction)">
                     </el-option>
                   </el-select>
-                  <el-input v-else v-model="tableData.collResultHead.defaultAction.value"/>
+                  <el-input v-else v-model="tableData.collResultHead.value"/>
                 </el-form-item>
               </el-form>
               <el-button type="primary" size="mini" style="float: right;"
@@ -314,9 +333,13 @@
                        style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
                    {{getConditionNamePrefix(tableData.collResultHead.defaultAction.type)}}
                 </el-tag>
-              {{tableData.collResultHead.defaultAction.valueName!=null?tableData.collResultHead.defaultAction.valueName:tableData.collResultHead.defaultAction.value}}
+                 {{tableData.collResultHead.defaultAction.variableValue!=null?tableData.collResultHead.defaultAction.variableValue:tableData.collResultHead.defaultAction.valueName}}
                     ）
               </span>
+             <el-tag type="warning" v-if="tableData.collResultHead.defaultAction.type==null"
+                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                 未配置
+              </el-tag>
               </span>
           </el-popover>
         </template>
@@ -345,13 +368,15 @@
                     collPriorityHead: {},
                     collConditionHeads: [],
                     collResultHead: {
+                        type: null,
+                        valueType: null,
                         defaultAction: {
                             visible: false,
+                            variableValue: null,
                             enableDefaultAction: 1,
                             value: undefined,
                             valueName: null,
                             valueType: null,
-                            type: null,
                         },
                     },
                     rows: [{
@@ -440,6 +465,7 @@
         },
         methods: {
             handlePopover(cch) {
+                // todo 待优化
                 this.symbolSelect.options = [];
                 if (cch.leftValue.valueType != null) {
                     this.$axios.post("/ruleEngine/symbol/getByType", {
@@ -558,7 +584,7 @@
                     return "固定值";
                 }
             },
-            leftRemoteMethod(query, type, cch) {
+            leftRemoteMethod(query, type, valueType, symbol) {
                 if (query !== '') {
                     this.leftSelect.loading = true;
                     this.leftSelect.options = [];
@@ -569,7 +595,7 @@
                         },
                         "query": {
                             "name": query,
-                            "valueType": this.getRValueType(cch)
+                            "valueType": this.getRValueType(valueType, symbol)
                         },
                         "orders": []
                     }).then(res => {
@@ -584,18 +610,18 @@
                     this.leftSelect.options = [];
                 }
             },
-            getRValueType(cch) {
-                if (cch == null) {
+            getRValueType(valueType, symbol) {
+                if (valueType == null) {
                     return [];
                 }
                 // 如果左值为集合时
-                if (cch.leftValue.valueType === 'COLLECTION') {
+                if (valueType === 'COLLECTION' && symbol != null) {
                     // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
-                    if (cch.symbol === 'CONTAIN' || cch.symbol === 'NOT_CONTAIN') {
+                    if (symbol === 'CONTAIN' || symbol === 'NOT_CONTAIN') {
                         return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION"];
                     }
                 } else {
-                    return new Array(cch.leftValue.valueType);
+                    return new Array(valueType);
                 }
             },
         }
