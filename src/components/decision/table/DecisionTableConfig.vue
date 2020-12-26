@@ -29,7 +29,7 @@
             placement="right"
             width="400"
             trigger="click">
-            123
+            <span>待完成</span>
             <span slot="reference">优先级</span>
           </el-popover>
         </template>
@@ -44,7 +44,7 @@
           <el-popover
             placement="right"
             width="400"
-            trigger="click"
+            v-model="cch.visible"
             @show="handlePopover(cch)">
             <div>
               <br>
@@ -85,7 +85,7 @@
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,cch)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -117,8 +117,9 @@
                   </el-col>
                 </el-form-item>
               </el-form>
-              <el-button type="primary" size="mini" style="float: right;">确认</el-button>
-              <el-button size="mini" style="float: right;margin-right: 12px;">取消</el-button>
+              <el-button type="primary" size="mini" style="float: right;" @click="cch.visible = false">确认</el-button>
+              <el-button size="mini" style="float: right;margin-right: 12px;" @click="cch.visible = false">取消
+              </el-button>
             </div>
 
             <span slot="reference">
@@ -160,6 +161,86 @@
         prop="result"
         label="结果"
         width="200">
+
+        <template slot="header" slot-scope="scope">
+          <el-popover
+            placement="right"
+            width="400"
+            v-model="collResultHead.defaultAction.visible">
+            <div>
+              <br>
+              <el-form label-width="70px">
+                <el-form-item label="默认类型">
+                  <el-select v-model="collResultHead.defaultAction.type" placeholder="请选择数据类型"
+                             @change="defaultActionValueTypeChange(collResultHead.defaultAction)">
+                    <el-option label="元素" :value="0"/>
+                    <el-option label="变量" :value="1"/>
+                    <el-option label="字符串" :value="5"
+                               @click.native="collResultHead.defaultAction.valueType='STRING'"/>
+                    <el-option label="布尔" :value="6"
+                               @click.native="collResultHead.defaultAction.valueType='BOOLEAN'"/>
+                    <el-option label="数值" :value="7"
+                               @click.native="collResultHead.defaultAction.valueType='NUMBER'"/>
+                    <el-option label="集合" :value="8"
+                               @click.native="collResultHead.defaultAction.valueType='COLLECTION'"/>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="默认值">
+                  <el-input-number v-if="collResultHead.defaultAction.type===7"
+                                   v-model="collResultHead.defaultAction.value"
+                                   :controls="false" :max="10000000000000"
+                                   style="width: 330px"/>
+
+                  <el-select v-else-if="collResultHead.defaultAction.type===6"
+                             v-model="collResultHead.defaultAction.value"
+                             placeholder="请选择数据 ">
+                    <el-option label="true" value="true"/>
+                    <el-option label="false" value="false"/>
+                  </el-select>
+
+                  <el-select
+                    v-else-if="collResultHead.defaultAction.type===0||collResultHead.defaultAction.type===1"
+                    v-model="collResultHead.defaultAction.valueName"
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="(query)=>{leftRemoteMethod(query,collResultHead.defaultAction.type)}"
+                    :loading="leftSelect.loading"
+                    @change="leftValueChange()">
+                    <el-option
+                      v-for="item in leftSelect.options"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                      @click.native="leftSelectClick(item)">
+                    </el-option>
+                  </el-select>
+                  <el-input v-else v-model="collResultHead.defaultAction.value"/>
+                </el-form-item>
+              </el-form>
+              <el-button type="primary" size="mini" style="float: right;"
+                         @click="collResultHead.defaultAction.visible = false">确认
+              </el-button>
+              <el-button size="mini" style="float: right;margin-right: 12px;"
+                         @click="collResultHead.defaultAction.visible = false">取消
+              </el-button>
+            </div>
+
+            <span slot="reference">
+              结果
+              <span v-if="collResultHead.defaultAction.type!=null&&collResultHead.defaultAction.value!=null">
+                  默认（
+               <el-tag type="success"
+                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                   {{getConditionNamePrefix(collResultHead.defaultAction.type)}}
+                </el-tag>
+              {{collResultHead.defaultAction.valueName!=null?collResultHead.defaultAction.valueName:collResultHead.defaultAction.value}}
+                    ）
+              </span>
+              </span>
+          </el-popover>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -186,8 +267,18 @@
                     priority: 1,
                     result: 200333
                 }],
-                test: null,
+                collPriorityHead: {},
                 collConditionHeads: [],
+                collResultHead: {
+                    defaultAction: {
+                        visible: false,
+                        enableDefaultAction: 1,
+                        value: undefined,
+                        valueName: null,
+                        valueType: null,
+                        type: null,
+                    },
+                },
                 leftSelect: {
                     loading: false,
                     options: [],
@@ -205,6 +296,7 @@
                 {
                     uuid: 1,
                     name: "条件",
+                    visible: false,
                     leftValue: {
                         value: undefined,
                         valueName: null,
@@ -261,6 +353,15 @@
                     return "COLLECTION";
                 }
             },
+            defaultActionValueTypeChange(da) {
+                da.value = undefined;
+                da.valueName = null;
+                // 如果是变量或者元素
+                if (da.type === 1 || da.type === 0) {
+                    da.valueType = null;
+                }
+                this.leftSelect.options = [];
+            },
             leftValueTypeChange(cch) {
                 cch.leftValue.value = undefined;
                 cch.leftValue.valueName = null;
@@ -311,11 +412,10 @@
                     return "固定值";
                 }
             },
-            leftRemoteMethod(query, cch) {
+            leftRemoteMethod(query, type) {
                 if (query !== '') {
                     this.leftSelect.loading = true;
                     this.leftSelect.options = [];
-                    let type = cch.leftValue.type;
                     this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
                         "page": {
                             "pageSize": 10,
