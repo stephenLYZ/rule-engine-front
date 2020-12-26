@@ -9,7 +9,7 @@
     <br>
 
     <el-table
-      :data="tableData"
+      :data="tableData.rows"
       border
       style="width: 100%"
       max-height="500">
@@ -39,7 +39,7 @@
       <el-table-column
         prop="condition"
         label="条件"
-        min-width="200" v-for="(cch,index) in collConditionHeads" :key="cch.uuid">
+        min-width="200" v-for="(cch,index) in tableData.collConditionHeads" :key="cch.uuid">
         <template slot="header" slot-scope="scope">
           <el-popover
             placement="right"
@@ -153,7 +153,7 @@
             style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
             disable-transitions>固定值
           </el-tag>
-          11
+          {{scope.row.conditions[index].valueName!=null?scope.row.conditions[index].valueName:scope.row.conditions[index].value}}
         </template>
       </el-table-column>
 
@@ -166,46 +166,46 @@
           <el-popover
             placement="right"
             width="400"
-            v-model="collResultHead.defaultAction.visible">
+            v-model="tableData.collResultHead.defaultAction.visible">
             <div>
               <br>
               <el-form label-width="70px">
                 <el-form-item label="默认类型">
-                  <el-select v-model="collResultHead.defaultAction.type" placeholder="请选择数据类型"
-                             @change="defaultActionValueTypeChange(collResultHead.defaultAction)">
+                  <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
+                             @change="defaultActionValueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
-                               @click.native="collResultHead.defaultAction.valueType='STRING'"/>
+                               @click.native="tableData.collResultHead.defaultAction.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
-                               @click.native="collResultHead.defaultAction.valueType='BOOLEAN'"/>
+                               @click.native="tableData.collResultHead.defaultAction.valueType='BOOLEAN'"/>
                     <el-option label="数值" :value="7"
-                               @click.native="collResultHead.defaultAction.valueType='NUMBER'"/>
+                               @click.native="tableData.collResultHead.defaultAction.valueType='NUMBER'"/>
                     <el-option label="集合" :value="8"
-                               @click.native="collResultHead.defaultAction.valueType='COLLECTION'"/>
+                               @click.native="tableData.collResultHead.defaultAction.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="默认值">
-                  <el-input-number v-if="collResultHead.defaultAction.type===7"
-                                   v-model="collResultHead.defaultAction.value"
+                  <el-input-number v-if="tableData.collResultHead.defaultAction.type===7"
+                                   v-model="tableData.collResultHead.defaultAction.value"
                                    :controls="false" :max="10000000000000"
                                    style="width: 330px"/>
 
-                  <el-select v-else-if="collResultHead.defaultAction.type===6"
-                             v-model="collResultHead.defaultAction.value"
+                  <el-select v-else-if="tableData.collResultHead.defaultAction.type===6"
+                             v-model="tableData.collResultHead.defaultAction.value"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
                     <el-option label="false" value="false"/>
                   </el-select>
 
                   <el-select
-                    v-else-if="collResultHead.defaultAction.type===0||collResultHead.defaultAction.type===1"
-                    v-model="collResultHead.defaultAction.valueName"
+                    v-else-if="tableData.collResultHead.defaultAction.type===0||tableData.collResultHead.defaultAction.type===1"
+                    v-model="tableData.collResultHead.defaultAction.valueName"
                     filterable
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,collResultHead.defaultAction.type)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -216,26 +216,27 @@
                       @click.native="leftSelectClick(item)">
                     </el-option>
                   </el-select>
-                  <el-input v-else v-model="collResultHead.defaultAction.value"/>
+                  <el-input v-else v-model="tableData.collResultHead.defaultAction.value"/>
                 </el-form-item>
               </el-form>
               <el-button type="primary" size="mini" style="float: right;"
-                         @click="collResultHead.defaultAction.visible = false">确认
+                         @click="tableData.collResultHead.defaultAction.visible = false">确认
               </el-button>
               <el-button size="mini" style="float: right;margin-right: 12px;"
-                         @click="collResultHead.defaultAction.visible = false">取消
+                         @click="tableData.collResultHead.defaultAction.visible = false">取消
               </el-button>
             </div>
 
             <span slot="reference">
               结果
-              <span v-if="collResultHead.defaultAction.type!=null&&collResultHead.defaultAction.value!=null">
+              <span
+                v-if="tableData.collResultHead.defaultAction.type!=null&&tableData.collResultHead.defaultAction.value!=null">
                   默认（
                <el-tag type="success"
                        style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                   {{getConditionNamePrefix(collResultHead.defaultAction.type)}}
+                   {{getConditionNamePrefix(tableData.collResultHead.defaultAction.type)}}
                 </el-tag>
-              {{collResultHead.defaultAction.valueName!=null?collResultHead.defaultAction.valueName:collResultHead.defaultAction.value}}
+              {{tableData.collResultHead.defaultAction.valueName!=null?tableData.collResultHead.defaultAction.valueName:tableData.collResultHead.defaultAction.value}}
                     ）
               </span>
               </span>
@@ -262,22 +263,38 @@
         name: "DecisionTableConfig",
         data() {
             return {
-                tableData: [{
-                    id: 1,
-                    priority: 1,
-                    result: 200333
-                }],
-                collPriorityHead: {},
-                collConditionHeads: [],
-                collResultHead: {
-                    defaultAction: {
-                        visible: false,
-                        enableDefaultAction: 1,
-                        value: undefined,
-                        valueName: null,
-                        valueType: null,
-                        type: null,
+                tableData: {
+                    collPriorityHead: {},
+                    collConditionHeads: [],
+                    collResultHead: {
+                        defaultAction: {
+                            visible: false,
+                            enableDefaultAction: 1,
+                            value: undefined,
+                            valueName: null,
+                            valueType: null,
+                            type: null,
+                        },
                     },
+                    rows: [{
+                        id: 1,
+                        priority: 1,
+                        conditions: [
+                            {
+                                value: 123,
+                                valueName: null,
+                                valueType: null,
+                                type: null,
+                            },
+                            {
+                                value: undefined,
+                                valueName: null,
+                                valueType: null,
+                                type: null,
+                            }
+                        ],
+                        result: 200333
+                    }],
                 },
                 leftSelect: {
                     loading: false,
@@ -292,7 +309,7 @@
             }
         },
         created() {
-            this.collConditionHeads = [
+            this.tableData.collConditionHeads = [
                 {
                     uuid: 1,
                     name: "条件",
