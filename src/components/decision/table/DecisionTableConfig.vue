@@ -336,11 +336,90 @@
                  {{tableData.collResultHead.defaultAction.variableValue!=null?tableData.collResultHead.defaultAction.variableValue:tableData.collResultHead.defaultAction.valueName}}
                     ）
               </span>
-             <el-tag type="warning" v-if="tableData.collResultHead.defaultAction.type==null"
+             <el-tag type="warning" v-if="tableData.collResultHead.type==null"
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
                  未配置
               </el-tag>
               </span>
+          </el-popover>
+        </template>
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            width="400"
+            v-model="scope.row.result.visible">
+            <el-form label-width="70px">
+              <br>
+              <el-form-item label="值类型">
+                <el-select v-model="scope.row.result.type" placeholder="请选择数据类型"
+                           @change="valueTypeChange(scope.row.result)">
+                  <el-option label="变量" :value="1"/>
+                  <el-option label="字符串" :value="5"
+                             v-if="scope.row.result.valueType='STRING'"
+                             @click.native="scope.row.result.valueType='STRING'"/>
+                  <el-option label="布尔" :value="6"
+                             v-if="scope.row.result.valueType='BOOLEAN'"
+                             @click.native="scope.row.result.valueType='BOOLEAN'"/>
+                  <el-option label="数值" :value="7"
+                             v-if="scope.row.result.valueType='NUMBER'"
+                             @click.native="scope.row.result.valueType='NUMBER'"/>
+                  <el-option label="集合" :value="8"
+                             v-if="scope.row.result.valueType='COLLECTION'"
+                             @click.native="scope.row.result.valueType='COLLECTION'"/>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="值">
+                <el-input-number v-if="scope.row.result.type===7" v-model="scope.row.result.value"
+                                 :controls="false" :max="10000000000000"
+                                 style="width: 330px"/>
+
+                <el-select v-else-if="scope.row.result.type===6" v-model="scope.row.result.value"
+                           placeholder="请选择数据 ">
+                  <el-option label="true" value="true"/>
+                  <el-option label="false" value="false"/>
+                </el-select>
+
+                <el-select
+                  v-else-if="scope.row.result.type===0||scope.row.result.type===1"
+                  v-model="scope.row.result.valueName"
+                  filterable
+                  remote
+                  reserve-keyword
+                  placeholder="请输入关键词"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.result.type,tableData.collResultHead.valueType,null)}"
+                  :loading="leftSelect.loading"
+                  @change="leftValueChange()">
+                  <el-option
+                    v-for="item in leftSelect.options"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                    @click.native="conditionCollSelectClick(item,scope.row.result)">
+                  </el-option>
+                </el-select>
+                <el-input v-else v-model="scope.row.result.value"/>
+              </el-form-item>
+            </el-form>
+            <span slot="reference">
+              <span v-if="tableData.collResultHead.type!=null">
+                <span>
+                  <el-tag
+                    type="success"
+                    v-if="scope.row.result.type!=null"
+                    style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
+                    disable-transitions>
+                    {{getConditionNamePrefix(scope.row.result.type)}}
+                  </el-tag>
+                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:scope.row.result.value}}
+                </span>
+
+                 <el-tag type="warning"
+                         v-if="scope.row.result.type==null"
+                         style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                     未配置
+                  </el-tag>
+                  </span>
+            </span>
           </el-popover>
         </template>
       </el-table-column>
@@ -400,7 +479,14 @@
                                 visible: false
                             }
                         ],
-                        result: 200333
+                        result: {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }
                     }, {
                         id: 2,
                         priority: 1,
@@ -419,7 +505,14 @@
                             type: null,
                             visible: false
                         }],
-                        result: 123
+                        result:  {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }
                     }],
                 },
                 leftSelect: {
