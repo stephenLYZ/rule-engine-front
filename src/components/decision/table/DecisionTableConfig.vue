@@ -85,7 +85,7 @@
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type,null)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -93,7 +93,7 @@
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item)">
+                      @click.native="leftSelectClick(item,cch.leftValue)">
                     </el-option>
                   </el-select>
 
@@ -123,7 +123,9 @@
             </div>
 
             <span slot="reference">
+              <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
               （{{cch.name}}）
+              </el-tag>
              <el-tag type="success" v-if="cch.leftValue.type!=null"
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
                  {{getConditionNamePrefix(cch.leftValue.type)}}
@@ -148,12 +150,88 @@
         </template>
 
         <template slot-scope="scope">
-          <el-tag
-            type="success"
-            style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
-            disable-transitions>固定值
-          </el-tag>
-          {{scope.row.conditions[index].valueName!=null?scope.row.conditions[index].valueName:scope.row.conditions[index].value}}
+          <el-popover
+            placement="right"
+            width="400"
+            v-model="scope.row.conditions[index].visible">
+            <el-form label-width="70px">
+              <br>
+              <el-form-item label="值类型">
+                <el-select v-model="scope.row.conditions[index].type" placeholder="请选择数据类型"
+                           @change="valueTypeChange(scope.row.conditions[index])">
+                  <el-option label="变量" :value="1"/>
+                  <el-option label="字符串" :value="5"
+                             v-if="isRightTypeSelectView('STRING',cch)"
+                             @click.native="scope.row.conditions[index].valueType='STRING'"/>
+                  <el-option label="布尔" :value="6"
+                             v-if="isRightTypeSelectView('BOOLEAN',cch)"
+                             @click.native="scope.row.conditions[index].valueType='BOOLEAN'"/>
+                  <el-option label="数值" :value="7"
+                             v-if="isRightTypeSelectView('NUMBER',cch)"
+                             @click.native="scope.row.conditions[index].valueType='NUMBER'"/>
+                  <el-option label="集合" :value="8"
+                             v-if="isRightTypeSelectView('COLLECTION',cch)"
+                             @click.native="scope.row.conditions[index].valueType='COLLECTION'"/>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="值">
+                <el-input-number v-if="scope.row.conditions[index].type===7" v-model="scope.row.conditions[index].value"
+                                 :controls="false" :max="10000000000000"
+                                 style="width: 330px"/>
+
+                <el-select v-else-if="scope.row.conditions[index].type===6" v-model="scope.row.conditions[index].value"
+                           placeholder="请选择数据 ">
+                  <el-option label="true" value="true"/>
+                  <el-option label="false" value="false"/>
+                </el-select>
+
+                <el-select
+                  v-else-if="scope.row.conditions[index].type===0||scope.row.conditions[index].type===1"
+                  v-model="scope.row.conditions[index].valueName"
+                  filterable
+                  remote
+                  reserve-keyword
+                  placeholder="请输入关键词"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,cch)}"
+                  :loading="leftSelect.loading"
+                  @change="leftValueChange()">
+                  <el-option
+                    v-for="item in leftSelect.options"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                    @click.native="conditionCollSelectClick(item,scope.row.conditions[index])">
+                  </el-option>
+                </el-select>
+                <el-input v-else v-model="scope.row.conditions[index].value"/>
+              </el-form-item>
+            </el-form>
+            <span slot="reference">
+              <span v-if="cch.leftValue.type!=null&&cch.leftValue.value!=null&&cch.symbol!=null">
+                <span>
+                  <el-tag
+                    type="success"
+                    v-if="scope.row.conditions[index].type!=null"
+                    style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
+                    disable-transitions>
+                    {{getConditionNamePrefix(scope.row.conditions[index].type)}}
+                  </el-tag>
+                  {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:scope.row.conditions[index].value}}
+                </span>
+
+                 <el-tag type="warning"
+                         v-if="scope.row.conditions[index].type==null&&scope.row.conditions[index].value==null"
+                         style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                     未配置
+                  </el-tag>
+                    <el-tag type="warning"
+                            v-else-if="scope.row.conditions[index].type==null||scope.row.conditions[index].value==null"
+                            style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                     待补全
+                  </el-tag>
+                  </span>
+            </span>
+          </el-popover>
         </template>
       </el-table-column>
 
@@ -172,7 +250,7 @@
               <el-form label-width="70px">
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
-                             @change="defaultActionValueTypeChange(tableData.collResultHead.defaultAction)">
+                             @change="valueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
@@ -205,7 +283,7 @@
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,null)}"
                     :loading="leftSelect.loading"
                     @change="leftValueChange()">
                     <el-option
@@ -213,7 +291,7 @@
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item)">
+                      @click.native="conditionCollSelectClick(item,tableData.collResultHead.defaultAction)">
                     </el-option>
                   </el-select>
                   <el-input v-else v-model="tableData.collResultHead.defaultAction.value"/>
@@ -281,19 +359,42 @@
                         priority: 1,
                         conditions: [
                             {
-                                value: 123,
+                                value: undefined,
                                 valueName: null,
                                 valueType: null,
+                                variableValue: null,
                                 type: null,
+                                visible: false
                             },
                             {
                                 value: undefined,
                                 valueName: null,
                                 valueType: null,
+                                variableValue: null,
                                 type: null,
+                                visible: false
                             }
                         ],
                         result: 200333
+                    }, {
+                        id: 2,
+                        priority: 1,
+                        conditions: [{
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }, {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }],
+                        result: 123
                     }],
                 },
                 leftSelect: {
@@ -317,6 +418,7 @@
                     leftValue: {
                         value: undefined,
                         valueName: null,
+                        variableValue: null,
                         valueType: null,
                         type: null,
                     },
@@ -328,6 +430,7 @@
                     leftValue: {
                         value: undefined,
                         valueName: null,
+                        variableValue: null,
                         valueType: null,
                         type: null,
                     },
@@ -370,7 +473,7 @@
                     return "COLLECTION";
                 }
             },
-            defaultActionValueTypeChange(da) {
+            valueTypeChange(da) {
                 da.value = undefined;
                 da.valueName = null;
                 // 如果是变量或者元素
@@ -405,8 +508,34 @@
             leftValueChange() {
 
             },
-            leftSelectClick(item) {
-                //变更运算符
+            isRightTypeSelectView(valueType, cch) {
+                if (cch.leftValue.valueType === null) {
+                    return false;
+                }
+                if (cch.leftValue.valueType === valueType) {
+                    return true;
+                }
+                // 如果左值为集合时
+                if (cch.leftValue.valueType === 'COLLECTION') {
+                    if (cch.symbol === null) {
+                        return true;
+                    }
+                    // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+                    return cch.symbol === 'CONTAIN' || cch.symbol === 'NOT_CONTAIN';
+                }
+            },
+            conditionCollSelectClick(item, cch) {
+                cch.valueType = item.valueType;
+                cch.value = item.id;
+                cch.valueName = item.name;
+                cch.variableValue = item.value;
+            },
+            leftSelectClick(item, cch) {
+                cch.valueType = item.valueType;
+                cch.value = item.id;
+                cch.valueName = item.name;
+                cch.variableValue = item.value;
+                // 变更运算符
                 this.symbolSelect.options = [];
                 this.$axios.post("/ruleEngine/symbol/getByType", {
                     "param": item.valueType
@@ -429,7 +558,7 @@
                     return "固定值";
                 }
             },
-            leftRemoteMethod(query, type) {
+            leftRemoteMethod(query, type, cch) {
                 if (query !== '') {
                     this.leftSelect.loading = true;
                     this.leftSelect.options = [];
@@ -440,6 +569,7 @@
                         },
                         "query": {
                             "name": query,
+                            "valueType": this.getRValueType(cch)
                         },
                         "orders": []
                     }).then(res => {
@@ -452,6 +582,20 @@
                     });
                 } else {
                     this.leftSelect.options = [];
+                }
+            },
+            getRValueType(cch) {
+                if (cch == null) {
+                    return [];
+                }
+                // 如果左值为集合时
+                if (cch.leftValue.valueType === 'COLLECTION') {
+                    // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+                    if (cch.symbol === 'CONTAIN' || cch.symbol === 'NOT_CONTAIN') {
+                        return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION"];
+                    }
+                } else {
+                    return new Array(cch.leftValue.valueType);
                 }
             },
         }
