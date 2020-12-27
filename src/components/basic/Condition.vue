@@ -81,7 +81,8 @@
 
           <el-form-item label="运算符" prop="config.symbol" style="margin-top: 18px">
             <el-col :span="9">
-              <el-select v-model="form.config.symbol" placeholder="请选择运算符">
+              <el-select v-model="form.config.symbol" placeholder="请选择运算符"
+                         :disabled="form.config.leftValue.valueType==null">
                 <el-option
                   v-for="item in symbolSelect.options"
                   :key="item.name"
@@ -99,6 +100,7 @@
             <el-col :span="9">
               <el-form-item prop="config.rightValue.type">
                 <el-select v-model="form.config.rightValue.type" placeholder="请选择数据类型"
+                           :disabled="form.config.symbol==null"
                            @change="rightValueTypeChange()">
                   <el-option v-if="form.config.leftValue.type!=null" label="元素" :value="0"/>
                   <el-option v-if="form.config.leftValue.type!=null" label="变量" :value="1"/>
@@ -117,9 +119,11 @@
 
                 <el-input-number v-if="form.config.rightValue.type===7" v-model="form.config.rightValue.value"
                                  :controls="false" :max="10000000000000"
+                                 :disabled="form.config.symbol==null"
                                  style="width: 193px"/>
 
                 <el-select v-else-if="form.config.rightValue.type===6" v-model="form.config.rightValue.value"
+                           :disabled="form.config.symbol==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
@@ -128,6 +132,7 @@
                 <el-select
                   v-else-if="form.config.rightValue.type===0||form.config.rightValue.type===1"
                   v-model="form.config.rightValue.valueName"
+                  :disabled="form.config.symbol==null"
                   filterable
                   remote
                   reserve-keyword
@@ -143,7 +148,7 @@
                   </el-option>
                 </el-select>
 
-                <el-input v-else v-model="form.config.rightValue.value"/>
+                <el-input v-else v-model="form.config.rightValue.value" :disabled="form.config.symbol==null"/>
 
               </el-form-item>
             </el-col>
@@ -503,30 +508,30 @@
             },
             leftValueChange() {
                 //左面发生改变，右边也改变
-                this.form.config.symbol = '';
+                this.form.config.symbol = null;
                 this.form.config.rightValue.value = undefined;
-                this.form.config.rightValue.valueName = '';
-                this.form.config.rightValue.type = '';
+                this.form.config.rightValue.valueName = null;
+                this.form.config.rightValue.type = null;
                 this.rightSelect.options = [];
             },
             leftValueTypeChange() {
                 this.form.config.leftValue.value = undefined;
-                this.form.config.leftValue.valueName = '';
+                this.form.config.leftValue.valueName = null;
                 // 如果是变量或者元素
                 if (this.form.config.leftValue.type === 1 || this.form.config.leftValue.type === 0) {
                     this.form.config.leftValue.valueType = null;
                 }
                 this.leftSelect.options = [];
-                this.form.config.symbol = '';
+                this.form.config.symbol = null;
                 //左面发生改变，右边也改变
                 this.form.config.rightValue.value = undefined;
-                this.form.config.rightValue.valueName = '';
-                this.form.config.rightValue.type = '';
+                this.form.config.rightValue.valueName = null;
+                this.form.config.rightValue.type = null;
                 this.rightSelect.options = [];
             },
             rightValueTypeChange() {
                 this.form.config.rightValue.value = undefined;
-                this.form.config.rightValue.valueName = '';
+                this.form.config.rightValue.valueName = null;
                 this.rightSelect.options = [];
             },
             saveOrUpdate(formName) {
@@ -647,7 +652,7 @@
                         },
                         "query": {
                             "name": query,
-                            "valueType": this.form.config.leftValue.valueType === 'COLLECTION' ? null : this.form.config.leftValue.valueType
+                            "valueType": new Array(this.form.config.leftValue.valueType === 'COLLECTION' ? null : this.form.config.leftValue.valueType)
                         },
                         "orders": []
                     }).then(res => {

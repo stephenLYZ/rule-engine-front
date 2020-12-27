@@ -106,53 +106,114 @@
 </template>
 
 <script>
-  export default {
-    name: "DecisionTable",
-    data() {
-      return {
-        search: {
-          form: {
-            name: null,
-            code: null,
-            status: null
-          }
-        },
-        tableData: [],
-        loading: false,
-        page: {
-          pageIndex: 1,
-          pageSize: 10,
-          total: 0
-        },
-      }
-    }, methods: {
-      create() {
-          this.$router.push("/DecisionTableDefinition")
-      },
-      reset(formName) {
-        this.search.form.status = null;
-        this.$refs[formName].resetFields();
-        this.list();
-      },
-      edit(row) {
+    export default {
+        name: "DecisionTable",
+        data() {
+            return {
+                search: {
+                    form: {
+                        name: null,
+                        code: null,
+                        status: null
+                    }
+                },
+                tableData: [],
+                loading: false,
+                page: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    total: 0
+                },
+            }
+        }, methods: {
+            create() {
+                this.$router.push("/DecisionTableDefinition")
+            },
+            reset(formName) {
+                this.search.form.status = null;
+                this.$refs[formName].resetFields();
+                this.list();
+            },
+            edit(row) {
+                // 可执行｜已发布
+                if (row.status === 1 || row.status === 2) {
+                    alert("敬请期待");
+                    //this.$router.push({path: '/DecisionTableViewAndTest', query: {decisionTableId: row.id}});
+                    return;
+                }
+                this.$router.push({path: '/DecisionTableConfig', query: {decisionTableId: row.id}});
+            },
+            deleteRow(row) {
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post("/ruleEngine/decisionTable/delete", {
+                        "id": row.id
+                    }).then(res => {
+                        let da = res.data;
+                        if (da) {
+                            this.$message({
+                                showClose: true,
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.list();
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            list() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/decisionTable/list", {
+                    "page": {
+                        "pageSize": this.page.pageSize,
+                        "pageIndex": this.page.pageIndex
+                    },
+                    "query": {
+                        "name": this.search.form.name,
+                        "code": this.search.form.code,
+                        "status": this.search.form.status,
+                    },
+                    "orders": [
+                        {
+                            "columnName": "id",
+                            "desc": true
+                        }
+                    ]
+                }).then(res => {
+                    if (res.data != null) {
+                        this.tableData = res.data.rows;
 
-      },
-      deleteRow(row) {
-
-      },
-      list() {
-
-      },
-      handleSizeChange(val) {
-        this.page.pageSize = val;
-        this.list();
-      },
-      handleCurrentChange(val) {
-        this.page.pageIndex = val;
-        this.list();
-      },
+                        this.page.total = res.data.page.total;
+                    } else {
+                        this.tableData = [];
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            handleSizeChange(val) {
+                this.page.pageSize = val;
+                this.list();
+            },
+            handleCurrentChange(val) {
+                this.page.pageIndex = val;
+                this.list();
+            },
+        }, mounted() {
+            this.list();
+        }
     }
-  }
 </script>
 
 <style scoped>

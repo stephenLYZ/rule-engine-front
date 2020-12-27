@@ -69,10 +69,12 @@
                 </el-form-item>
                 <el-form-item label="左值">
                   <el-input-number v-if="cch.leftValue.type===7" v-model="cch.leftValue.value"
+                                   :disabled="cch.leftValue.type==null"
                                    :controls="false" :max="10000000000000"
                                    style="width: 330px"/>
 
                   <el-select v-else-if="cch.leftValue.type===6" v-model="cch.leftValue.value"
+                             :disabled="cch.leftValue.type==null"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
                     <el-option label="false" value="false"/>
@@ -81,6 +83,7 @@
                   <el-select
                     v-else-if="cch.leftValue.type===0||cch.leftValue.type===1"
                     v-model="cch.leftValue.valueName"
+                    :disabled="cch.leftValue.type==null"
                     filterable
                     remote
                     reserve-keyword
@@ -97,13 +100,13 @@
                     </el-option>
                   </el-select>
 
-                  <el-input v-else v-model="cch.leftValue.value"/>
+                  <el-input v-else v-model="cch.leftValue.value" :disabled="cch.leftValue.type==null"/>
 
                 </el-form-item>
 
                 <el-form-item label="运算符" style="margin-top: 18px">
                   <el-col :span="9">
-                    <el-select v-model="cch.symbol">
+                    <el-select v-model="cch.symbol" :disabled="cch.leftValue.valueType==null">
                       <el-option
                         v-for="item in symbolSelect.options"
                         :key="item.name"
@@ -176,10 +179,12 @@
               </el-form-item>
               <el-form-item label="值">
                 <el-input-number v-if="scope.row.conditions[index].type===7" v-model="scope.row.conditions[index].value"
+                                 :disabled="scope.row.conditions[index].type==null"
                                  :controls="false" :max="10000000000000"
                                  style="width: 330px"/>
 
                 <el-select v-else-if="scope.row.conditions[index].type===6" v-model="scope.row.conditions[index].value"
+                           :disabled="scope.row.conditions[index].type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
@@ -188,6 +193,7 @@
                 <el-select
                   v-else-if="scope.row.conditions[index].type===0||scope.row.conditions[index].type===1"
                   v-model="scope.row.conditions[index].valueName"
+                  :disabled="scope.row.conditions[index].type==null"
                   filterable
                   remote
                   reserve-keyword
@@ -203,7 +209,8 @@
                     @click.native="conditionCollSelectClick(item,scope.row.conditions[index])">
                   </el-option>
                 </el-select>
-                <el-input v-else v-model="scope.row.conditions[index].value"/>
+                <el-input v-else v-model="scope.row.conditions[index].value"
+                          :disabled="scope.row.conditions[index].type==null"/>
               </el-form-item>
             </el-form>
             <span slot="reference">
@@ -264,6 +271,7 @@
 
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
+                             :disabled="tableData.collResultHead.type==null"
                              @change="valueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
@@ -285,10 +293,12 @@
                 <el-form-item label="默认值">
                   <el-input-number v-if="tableData.collResultHead.defaultAction.type===7"
                                    v-model="tableData.collResultHead.defaultAction.value"
+                                   :disabled="tableData.collResultHead.defaultAction.type==null"
                                    :controls="false" :max="10000000000000"
                                    style="width: 330px"/>
 
                   <el-select v-else-if="tableData.collResultHead.defaultAction.type===6"
+                             :disabled="tableData.collResultHead.defaultAction.type==null"
                              v-model="tableData.collResultHead.defaultAction.value"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
@@ -299,6 +309,7 @@
                     v-else-if="tableData.collResultHead.defaultAction.type===0||tableData.collResultHead.defaultAction.type===1"
                     v-model="tableData.collResultHead.defaultAction.valueName"
                     filterable
+                    :disabled="tableData.collResultHead.defaultAction.type==null"
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
@@ -313,7 +324,8 @@
                       @click.native="conditionCollSelectClick(item,tableData.collResultHead.defaultAction)">
                     </el-option>
                   </el-select>
-                  <el-input v-else v-model="tableData.collResultHead.value"/>
+                  <el-input v-else v-model="tableData.collResultHead.value"
+                            :disabled="tableData.collResultHead.defaultAction.type==null"/>
                 </el-form-item>
               </el-form>
               <el-button type="primary" size="mini" style="float: right;"
@@ -371,9 +383,11 @@
               <el-form-item label="值">
                 <el-input-number v-if="scope.row.result.type===7" v-model="scope.row.result.value"
                                  :controls="false" :max="10000000000000"
+                                 :disabled="scope.row.result.type==null"
                                  style="width: 330px"/>
 
                 <el-select v-else-if="scope.row.result.type===6" v-model="scope.row.result.value"
+                           :disabled="scope.row.result.type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
@@ -383,6 +397,7 @@
                   v-else-if="scope.row.result.type===0||scope.row.result.type===1"
                   v-model="scope.row.result.valueName"
                   filterable
+                  :disabled="scope.row.result.type==null"
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
@@ -397,7 +412,7 @@
                     @click.native="conditionCollSelectClick(item,scope.row.result)">
                   </el-option>
                 </el-select>
-                <el-input v-else v-model="scope.row.result.value"/>
+                <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.type==null"/>
               </el-form-item>
             </el-form>
             <span slot="reference">
@@ -435,6 +450,8 @@
       </el-col>
       <el-col :span="1">&nbsp;</el-col>
     </el-row>
+
+    <el-backtop/>
   </div>
 </template>
 
@@ -443,6 +460,7 @@
         name: "DecisionTableConfig",
         data() {
             return {
+                id: null,
                 tableData: {
                     collPriorityHead: {},
                     collConditionHeads: [],
@@ -505,7 +523,7 @@
                             type: null,
                             visible: false
                         }],
-                        result:  {
+                        result: {
                             value: undefined,
                             valueName: null,
                             variableValue: null,
@@ -573,13 +591,13 @@
                 }
             },
             update() {
-
+                alert("敬请期待");
             },
             nextStep() {
-
+                alert("敬请期待");
             },
             previous() {
-                this.$router.push({path: '/DecisionTableDefinition', query: {ruleId: this.id}});
+                this.$router.push({path: '/DecisionTableDefinition', query: {decisionTableId: this.id}});
             },
             getValueTypeByType(type) {
                 if (type === 5) {
@@ -703,6 +721,9 @@
                     this.leftSelect.options = [];
                 }
             },
+            getDecisionTableConfig() {
+
+            },
             getRValueType(valueType, symbol) {
                 if (valueType == null) {
                     return [];
@@ -717,6 +738,10 @@
                     return new Array(valueType);
                 }
             },
+        },
+        mounted() {
+            this.id = this.$route.query.decisionTableId;
+            this.getDecisionTableConfig();
         }
     }
 </script>

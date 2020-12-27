@@ -290,7 +290,7 @@
                         },
                         "query": {
                             "name": query,
-                            "valueType": pv.valueType
+                            "valueType": new Array(pv.valueType)
                         },
                         "orders": []
                     }).then(res => {

@@ -64,7 +64,7 @@
                         "param": value
                     }).then(res => {
                     if (res.data) {
-                        callback(new Error('规则code已经存在'));
+                        callback(new Error('规则Code已经存在'));
                     } else {
                         callback();
                     }
@@ -133,7 +133,8 @@
                     console.log(error);
                 });
             }
-        }, mounted() {
+        },
+        mounted() {
             this.form.id = this.$route.query.ruleId;
             this.getRuleDefinition();
         }
