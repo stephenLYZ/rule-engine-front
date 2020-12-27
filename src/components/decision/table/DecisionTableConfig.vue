@@ -54,7 +54,7 @@
                 </el-form-item>
                 <el-form-item label="左值类型">
                   <el-select v-model="cch.leftValue.type" placeholder="请选择数据类型"
-                             @change="leftValueTypeChange(cch)">
+                             @change="leftValueTypeChange(cch,index)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
@@ -619,7 +619,20 @@
                 }
                 this.leftSelect.options = [];
             },
-            leftValueTypeChange(cch) {
+            leftValueTypeChange(cch, index) {
+                if (cch.leftValue.valueType != null) {
+                    // 条件头修改后，此列下所有单元格清空
+                    this.tableData.rows.forEach((f) => {
+                        this.$set(f.conditions, 0, {
+                            value: null,
+                            valueName: null,
+                            valueType: null,
+                            variableValue: null,
+                            type: null,
+                            visible: false
+                        });
+                    });
+                }
                 cch.leftValue.value = undefined;
                 cch.leftValue.valueName = null;
                 // 如果是变量或者元素
@@ -640,7 +653,6 @@
                 }
                 this.leftSelect.options = [];
                 cch.symbol = null;
-                //左面发生改变，右边也改变
             },
             leftValueChange() {
 
