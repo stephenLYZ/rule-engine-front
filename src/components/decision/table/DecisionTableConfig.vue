@@ -623,7 +623,7 @@
                 if (cch.leftValue.valueType != null) {
                     // 条件头修改后，此列下所有单元格清空
                     this.tableData.rows.forEach((f) => {
-                        this.$set(f.conditions, 0, {
+                        this.$set(f.conditions, index, {
                             value: null,
                             valueName: null,
                             valueType: null,
