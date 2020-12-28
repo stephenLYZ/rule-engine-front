@@ -215,7 +215,7 @@
         code: null,
         description: null,
         request: {
-          url: "http://ruleserver.cn/ruleEngine/execute",
+          url: "http://ruleserver.cn/ruleEngine/simpleRule/execute",
           requestJson: null,
           param: [{
             name: null,
@@ -287,7 +287,7 @@
           "param": params
         };
         this.runPercentage = 56;
-        this.$axios.post("/ruleEngine/ruleTest/run", requestJson).then(res => {
+        this.$axios.post("/ruleEngine/simpleRuleTest/run", requestJson).then(res => {
           let da = res.data;
           if (da != null) {
             this.runData.value = da.value + "";
@@ -307,7 +307,7 @@
       },
       getPublishRule(id) {
         this.loading = true;
-        this.$axios.post("/ruleEngine/rule/getPublishRule", {
+        this.$axios.post("/ruleEngine/simpleRule/getPublishRule", {
           "id": id
         }).then(res => {
           let da = res.data;

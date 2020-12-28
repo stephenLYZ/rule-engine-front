@@ -155,7 +155,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post("/ruleEngine/rule/delete", {
+                    this.$axios.post("/ruleEngine/simpleRule/delete", {
                         "id": row.id
                     }).then(res => {
                         let da = res.data;
@@ -179,7 +179,7 @@
             },
             list() {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/rule/list", {
+                this.$axios.post("/ruleEngine/simpleRule/list", {
                     "page": {
                         "pageSize": this.page.pageSize,
                         "pageIndex": this.page.pageIndex
