@@ -90,7 +90,7 @@
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
-                    @change="leftValueChange()">
+                    @change="headConditionValueChange(cch,index)">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
@@ -257,7 +257,7 @@
               <el-form label-width="70px">
                 <el-form-item label="类型">
                   <el-select v-model="tableData.collResultHead.type" placeholder="请选择数据类型"
-                             @change="valueTypeChange(tableData.collResultHead)">
+                             @change="actionValueTypeChange(tableData.collResultHead)">
                     <el-option label="字符串" :value="5"
                                @click.native="tableData.collResultHead.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
@@ -276,17 +276,17 @@
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
-                               v-if="tableData.collResultHead.type===5"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='STRING'"/>
+                               v-if="tableData.collResultHead.valueType==='STRING'"
+                               @click.native="tableData.collResultHead.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
-                               v-if="tableData.collResultHead.type===6"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='BOOLEAN'"/>
+                               v-if="tableData.collResultHead.valueType==='BOOLEAN'"
+                               @click.native="tableData.collResultHead.valueType='BOOLEAN'"/>
                     <el-option label="数值" :value="7"
-                               v-if="tableData.collResultHead.type===7"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='NUMBER'"/>
+                               v-if="tableData.collResultHead.valueType==='NUMBER'"
+                               @click.native="tableData.collResultHead.valueType='NUMBER'"/>
                     <el-option label="集合" :value="8"
-                               v-if="tableData.collResultHead.type===8"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='COLLECTION'"/>
+                               v-if="tableData.collResultHead.valueType==='COLLECTION'"
+                               @click.native="tableData.collResultHead.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
 
@@ -324,7 +324,7 @@
                       @click.native="conditionCollSelectClick(item,tableData.collResultHead.defaultAction)">
                     </el-option>
                   </el-select>
-                  <el-input v-else v-model="tableData.collResultHead.value"
+                  <el-input v-else v-model="tableData.collResultHead.defaultAction.value"
                             :disabled="tableData.collResultHead.defaultAction.type==null"/>
                 </el-form-item>
               </el-form>
@@ -338,16 +338,6 @@
 
             <span slot="reference">
               结果
-              <span
-                v-if="tableData.collResultHead.defaultAction.type!=null&&tableData.collResultHead.defaultAction.value!=null">
-                  默认（
-               <el-tag type="success"
-                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                   {{getConditionNamePrefix(tableData.collResultHead.defaultAction.type)}}
-                </el-tag>
-                 {{tableData.collResultHead.defaultAction.variableValue!=null?tableData.collResultHead.defaultAction.variableValue:tableData.collResultHead.defaultAction.valueName}}
-                    ）
-              </span>
              <el-tag type="warning" v-if="tableData.collResultHead.type==null"
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
                  未配置
@@ -363,20 +353,21 @@
             <el-form label-width="70px">
               <br>
               <el-form-item label="值类型">
+
                 <el-select v-model="scope.row.result.type" placeholder="请选择数据类型"
                            @change="valueTypeChange(scope.row.result)">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
-                             v-if="scope.row.result.valueType='STRING'"
+                             v-if="tableData.collResultHead.valueType==='STRING'"
                              @click.native="scope.row.result.valueType='STRING'"/>
                   <el-option label="布尔" :value="6"
-                             v-if="scope.row.result.valueType='BOOLEAN'"
+                             v-if="tableData.collResultHead.valueType==='BOOLEAN'"
                              @click.native="scope.row.result.valueType='BOOLEAN'"/>
                   <el-option label="数值" :value="7"
-                             v-if="scope.row.result.valueType='NUMBER'"
+                             v-if="tableData.collResultHead.valueType==='NUMBER'"
                              @click.native="scope.row.result.valueType='NUMBER'"/>
                   <el-option label="集合" :value="8"
-                             v-if="scope.row.result.valueType='COLLECTION'"
+                             v-if="tableData.collResultHead.valueType==='COLLECTION'"
                              @click.native="scope.row.result.valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
@@ -468,12 +459,12 @@
                         type: null,
                         valueType: null,
                         defaultAction: {
+                            type: null,
                             visible: false,
                             variableValue: null,
                             enableDefaultAction: 1,
                             value: undefined,
                             valueName: null,
-                            valueType: null,
                         },
                     },
                     rows: [{
@@ -575,6 +566,21 @@
             ];
         },
         methods: {
+            headConditionValueChange(cch, index) {
+                // 清除运算符
+                cch.symbol = null;
+                // 条件头修改后，此列下所有单元格清空 此次待优化，如果valueType没有修改，则不会执行以下代码
+                this.tableData.rows.forEach((f) => {
+                    this.$set(f.conditions, index, {
+                        value: null,
+                        valueName: null,
+                        valueType: null,
+                        variableValue: null,
+                        type: null,
+                        visible: false
+                    });
+                });
+            },
             handlePopover(cch) {
                 // todo 待优化
                 this.symbolSelect.options = [];
@@ -618,6 +624,26 @@
                     da.valueType = null;
                 }
                 this.leftSelect.options = [];
+            },
+            actionValueTypeChange(da) {
+                da.defaultAction.type = null;
+                da.value = undefined;
+                da.valueName = null;
+                // 如果是变量或者元素
+                if (da.type === 1 || da.type === 0) {
+                    da.valueType = null;
+                }
+                this.leftSelect.options = [];
+                this.tableData.rows.forEach((f) => {
+                    f.result = {
+                        value: undefined,
+                        valueName: null,
+                        variableValue: null,
+                        valueType: null,
+                        type: null,
+                        visible: false
+                    };
+                });
             },
             leftValueTypeChange(cch, index) {
                 if (cch.leftValue.valueType != null) {
