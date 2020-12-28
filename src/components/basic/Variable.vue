@@ -83,15 +83,17 @@
                           :key="pv.code"
                           :prop="'function.paramValues.' + index + '.value'"
                           :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
-              <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据 ">
+              <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据" :disabled="pv.type==null">
                 <el-option label="true" value="true"/>
                 <el-option label="false" value="false"/>
               </el-select>
               <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
+                               :disabled="pv.type==null"
                                :max="10000000000000" style="width: 100%"/>
               <el-select
                 v-else-if="pv.type===1||pv.type===0"
                 v-model="pv.valueName"
+                :disabled="pv.type==null"
                 filterable
                 remote
                 placeholder="请输入关键词"
@@ -105,7 +107,7 @@
                   @click.native="leftSelectClick(pv,item)">
                 </el-option>
               </el-select>
-              <el-input v-else v-model="pv.value"/>
+              <el-input v-else v-model="pv.value" :disabled="pv.type==null"/>
             </el-form-item>
           </el-col>
           <el-col :span="3">
@@ -115,15 +117,16 @@
 
         <el-form-item label="变量值" v-if="form.type!==3" prop="value">
           <el-input-number v-if="form.type===7" v-model="form.value" :controls="false"
+                           :disabled="form.type==null"
                            :max="10000000000000" style="width: 100%"/>
-          <el-select v-else-if="form.type===6" v-model="form.value">
+          <el-select v-else-if="form.type===6" v-model="form.value" :disabled="form.type==null">
             <el-option label="true" value="true"/>
             <el-option label="false" value="false"/>
           </el-select>
 
-          <el-input type="textarea" v-else-if="form.type===8" v-model="form.value"/>
+          <el-input type="textarea" v-else-if="form.type===8" v-model="form.value" :disabled="form.type==null"/>
 
-          <el-input v-else v-model="form.value"/>
+          <el-input v-else v-model="form.value" :disabled="form.type==null"/>
 
         </el-form-item>
 
