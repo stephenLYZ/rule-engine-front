@@ -9,6 +9,7 @@ import Page404 from '@/components/404.vue'
 
 import Condition from '@/components/basic/Condition'
 import Element from '@/components/basic/Element.vue'
+import ElementGroup from "../components/basic/ElementGroup";
 import Function from '@/components/basic/Function.vue'
 import Variable from '@/components/basic/Variable.vue'
 
@@ -29,6 +30,9 @@ import DecisionTableDefinition from '@/components/decision/table/DecisionTableDe
 import DecisionTableConfig from '@/components/decision/table/DecisionTableConfig'
 
 import Workspace from '@/components/authority/Workspace'
+
+import RuleSet from "../components/ruleset/RuleSet";
+
 
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -138,6 +142,16 @@ export default new Router({
           path: '/workspace',
           name: 'Workspace',
           component: Workspace
+        },
+        {
+          path: '/elementGroup',
+          name: 'ElementGroup',
+          component: ElementGroup
+        },
+        {
+          path: '/ruleSet',
+          name: 'RuleSet',
+          component: RuleSet
         },
       ]
     },

@@ -11,27 +11,6 @@
 
     <el-row v-loading="loading">
       <el-col :span="6">
-
-        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
-          <div slot="header" class="box-card-header">
-            <span>基本信息</span>
-          </div>
-          <div>
-            <el-form label-width="40px">
-              <el-form-item label="名称" prop="name" style="margin-top: -8px;">
-                <el-input v-model="name" :disabled="true"/>
-              </el-form-item>
-              <el-form-item label="Code" prop="code" style="margin-top: -8px;">
-                <el-input v-model="code" :disabled="true"/>
-              </el-form-item>
-              <el-form-item label="说明" prop="description" style="margin-top: -8px;">
-                <el-input type="textarea" v-model="description" :disabled="true"/>
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-card>
-        <br>
-        <br>
         <el-card class="box-card">
           <div slot="header" class="box-card-header">
             <span>异常报警</span>

@@ -199,8 +199,7 @@
                   reserve-keyword
                   placeholder="请输入关键词"
                   :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,cch.leftValue.valueType,cch.symbol)}"
-                  :loading="leftSelect.loading"
-                  @change="leftValueChange()">
+                  :loading="leftSelect.loading">
                   <el-option
                     v-for="item in leftSelect.options"
                     :key="item.id"
@@ -314,8 +313,7 @@
                     reserve-keyword
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,tableData.collResultHead.valueType,null)}"
-                    :loading="leftSelect.loading"
-                    @change="leftValueChange()">
+                    :loading="leftSelect.loading">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
@@ -393,8 +391,7 @@
                   reserve-keyword
                   placeholder="请输入关键词"
                   :remote-method="(query)=>{leftRemoteMethod(query,scope.row.result.type,tableData.collResultHead.valueType,null)}"
-                  :loading="leftSelect.loading"
-                  @change="leftValueChange()">
+                  :loading="leftSelect.loading">
                   <el-option
                     v-for="item in leftSelect.options"
                     :key="item.id"
@@ -679,9 +676,6 @@
                 }
                 this.leftSelect.options = [];
                 cch.symbol = null;
-            },
-            leftValueChange() {
-
             },
             isRightTypeSelectView(valueType, cch) {
                 if (cch.leftValue.valueType === null) {
