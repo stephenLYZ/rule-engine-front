@@ -1,5 +1,5 @@
 <template>
-  <div id="ruleConfig">
+  <div id="GeneralRuleConfig">
 
     <el-steps :active="2" align-center>
       <el-step title="规则定义" icon="el-icon-edit"/>
@@ -305,7 +305,7 @@
     import uuidv1 from 'uuid/v1'
 
     export default {
-        name: "RuleConfig",
+        name: "GeneralRuleConfig",
         data() {
             return {
                 loading: false,
@@ -358,7 +358,7 @@
         },
         methods: {
             previous() {
-                this.$router.push({path: '/RuleDefinition', query: {ruleId: this.id}});
+                this.$router.push({path: '/GeneralRuleDefinition', query: {ruleId: this.id}});
             },
             getConditionNamePrefix(type) {
                 if (type === 0) {
@@ -544,7 +544,7 @@
                                         }).then(res => {
                                             let da = res.data;
                                             if (da) {
-                                                this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
+                                                this.$router.push({path: '/GeneralRuleViewAndTest', query: {ruleId: this.id}});
                                             }
                                         }).catch(function (error) {
                                             console.log(error);

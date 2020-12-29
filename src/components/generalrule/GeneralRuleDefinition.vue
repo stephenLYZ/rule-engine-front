@@ -1,5 +1,5 @@
 <template>
-  <div id="ruleDefinition">
+  <div id="generalRuleDefinition">
     <el-steps :active="1" align-center>
       <el-step title="规则定义" icon="el-icon-edit"/>
       <el-step title="规则配置" icon="el-icon-connection" class="stepp"/>
@@ -48,7 +48,7 @@
 
 <script>
     export default {
-        name: "RuleDefinition",
+        name: "GeneralRuleDefinition",
         data() {
             var patter = /^[a-zA-Z][a-zA-Z0-9_&#\-]*$/;
             const validateIsExists = (rule, value, callback) => {
@@ -104,7 +104,7 @@
                             let da = res.data;
                             if (da != null) {
                                 this.form.id = da;
-                                this.$router.push({path: '/RuleConfig', query: {ruleId: da}});
+                                this.$router.push({path: '/GeneralRuleConfig', query: {ruleId: da}});
                             }
                         }).catch(function (error) {
                             console.log(error);
@@ -114,7 +114,8 @@
                         return false;
                     }
                 });
-            }, getRuleDefinition() {
+            },
+            getRuleDefinition() {
                 if (this.form.id === undefined) {
                     return;
                 }

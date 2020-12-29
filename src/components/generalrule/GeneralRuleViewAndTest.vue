@@ -171,7 +171,7 @@
 
 <script>
     export default {
-        name: "RuleViewAndTest",
+        name: "GeneralRuleViewAndTest",
         data() {
             return {
                 loading: false,
@@ -225,7 +225,7 @@
                 this.runEnd = false;
             },
             previous() {
-                this.$router.push({path: '/RuleConfig', query: {ruleId: this.id}});
+                this.$router.push({path: '/GeneralRuleConfig', query: {ruleId: this.id}});
             },
             getConditionNamePrefix(type) {
                 if (type === 0) {

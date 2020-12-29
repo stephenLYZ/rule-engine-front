@@ -183,7 +183,7 @@
   import Clipboard from 'clipboard';
 
   export default {
-    name: "RuleViewPublish",
+    name: "GeneralRuleViewPublish",
     data() {
       return {
         clipboard: null,

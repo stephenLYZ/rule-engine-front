@@ -141,13 +141,13 @@
             edit(row) {
                 // 可执行｜已发布
                 if (row.status === 1 || row.status === 2) {
-                    this.$router.push({path: '/RuleViewAndTest', query: {ruleId: row.id}});
+                    this.$router.push({path: '/GeneralRuleViewAndTest', query: {ruleId: row.id}});
                     return;
                 }
-                this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
+                this.$router.push({path: '/GeneralRuleConfig', query: {ruleId: row.id}});
             },
             show(row) {
-                this.$router.push({path: '/RuleViewPublish', query: {ruleId: row.id}});
+                this.$router.push({path: '/GeneralRuleViewPublish', query: {ruleId: row.id}});
             },
             deleteRow(row) {
                 this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
@@ -208,7 +208,7 @@
                     console.log(error);
                 });
             }, createRule() {
-                this.$router.push("/RuleDefinition")
+                this.$router.push("/GeneralRuleDefinition")
             }
         }, mounted() {
             this.list();
