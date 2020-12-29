@@ -42,11 +42,12 @@
             <el-col :span="9">
               <el-form-item prop="config.leftValue.value">
                 <el-input-number v-if="form.config.leftValue.type===7" v-model="form.config.leftValue.value"
+                                 :disabled="form.config.leftValue.type==null"
                                  :controls="false" :max="10000000000000"
                                  style="width: 193px"/>
 
                 <el-select v-else-if="form.config.leftValue.type===6" v-model="form.config.leftValue.value"
-                           placeholder="请选择数据 ">
+                           :disabled="form.config.leftValue.type==null">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
                 </el-select>
@@ -55,6 +56,7 @@
                   v-else-if="form.config.leftValue.type===0||form.config.leftValue.type===1"
                   v-model="form.config.leftValue.valueName"
                   filterable
+                  :disabled="form.config.leftValue.type==null"
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
@@ -70,7 +72,7 @@
                   </el-option>
                 </el-select>
 
-                <el-input v-else v-model="form.config.leftValue.value"/>
+                <el-input v-else v-model="form.config.leftValue.value" :disabled="form.config.leftValue.type==null"/>
 
               </el-form-item>
             </el-col>

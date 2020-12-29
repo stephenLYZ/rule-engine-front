@@ -124,7 +124,7 @@
               <div>
                 <el-form ref="actionForm" :model="action" :rules="actionRules">
                   <el-form-item prop="type" class="el-col-6">
-                    <el-select v-model="action.type" placeholder="请选择数据类型" @change="actionTypeChange()">
+                    <el-select v-model="action.type" @change="actionTypeChange()">
                       <el-option label="元素" :value="0"/>
                       <el-option label="变量" :value="1"/>
                       <el-option label="字符串" :value="2" @click.native="action.valueType='STRING'"/>
@@ -140,7 +140,7 @@
 
                   <el-form-item prop="value" class="el-col-17">
 
-                    <el-select v-if="action.type===3" v-model="action.value" placeholder="请选择数据 ">
+                    <el-select v-if="action.type===3" v-model="action.value" :disabled="action.type==null">
                       <el-option label="true" value="true"/>
                       <el-option label="false" value="false"/>
                     </el-select>
@@ -148,6 +148,7 @@
                     <el-select v-else-if="action.type===0||action.type===1"
                                v-model="action.valueName"
                                filterable
+                               :disabled="action.type==null"
                                remote
                                reserve-keyword
                                placeholder="请输入关键词"
@@ -164,10 +165,11 @@
 
                     <div v-else-if="action.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
+                                       :disabled="action.type==null"
                                        :max="10000000000000" style="width: 100%"/>
                     </div>
 
-                    <el-input v-else v-model="action.value"/>
+                    <el-input v-else v-model="action.value" :disabled="action.type==null"/>
 
                   </el-form-item>
 
@@ -195,8 +197,8 @@
                   <br>
                   <br>
                   <el-form-item prop="valueType" class="el-col-6"
-                                :rules="defaultAction.enableDefaultAction===0? {required: true, message: '请选择规则结果类型', trigger: 'blur'}:{}">
-                    <el-select v-model="defaultAction.type" placeholder="请选择数据类型"
+                                :rules="defaultAction.enableDefaultAction===0? {required: true, message: '请选择结果类型', trigger: 'blur'}:{}">
+                    <el-select v-model="defaultAction.type"
                                @change="defaultActionTypeChange()">
                       <el-option label="元素" :value="0"/>
                       <el-option label="变量" :value="1"/>
@@ -216,7 +218,8 @@
                   <el-form-item prop="value" class="el-col-17"
                                 :rules="defaultAction.enableDefaultAction===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{}">
 
-                  <el-select v-if="defaultAction.type===3" v-model="defaultAction.value" placeholder="请选择数据 ">
+                    <el-select v-if="defaultAction.type===3" v-model="defaultAction.value"
+                               :disabled="defaultAction.type==null">
                       <el-option label="true" value="true"/>
                       <el-option label="false" value="false"/>
                     </el-select>
@@ -225,6 +228,7 @@
                                v-model="defaultAction.valueName"
                                filterable
                                remote
+                               :disabled="defaultAction.type==null"
                                reserve-keyword
                                placeholder="请输入关键词"
                                :remote-method="defaultActionRemoteMethod"
@@ -241,10 +245,11 @@
 
                     <div v-else-if="defaultAction.valueType==='NUMBER'">
                       <el-input-number v-model="defaultAction.value" :controls="false"
+                                       :disabled="defaultAction.type==null"
                                        :max="10000000000000" style="width: 100%"/>
                     </div>
 
-                    <el-input v-else v-model="defaultAction.value"/>
+                    <el-input v-else v-model="defaultAction.value" :disabled="defaultAction.type==null"/>
                   </el-form-item>
                 </el-form>
               </div>
@@ -544,7 +549,10 @@
                                         }).then(res => {
                                             let da = res.data;
                                             if (da) {
-                                                this.$router.push({path: '/GeneralRuleViewAndTest', query: {ruleId: this.id}});
+                                                this.$router.push({
+                                                    path: '/GeneralRuleViewAndTest',
+                                                    query: {ruleId: this.id}
+                                                });
                                             }
                                         }).catch(function (error) {
                                             console.log(error);
