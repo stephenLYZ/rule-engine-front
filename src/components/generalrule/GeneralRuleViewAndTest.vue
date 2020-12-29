@@ -16,7 +16,7 @@
             <span>异常报警</span>
           </div>
           <div>
-            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false" :readonly="true"/>
+            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false" disabled/>
             <br>
             <br>
             <el-input v-model="abnormalAlarm.email" type="textarea" :readonly="true"/>
