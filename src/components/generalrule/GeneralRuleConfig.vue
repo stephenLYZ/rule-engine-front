@@ -491,7 +491,7 @@
                 this.condition.options = [];
             },
             update() {
-                this.$axios.post("/ruleEngine/simpleRule/updateRule", {
+                this.$axios.post("/ruleEngine/generalRule/updateRule", {
                     "id": this.id,
                     "conditionGroup": this.conditionGroup,
                     "action": {
@@ -544,7 +544,7 @@
                             if (valid) {
                                 this.$refs["abnormalAlarm"].validate((valid) => {
                                     if (valid) {
-                                        this.$axios.post("/ruleEngine/simpleRule/generationRelease", {
+                                        this.$axios.post("/ruleEngine/generalRule/generationRelease", {
                                             "id": this.id,
                                             "conditionGroup": this.conditionGroup,
                                             "action": {
@@ -723,7 +723,7 @@
             },
             getRuleConfig() {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/simpleRule/getRuleConfig", {
+                this.$axios.post("/ruleEngine/generalRule/getRuleConfig", {
                     "id": this.id
                 }).then(res => {
                     let da = res.data;

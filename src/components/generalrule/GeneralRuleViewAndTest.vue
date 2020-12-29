@@ -274,7 +274,7 @@
                     "param": params
                 };
                 this.runPercentage = 40;
-                this.$axios.post("/ruleEngine/simpleRuleTest/run", requestJson).then(res => {
+                this.$axios.post("/ruleEngine/generalRuleTest/run", requestJson).then(res => {
                     let da = res.data;
                     if (da != null) {
                         this.runData.value = da.value + "";
@@ -298,7 +298,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post("/ruleEngine/simpleRule/publish",
+                    this.$axios.post("/ruleEngine/generalRule/publish",
                         {
                             id: this.id
                         }
@@ -322,7 +322,7 @@
             },
             getRuleView(id) {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/simpleRule/getViewRule", {
+                this.$axios.post("/ruleEngine/generalRule/getViewRule", {
                     "id": id
                 }).then(res => {
                     let da = res.data;

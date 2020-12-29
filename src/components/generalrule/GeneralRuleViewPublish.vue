@@ -215,7 +215,7 @@
         code: null,
         description: null,
         request: {
-          url: "http://ruleserver.cn/ruleEngine/simpleRule/execute",
+          url: "http://ruleserver.cn/ruleEngine/generalRule/execute",
           requestJson: null,
           param: [{
             name: null,
@@ -287,7 +287,7 @@
           "param": params
         };
         this.runPercentage = 56;
-        this.$axios.post("/ruleEngine/simpleRuleTest/run", requestJson).then(res => {
+        this.$axios.post("/ruleEngine/generalRuleTest/run", requestJson).then(res => {
           let da = res.data;
           if (da != null) {
             this.runData.value = da.value + "";
@@ -307,7 +307,7 @@
       },
       getPublishRule(id) {
         this.loading = true;
-        this.$axios.post("/ruleEngine/simpleRule/getPublishRule", {
+        this.$axios.post("/ruleEngine/generalRule/getPublishRule", {
           "id": id
         }).then(res => {
           let da = res.data;
@@ -342,7 +342,7 @@
               });
             }
             this.request.requestJson = JSON.stringify({
-              "ruleCode": da.code,
+              "code": da.code,
               "workspaceCode": da.workspaceCode,
               "accessKeyId": '略',
               "accessKeySecret": '略',

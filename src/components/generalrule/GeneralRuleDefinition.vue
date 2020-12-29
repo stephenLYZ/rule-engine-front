@@ -59,7 +59,7 @@
                 if (!patter.test(value)) {
                     return callback(new Error('字母开头，以及字母数字_&#-组成'));
                 }
-                this.$axios.post("/ruleEngine/simpleRule/codeIsExists",
+                this.$axios.post("/ruleEngine/generalRule/codeIsExists",
                     {
                         "param": value
                     }).then(res => {
@@ -95,7 +95,7 @@
                 // 先执行保存
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        this.$axios.post("/ruleEngine/simpleRule/saveOrUpdateRuleDefinition", {
+                        this.$axios.post("/ruleEngine/generalRule/saveOrUpdateRuleDefinition", {
                             "id": this.form.id,
                             "code": this.form.code,
                             "name": this.form.name,
@@ -119,7 +119,7 @@
                     return;
                 }
                 this.loading = true;
-                this.$axios.post("/ruleEngine/simpleRule/getRuleDefinition", {
+                this.$axios.post("/ruleEngine/generalRule/getRuleDefinition", {
                     "id": this.form.id,
                 }).then(res => {
                     let da = res.data;

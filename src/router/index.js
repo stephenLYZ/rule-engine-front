@@ -12,11 +12,11 @@ import Element from '@/components/basic/Element.vue'
 import Function from '@/components/basic/Function.vue'
 import Variable from '@/components/basic/Variable.vue'
 
-import Rule from '@/components/rule/Rule.vue'
-import RuleConfig from '@/components/rule/RuleConfig.vue'
-import RuleViewAndTest from '@/components/rule/RuleViewAndTest.vue'
-import RuleViewPublish from '@/components/rule/RuleViewPublish.vue'
-import RuleDefinition from '@/components/rule/RuleDefinition.vue'
+import GeneralRule from '@/components/generalrule/GeneralRule.vue'
+import GeneralRuleConfig from '@/components/generalrule/GeneralRuleConfig.vue'
+import GeneralRuleViewAndTest from '@/components/generalrule/GeneralRuleViewAndTest.vue'
+import GeneralRuleViewPublish from '@/components/generalrule/GeneralRuleViewPublish.vue'
+import GeneralRuleDefinition from '@/components/generalrule/GeneralRuleDefinition.vue'
 
 import SystemSetting from '@/components/setting/SystemSetting.vue'
 import PersonalSettings from '@/components/setting/PersonalSettings.vue'
@@ -75,29 +75,29 @@ export default new Router({
           component: Variable
         },
         {
-          path: '/rule',
-          name: 'Rule',
-          component: Rule
+          path: '/generalRule',
+          name: 'GeneralRule',
+          component: GeneralRule
         },
         {
-          path: '/ruleConfig',
-          name: 'RuleConfig',
-          component: RuleConfig
+          path: '/generalRuleConfig',
+          name: 'GeneralRuleConfig',
+          component: GeneralRuleConfig
         },
         {
-          path: '/ruleViewAndTest',
-          name: 'RuleViewAndTest',
-          component: RuleViewAndTest
+          path: '/generalRuleViewAndTest',
+          name: 'GeneralRuleViewAndTest',
+          component: GeneralRuleViewAndTest
         },
         {
-          path: '/ruleViewPublish',
-          name: 'RuleViewPublish',
-          component: RuleViewPublish
+          path: '/generalRuleViewPublish',
+          name: 'GeneralRuleViewPublish',
+          component: GeneralRuleViewPublish
         },
         {
-          path: '/ruleDefinition',
-          name: 'RuleDefinition',
-          component: RuleDefinition
+          path: '/generalRuleDefinition',
+          name: 'GeneralRuleDefinition',
+          component: GeneralRuleDefinition
         },
         {
           path: '/systemSetting',
