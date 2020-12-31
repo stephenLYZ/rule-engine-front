@@ -7,30 +7,35 @@
     </el-steps>
     <br>
     <br>
-
     <el-table
+      v-loading="loading"
       :data="tableData.rows"
+      @row-contextmenu="rightClick"
+      @header-contextmenu="headerRightClick"
       border
       style="width: 100%"
-      max-height="500">
+      max-height="600">
       <el-table-column
         prop="id"
         label="编号"
+        sortable
         width="90">
       </el-table-column>
 
       <el-table-column
         prop="priority"
         label="优先级"
+        sortable
         width="90">
 
-        <template slot="header" slot-scope="scope">
+        <template slot-scope="scope">
           <el-popover
             placement="right"
-            width="400"
+            width="180"
             trigger="click">
-            <span>待完成</span>
-            <span slot="reference">优先级</span>
+            <el-input-number v-model="scope.row.priority" controls-position="right" :min="1" :max="10"
+                             @change="(value)=>{handlePriorityChange(value,scope.row)}"/>
+            <span slot="reference">{{scope.row.priority}}</span>
           </el-popover>
         </template>
 
@@ -39,7 +44,7 @@
       <el-table-column
         prop="condition"
         label="条件"
-        min-width="200" v-for="(cch,index) in tableData.collConditionHeads" :key="cch.uuid">
+        min-width="200" v-for="(cch,index) in tableData.collConditionHeads" :key="index">
         <template slot="header" slot-scope="scope">
           <el-popover
             placement="right"
@@ -52,7 +57,7 @@
                 <el-form-item label="条件名称">
                   <el-input v-model="cch.name"/>
                 </el-form-item>
-                <el-form-item label="左值类型">
+                <el-form-item label="类型">
                   <el-select v-model="cch.leftValue.type" placeholder="请选择数据类型"
                              @change="leftValueTypeChange(cch,index)">
                     <el-option label="元素" :value="0"/>
@@ -67,7 +72,7 @@
                                @click.native="cch.leftValue.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="左值">
+                <el-form-item label="值">
                   <el-input-number v-if="cch.leftValue.type===7" v-model="cch.leftValue.value"
                                    :disabled="cch.leftValue.type==null"
                                    :controls="false" :max="10000000000000"
@@ -156,10 +161,11 @@
           <el-popover
             placement="right"
             width="400"
+            v-if="isCreateCondition(scope.row.conditions,index)"
             v-model="scope.row.conditions[index].visible">
             <el-form label-width="70px">
               <br>
-              <el-form-item label="值类型">
+              <el-form-item label="类型">
                 <el-select v-model="scope.row.conditions[index].type" placeholder="请选择数据类型"
                            @change="valueTypeChange(scope.row.conditions[index])">
                   <el-option label="变量" :value="1"/>
@@ -350,7 +356,7 @@
             v-model="scope.row.result.visible">
             <el-form label-width="70px">
               <br>
-              <el-form-item label="值类型">
+              <el-form-item label="类型">
 
                 <el-select v-model="scope.row.result.type" placeholder="请选择数据类型"
                            @change="valueTypeChange(scope.row.result)">
@@ -440,6 +446,29 @@
     </el-row>
 
     <el-backtop/>
+
+    <div id="contextmenu"
+         v-show="menuVisible"
+         class="menu">
+      <div class="contextmenu__item" @click="addRowOn()">上添加一行
+      </div>
+      <div class="contextmenu__item" @click="addRowBelow()">下添加一行
+      </div>
+      <div class="contextmenu__item">删除此行
+      </div>
+    </div>
+
+
+    <div id="headerContextmenu"
+         v-show="headerMenuVisible"
+         class="headerMenu">
+      <div class="contextmenu__item" @click="addOneColumnToTheLeft()">左添加一列
+      </div>
+      <div class="contextmenu__item" @click="addAColumnToTheRight()">右添加一列
+      </div>
+      <div class="contextmenu__item">删除此列
+      </div>
+    </div>
   </div>
 </template>
 
@@ -448,7 +477,12 @@
         name: "DecisionTableConfig",
         data() {
             return {
+                menuVisible: false,
+                headerMenuVisible: false,
+                currentRow: null,
+                currentColumn: null,
                 id: null,
+                loading: false,
                 tableData: {
                     collPriorityHead: {},
                     collConditionHeads: [],
@@ -534,35 +568,121 @@
             }
         },
         created() {
-            this.tableData.collConditionHeads = [
-                {
-                    uuid: 1,
-                    name: "条件",
-                    visible: false,
-                    leftValue: {
-                        value: undefined,
-                        valueName: null,
-                        variableValue: null,
-                        valueType: null,
-                        type: null,
-                    },
-                    symbol: null,
-                },
-                {
-                    uuid: 2,
-                    name: "条件",
-                    leftValue: {
-                        value: undefined,
-                        valueName: null,
-                        variableValue: null,
-                        valueType: null,
-                        type: null,
-                    },
-                    symbol: null,
-                },
-            ];
         },
         methods: {
+            getNewColl() {
+
+            },
+            addOneColumnToTheLeft() {
+
+            },
+            // 不存在则创建
+            isCreateCondition(conditions, index) {
+                if (conditions[index] == null) {
+                    this.$set(conditions, index, {
+                        value: undefined,
+                        valueName: null,
+                        variableValue: null,
+                        valueType: null,
+                        type: null,
+                        visible: false
+                    });
+                }
+                return true;
+            },
+            addAColumnToTheRight() {
+                console.log(this.currentColumn)
+                // this.tableData.collConditionHeads.push({})
+                this.tableData.collConditionHeads.splice(1, 0, this.tableData.collConditionHeads[1]);
+                for (let i = 0; i < this.tableData.collConditionHeads.length; i++) {
+                    if (this.tableData.collConditionHeads[i] === this.currentColumn) {
+                        this.tableData.collConditionHeads.splice(i, 0, this.tableData.currentColumn[i]);
+                    }
+                }
+            },
+            getNewRow(row) {
+                return {
+                    id: 1,
+                    priority: 1,
+                    conditions: Array.from(row.conditions).map(m => ({
+                        value: undefined,
+                        valueName: null,
+                        valueType: null,
+                        variableValue: null,
+                        type: null,
+                        visible: false
+                    })),
+                    result: {
+                        value: undefined,
+                        valueName: null,
+                        variableValue: null,
+                        valueType: null,
+                        type: null,
+                        visible: false
+                    }
+                };
+            },
+            addRowOn() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i, 0, this.getNewRow(this.tableData.rows[i]));
+                        return;
+                    }
+                }
+            },
+            addRowBelow() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i + 1, 0, this.getNewRow(this.tableData.rows[i]));
+                        return;
+                    }
+                }
+            },
+            headerRightClick(column, event) {
+                this.menuVisible = false;
+                this.headerMenuVisible = true; // 显示模态窗口，跳出自定义菜单栏
+                event.preventDefault(); //关闭浏览器右键默认事件
+                this.currentColumn = column;
+                var menu = document.querySelector('.headerMenu');
+                this.styleMenu(menu, event)
+            },
+            rightClick(row, column, event) {
+                this.headerMenuVisible = false;
+                this.menuVisible = true; // 显示模态窗口，跳出自定义菜单栏
+                event.preventDefault(); //关闭浏览器右键默认事件
+                this.currentRow = row;
+                var menu = document.querySelector('.menu');
+                this.styleMenu(menu, event)
+            },
+            foo() {
+                // 取消鼠标监听事件 菜单栏
+                this.menuVisible = false;
+                this.headerMenuVisible = false;
+                document.removeEventListener('click', this.foo) // 关掉监听，
+            },
+            styleMenu(menu, event) {
+                if (event.clientX > 1800) {
+                    menu.style.left = event.clientX - 100 + 'px'
+                } else {
+                    menu.style.left = event.clientX + 1 + 'px'
+                }
+                document.addEventListener('click', this.foo); // 给整个document新增监听鼠标事件，点击任何位置执行foo方法
+                if (event.clientY > 700) {
+                    menu.style.top = event.clientY - 30 + 'px'
+                } else {
+                    menu.style.top = event.clientY - 10 + 'px'
+                }
+            },
+            /**
+             * 优先级默认值0
+             * @param value
+             * @param row
+             */
+            handlePriorityChange(value, row) {
+                if (value === undefined || value === '') {
+                    row.priority = 0;
+                }
+            },
             headConditionValueChange(cch, index) {
                 // 清除运算符
                 cch.symbol = null;
@@ -594,7 +714,21 @@
                 }
             },
             update() {
-                alert("敬请期待");
+                this.$axios.post("/ruleEngine/decisionTable/updateDecisionTable", {
+                    "id": this.id,
+                    "tableData": this.tableData
+                }).then(res => {
+                    let da = res.data;
+                    if (da) {
+                        this.$message({
+                            showClose: true,
+                            message: '保存成功',
+                            type: 'success'
+                        });
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
             nextStep() {
                 alert("敬请期待");
@@ -754,7 +888,28 @@
                 }
             },
             getDecisionTableConfig() {
-
+                this.loading = true;
+                this.$axios.post("/ruleEngine/decisionTable/getDecisionTableConfig", {
+                    "id": this.id
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.id = da.id;
+                        this.name = da.name;
+                        this.code = da.code;
+                        this.description = da.description;
+                        this.tableData = da.tableData;
+                        if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
+                            this.abnormalAlarm = {
+                                "enable": da.abnormalAlarm.enable,
+                                "email": da.abnormalAlarm.email.join(',')
+                            }
+                        }
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
             getRValueType(valueType, symbol) {
                 if (valueType == null) {
@@ -800,5 +955,35 @@
   }
 </style>
 <style scoped>
+  .contextmenu__item {
+    display: block;
+    line-height: 34px;
+    text-align: center;
+  }
 
+  .contextmenu__item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .headerMenu, .menu {
+    position: absolute;
+    background-color: #fff;
+    width: 100px;
+    font-size: 13px;
+    color: #444040;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    white-space: nowrap;
+    z-index: 1000;
+  }
+
+  .contextmenu__item:hover {
+    cursor: pointer;
+    /*background: #409eff;*/
+    /*border-color: #409eff;*/
+    /*color: #fff;*/
+  }
 </style>

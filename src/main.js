@@ -4,7 +4,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import router from '@/router';
 import axios from 'axios';
 import userApi from '@/api/userApi';
+import Contextmenu from "vue-contextmenujs"
 
+Vue.use(Contextmenu);
 
 import App from './App.vue';
 
@@ -19,7 +21,7 @@ Vue.prototype.$userApi = userApi;
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";
 
 //请求后端服务器接口前缀
-const requestBaseURL = "http://ruleserver.cn";
+const requestBaseURL = "http://localhost";
 Vue.prototype.$requestBaseURL = requestBaseURL;
 
 //axios配置
