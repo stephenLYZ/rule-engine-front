@@ -16,7 +16,7 @@
       style="width: 100%"
       max-height="600">
       <el-table-column
-        prop="id"
+        type="index"
         label="编号"
         sortable
         width="90">
@@ -44,74 +44,80 @@
       <el-table-column
         prop="condition"
         label="条件"
+        show-overflow-tooltip
+        :index="index"
         min-width="200" v-for="(cch,index) in tableData.collConditionHeads" :key="index">
         <template slot="header" slot-scope="scope">
           <el-popover
             placement="right"
             width="400"
-            v-model="cch.visible"
-            @show="handlePopover(cch)">
+            v-model="tableData.collConditionHeads[index].visible"
+            @show="handlePopover(tableData.collConditionHeads[index])">
             <div>
               <br>
               <el-form label-width="70px">
                 <el-form-item label="条件名称">
-                  <el-input v-model="cch.name"/>
+                  <el-input v-model="tableData.collConditionHeads[index].name"/>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-select v-model="cch.leftValue.type" placeholder="请选择数据类型"
-                             @change="leftValueTypeChange(cch,index)">
+                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型"
+                             @change="leftValueTypeChange(tableData.collConditionHeads[index],index)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
-                               @click.native="cch.leftValue.valueType='STRING'"/>
+                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
-                               @click.native="cch.leftValue.valueType='BOOLEAN'"/>
+                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='BOOLEAN'"/>
                     <el-option label="数值" :value="7"
-                               @click.native="cch.leftValue.valueType='NUMBER'"/>
+                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='NUMBER'"/>
                     <el-option label="集合" :value="8"
-                               @click.native="cch.leftValue.valueType='COLLECTION'"/>
+                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="值">
-                  <el-input-number v-if="cch.leftValue.type===7" v-model="cch.leftValue.value"
-                                   :disabled="cch.leftValue.type==null"
+                  <el-input-number v-if="tableData.collConditionHeads[index].leftValue.type===7"
+                                   v-model="tableData.collConditionHeads[index].leftValue.value"
+                                   :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                                    :controls="false" :max="10000000000000"
                                    style="width: 330px"/>
 
-                  <el-select v-else-if="cch.leftValue.type===6" v-model="cch.leftValue.value"
-                             :disabled="cch.leftValue.type==null"
+                  <el-select v-else-if="tableData.collConditionHeads[index].leftValue.type===6"
+                             v-model="tableData.collConditionHeads[index].leftValue.value"
+                             :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
                     <el-option label="false" value="false"/>
                   </el-select>
 
                   <el-select
-                    v-else-if="cch.leftValue.type===0||cch.leftValue.type===1"
-                    v-model="cch.leftValue.valueName"
-                    :disabled="cch.leftValue.type==null"
+                    v-else-if="tableData.collConditionHeads[index].leftValue.type===0||tableData.collConditionHeads[index].leftValue.type===1"
+                    v-model="tableData.collConditionHeads[index].leftValue.valueName"
+                    :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                     filterable
                     remote
                     reserve-keyword
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,cch.leftValue.type,null,null)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
-                    @change="headConditionValueChange(cch,index)">
+                    @change="headConditionValueChange(tableData.collConditionHeads[index],index)">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item,cch.leftValue)">
+                      @click.native="leftSelectClick(item,tableData.collConditionHeads[index].leftValue)">
                     </el-option>
                   </el-select>
 
-                  <el-input v-else v-model="cch.leftValue.value" :disabled="cch.leftValue.type==null"/>
+                  <el-input v-else v-model="tableData.collConditionHeads[index].leftValue.value"
+                            :disabled="tableData.collConditionHeads[index].leftValue.type==null"/>
 
                 </el-form-item>
 
                 <el-form-item label="运算符" style="margin-top: 18px">
                   <el-col :span="9">
-                    <el-select v-model="cch.symbol" :disabled="cch.leftValue.valueType==null">
+                    <el-select v-model="tableData.collConditionHeads[index].symbol"
+                               :disabled="tableData.collConditionHeads[index].leftValue.valueType==null">
                       <el-option
                         v-for="item in symbolSelect.options"
                         :key="item.name"
@@ -125,32 +131,37 @@
                   </el-col>
                 </el-form-item>
               </el-form>
-              <el-button type="primary" size="mini" style="float: right;" @click="cch.visible = false">确认</el-button>
-              <el-button size="mini" style="float: right;margin-right: 12px;" @click="cch.visible = false">取消
+              <el-button type="primary" size="mini" style="float: right;"
+                         @click="tableData.collConditionHeads[index].visible = false">确认
+              </el-button>
+              <el-button size="mini" style="float: right;margin-right: 12px;"
+                         @click="tableData.collConditionHeads[index].visible = false">取消
               </el-button>
             </div>
 
             <span slot="reference">
               <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
-              （{{cch.name}}）
+              （{{tableData.collConditionHeads[index].name}}）
               </el-tag>
-             <el-tag type="success" v-if="cch.leftValue.type!=null"
-                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                 {{getConditionNamePrefix(cch.leftValue.type)}}
+             <el-tag type="success" v-if="tableData.collConditionHeads[index].leftValue.type!=null"
+                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                 {{getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type)}}
               </el-tag>
-            {{cch.leftValue.valueName!=null?cch.leftValue.valueName:cch.leftValue.value}}
+            {{tableData.collConditionHeads[index].leftValue.valueName!=null?tableData.collConditionHeads[index].leftValue.valueName:tableData.collConditionHeads[index].leftValue.value}}
 
-              <el-tag v-if="cch.symbol!=null" type="warning"
+              <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                  {{cch.symbol}}
+                  {{tableData.collConditionHeads[index].symbol}}
               </el-tag>
 
-             <el-tag type="warning" v-if="cch.leftValue.type==null&&cch.leftValue.value==null&&cch.symbol==null"
-                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+             <el-tag type="warning"
+                     v-if="tableData.collConditionHeads[index].leftValue.type==null&&tableData.collConditionHeads[index].leftValue.value==null&&tableData.collConditionHeads[index].symbol==null"
+                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  未配置
               </el-tag>
-                <el-tag type="warning" v-else-if="cch.leftValue.type==null||cch.leftValue.value==null||cch.symbol==null"
-                        style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
+                <el-tag type="warning"
+                        v-else-if="tableData.collConditionHeads[index].leftValue.type==null||tableData.collConditionHeads[index].leftValue.value==null||tableData.collConditionHeads[index].symbol==null"
+                        style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  待补全
               </el-tag>
               </span>
@@ -161,7 +172,6 @@
           <el-popover
             placement="right"
             width="400"
-            v-if="isCreateCondition(scope.row.conditions,index)"
             v-model="scope.row.conditions[index].visible">
             <el-form label-width="70px">
               <br>
@@ -170,16 +180,16 @@
                            @change="valueTypeChange(scope.row.conditions[index])">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
-                             v-if="isRightTypeSelectView('STRING',cch)"
+                             v-if="isRightTypeSelectView('STRING',tableData.collConditionHeads[index])"
                              @click.native="scope.row.conditions[index].valueType='STRING'"/>
                   <el-option label="布尔" :value="6"
-                             v-if="isRightTypeSelectView('BOOLEAN',cch)"
+                             v-if="isRightTypeSelectView('BOOLEAN',tableData.collConditionHeads[index])"
                              @click.native="scope.row.conditions[index].valueType='BOOLEAN'"/>
                   <el-option label="数值" :value="7"
-                             v-if="isRightTypeSelectView('NUMBER',cch)"
+                             v-if="isRightTypeSelectView('NUMBER',tableData.collConditionHeads[index])"
                              @click.native="scope.row.conditions[index].valueType='NUMBER'"/>
                   <el-option label="集合" :value="8"
-                             v-if="isRightTypeSelectView('COLLECTION',cch)"
+                             v-if="isRightTypeSelectView('COLLECTION',tableData.collConditionHeads[index])"
                              @click.native="scope.row.conditions[index].valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
@@ -204,7 +214,7 @@
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
-                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,cch.leftValue.valueType,cch.symbol)}"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,tableData.collConditionHeads[index].leftValue.valueType,tableData.collConditionHeads[index].symbol)}"
                   :loading="leftSelect.loading">
                   <el-option
                     v-for="item in leftSelect.options"
@@ -219,7 +229,8 @@
               </el-form-item>
             </el-form>
             <span slot="reference">
-              <span v-if="cch.leftValue.type!=null&&cch.leftValue.value!=null&&cch.symbol!=null">
+              <span
+                v-if="tableData.collConditionHeads[index].leftValue.type!=null&&tableData.collConditionHeads[index].leftValue.value!=null&&tableData.collConditionHeads[index].symbol!=null">
                 <span>
                   <el-tag
                     type="success"
@@ -484,7 +495,6 @@
                 id: null,
                 loading: false,
                 tableData: {
-                    collPriorityHead: {},
                     collConditionHeads: [],
                     collResultHead: {
                         type: null,
@@ -571,32 +581,61 @@
         },
         methods: {
             getNewColl() {
-
+                return {
+                    "uuid": null,
+                    "name": "条件",
+                    "visible": false,
+                    "symbol": null,
+                    "leftValue": {
+                        "type": null,
+                        "value": undefined,
+                        "valueName": null,
+                        "variableValue": null,
+                        "valueType": null
+                    }
+                };
             },
             addOneColumnToTheLeft() {
-
-            },
-            // 不存在则创建
-            isCreateCondition(conditions, index) {
-                if (conditions[index] == null) {
-                    this.$set(conditions, index, {
-                        value: undefined,
-                        valueName: null,
-                        variableValue: null,
-                        valueType: null,
-                        type: null,
-                        visible: false
-                    });
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index, 0, this.getNewColl());
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let conditions = this.tableData.rows[i].conditions;
+                    for (let j = 0; j < conditions.length; j++) {
+                        if (j === index) {
+                            const newCondition = {
+                                value: undefined,
+                                valueName: null,
+                                variableValue: null,
+                                valueType: null,
+                                type: null,
+                                visible: false
+                            };
+                            conditions.splice(index, 0, newCondition);
+                            break;
+                        }
+                    }
                 }
-                return true;
             },
             addAColumnToTheRight() {
-                console.log(this.currentColumn)
-                // this.tableData.collConditionHeads.push({})
-                this.tableData.collConditionHeads.splice(1, 0, this.tableData.collConditionHeads[1]);
-                for (let i = 0; i < this.tableData.collConditionHeads.length; i++) {
-                    if (this.tableData.collConditionHeads[i] === this.currentColumn) {
-                        this.tableData.collConditionHeads.splice(i, 0, this.tableData.currentColumn[i]);
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index + 1, 0, this.getNewColl());
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let conditions = this.tableData.rows[i].conditions;
+                    for (let j = 0; j < conditions.length; j++) {
+                        if (j === index) {
+                            const newCondition = {
+                                value: undefined,
+                                valueName: null,
+                                variableValue: null,
+                                valueType: null,
+                                type: null,
+                                visible: false
+                            };
+                            conditions.splice(index + 1, 0, newCondition);
+                            break;
+                        }
                     }
                 }
             },
