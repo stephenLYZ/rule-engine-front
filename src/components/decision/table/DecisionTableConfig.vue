@@ -430,7 +430,7 @@
                     disable-transitions>
                     {{getConditionNamePrefix(scope.row.result.type)}}
                   </el-tag>
-                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:scope.row.result.value}}
+                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:scope.row.result.valueName}}
                 </span>
 
                  <el-tag type="warning"
@@ -870,7 +870,7 @@
                 cch.valueType = item.valueType;
                 cch.value = item.id;
                 cch.valueName = item.name;
-                cch.variableValue = item.value;
+                cch.variableValue = item.variableValue;
             },
             leftSelectClick(item, cch) {
                 cch.valueType = item.valueType;
