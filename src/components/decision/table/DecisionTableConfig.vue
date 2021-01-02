@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="decisionTableConfig">
     <el-steps :active="2" align-center>
       <el-step title="决策表定义" icon="el-icon-edit"/>
       <el-step title="决策表配置" icon="el-icon-connection"/>
@@ -12,13 +12,13 @@
       :data="tableData.rows"
       @row-contextmenu="rightClick"
       @header-contextmenu="headerRightClick"
+      @cell-click="cellClick"
       border
       style="width: 100%"
       max-height="600">
       <el-table-column
         type="index"
         label="编号"
-        sortable
         width="90">
       </el-table-column>
 
@@ -35,7 +35,7 @@
             trigger="click">
             <el-input-number v-model="scope.row.priority" controls-position="right" :min="1" :max="10"
                              @change="(value)=>{handlePriorityChange(value,scope.row)}"/>
-            <span slot="reference">{{scope.row.priority}}</span>
+            <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{scope.row.priority}}</span>
           </el-popover>
         </template>
 
@@ -122,7 +122,8 @@
                         v-for="item in symbolSelect.options"
                         :key="item.name"
                         :label="item.explanation"
-                        :value="item.name">
+                        :value="item.name"
+                        @click.native="tableData.collConditionHeads[index].explanation=item.explanation">
                       </el-option>
                     </el-select>
                   </el-col>
@@ -139,7 +140,7 @@
               </el-button>
             </div>
 
-            <span slot="reference">
+            <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
               <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
               （{{tableData.collConditionHeads[index].name}}）
               </el-tag>
@@ -151,18 +152,7 @@
 
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                  {{tableData.collConditionHeads[index].symbol}}
-              </el-tag>
-
-             <el-tag type="warning"
-                     v-if="tableData.collConditionHeads[index].leftValue.type==null&&tableData.collConditionHeads[index].leftValue.value==null&&tableData.collConditionHeads[index].symbol==null"
-                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                 未配置
-              </el-tag>
-                <el-tag type="warning"
-                        v-else-if="tableData.collConditionHeads[index].leftValue.type==null||tableData.collConditionHeads[index].leftValue.value==null||tableData.collConditionHeads[index].symbol==null"
-                        style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                 待补全
+                  {{tableData.collConditionHeads[index].explanation}}
               </el-tag>
               </span>
           </el-popover>
@@ -171,12 +161,11 @@
         <template slot-scope="scope">
           <el-popover
             placement="right"
-            width="400"
+            :disabled="tableData.collConditionHeads[index].leftValue.valueType==null"
             v-model="scope.row.conditions[index].visible">
-            <el-form label-width="70px">
-              <br>
-              <el-form-item label="类型">
-                <el-select v-model="scope.row.conditions[index].type" placeholder="请选择数据类型"
+            <el-form id="conditionRowFrom">
+              <el-form-item class="el-col-6">
+                <el-select v-model="scope.row.conditions[index].type"
                            @change="valueTypeChange(scope.row.conditions[index])">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -193,10 +182,13 @@
                              @click.native="scope.row.conditions[index].valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
-              <el-form-item label="值">
+              <el-form-item class="el-col-1">
+                &nbsp;
+              </el-form-item>
+              <el-form-item class="el-col-17">
                 <el-input-number v-if="scope.row.conditions[index].type===7" v-model="scope.row.conditions[index].value"
                                  :disabled="scope.row.conditions[index].type==null"
-                                 :controls="false" :max="10000000000000"
+                                 :controls="false"
                                  style="width: 330px"/>
 
                 <el-select v-else-if="scope.row.conditions[index].type===6" v-model="scope.row.conditions[index].value"
@@ -228,31 +220,14 @@
                           :disabled="scope.row.conditions[index].type==null"/>
               </el-form-item>
             </el-form>
-            <span slot="reference">
-              <span
-                v-if="tableData.collConditionHeads[index].leftValue.type!=null&&tableData.collConditionHeads[index].leftValue.value!=null&&tableData.collConditionHeads[index].symbol!=null">
-                <span>
-                  <el-tag
-                    type="success"
-                    v-if="scope.row.conditions[index].type!=null"
-                    style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
-                    disable-transitions>
+            <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
+                  <el-tag type="success"
+                          v-if="scope.row.conditions[index].type!=null"
+                          style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
+                          disable-transitions>
                     {{getConditionNamePrefix(scope.row.conditions[index].type)}}
                   </el-tag>
                   {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:scope.row.conditions[index].value}}
-                </span>
-
-                 <el-tag type="warning"
-                         v-if="scope.row.conditions[index].type==null&&scope.row.conditions[index].value==null"
-                         style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                     未配置
-                  </el-tag>
-                    <el-tag type="warning"
-                            v-else-if="scope.row.conditions[index].type==null||scope.row.conditions[index].value==null"
-                            style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                     待补全
-                  </el-tag>
-                  </span>
             </span>
           </el-popover>
         </template>
@@ -284,7 +259,9 @@
                                @click.native="tableData.collResultHead.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
-
+                <el-form-item label="默认结果">
+                  <el-switch v-model="tableData.collResultHead.defaultAction.enableDefaultAction" :active-value="0" :inactive-value="1"/>
+                </el-form-item>
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
                              :disabled="tableData.collResultHead.type==null"
@@ -351,12 +328,8 @@
               </el-button>
             </div>
 
-            <span slot="reference">
+            <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
               结果
-             <el-tag type="warning" v-if="tableData.collResultHead.type==null"
-                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                 未配置
-              </el-tag>
               </span>
           </el-popover>
         </template>
@@ -364,12 +337,12 @@
           <el-popover
             placement="right"
             width="400"
+            :disabled="tableData.collResultHead.valueType==null"
             v-model="scope.row.result.visible">
-            <el-form label-width="70px">
-              <br>
-              <el-form-item label="类型">
+            <el-form id="resultRow">
+              <el-form-item class="el-col-6">
 
-                <el-select v-model="scope.row.result.type" placeholder="请选择数据类型"
+                <el-select v-model="scope.row.result.type"
                            @change="valueTypeChange(scope.row.result)">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -386,7 +359,10 @@
                              @click.native="scope.row.result.valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
-              <el-form-item label="值">
+              <el-form-item class="el-col-1">
+                &nbsp;
+              </el-form-item>
+              <el-form-item class="el-col-17">
                 <el-input-number v-if="scope.row.result.type===7" v-model="scope.row.result.value"
                                  :controls="false" :max="10000000000000"
                                  :disabled="scope.row.result.type==null"
@@ -420,9 +396,7 @@
                 <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.type==null"/>
               </el-form-item>
             </el-form>
-            <span slot="reference">
-              <span v-if="tableData.collResultHead.type!=null">
-                <span>
+            <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
                   <el-tag
                     type="success"
                     v-if="scope.row.result.type!=null"
@@ -431,14 +405,6 @@
                     {{getConditionNamePrefix(scope.row.result.type)}}
                   </el-tag>
                   {{scope.row.result.variableValue!=null?scope.row.result.variableValue:scope.row.result.valueName}}
-                </span>
-
-                 <el-tag type="warning"
-                         v-if="scope.row.result.type==null"
-                         style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;" disable-transitions>
-                     未配置
-                  </el-tag>
-                  </span>
             </span>
           </el-popover>
         </template>
@@ -465,7 +431,7 @@
       </div>
       <div class="contextmenu__item" @click="addRowBelow()">下添加一行
       </div>
-      <div class="contextmenu__item">删除此行
+      <div class="contextmenu__item" @click="removeRow()" v-if="this.tableData.rows.length > 1">删除此行
       </div>
     </div>
 
@@ -477,7 +443,7 @@
       </div>
       <div class="contextmenu__item" @click="addAColumnToTheRight()">右添加一列
       </div>
-      <div class="contextmenu__item">删除此列
+      <div class="contextmenu__item" @click="removeColumn()" v-if="this.tableData.collConditionHeads.length > 1">删除此列
       </div>
     </div>
   </div>
@@ -580,12 +546,16 @@
         created() {
         },
         methods: {
+            getConditionHeadInfo() {
+
+            },
             getNewColl() {
                 return {
                     "uuid": null,
                     "name": "条件",
                     "visible": false,
                     "symbol": null,
+                    "explanation": null,
                     "leftValue": {
                         "type": null,
                         "value": undefined,
@@ -616,6 +586,10 @@
                         }
                     }
                 }
+            },
+            removeColumn() {
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index, 1);
             },
             addAColumnToTheRight() {
                 let index = this.currentColumn.index;
@@ -669,6 +643,14 @@
                     }
                 }
             },
+            removeRow() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i, 1);
+                        return;
+                    }
+                }
+            },
             addRowBelow() {
                 for (let i = 0; i < this.tableData.rows.length; i++) {
                     if (this.tableData.rows[i] === this.currentRow) {
@@ -676,6 +658,8 @@
                         return;
                     }
                 }
+            },
+            cellClick(row, column, cell, event) {
             },
             headerRightClick(column, event) {
                 this.menuVisible = false;
@@ -738,7 +722,6 @@
                 });
             },
             handlePopover(cch) {
-                // todo 待优化
                 this.symbolSelect.options = [];
                 if (cch.leftValue.valueType != null) {
                     this.$axios.post("/ruleEngine/symbol/getByType", {
@@ -992,6 +975,14 @@
   .stepp .el-step__icon-inner {
     color: #C0C4CC;
   }
+
+  #decisionTableConfig .el-table th {
+    padding: 10px 0 10px 0;
+  }
+
+  #decisionTableConfig .el-table td {
+    padding: 8px 0 8px 0;
+  }
 </style>
 <style scoped>
   .contextmenu__item {
@@ -1024,5 +1015,9 @@
     /*background: #409eff;*/
     /*border-color: #409eff;*/
     /*color: #fff;*/
+  }
+
+  #conditionRowFrom .el-form-item, #resultRow .el-form-item {
+    margin-bottom: 0;
   }
 </style>
