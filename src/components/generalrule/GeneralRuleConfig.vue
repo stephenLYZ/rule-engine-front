@@ -166,7 +166,7 @@
                     <div v-else-if="action.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
                                        :disabled="action.type==null"
-                                       :max="10000000000000" style="width: 100%"/>
+                                       style="width: 100%"/>
                     </div>
 
                     <el-input v-else v-model="action.value" :disabled="action.type==null"/>
@@ -246,7 +246,7 @@
                     <div v-else-if="defaultAction.valueType==='NUMBER'">
                       <el-input-number v-model="defaultAction.value" :controls="false"
                                        :disabled="defaultAction.type==null"
-                                       :max="10000000000000" style="width: 100%"/>
+                                       style="width: 100%"/>
                     </div>
 
                     <el-input v-else v-model="defaultAction.value" :disabled="defaultAction.type==null"/>

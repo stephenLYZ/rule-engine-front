@@ -89,7 +89,7 @@
               </el-select>
               <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
                                :disabled="pv.type==null"
-                               :max="10000000000000" style="width: 100%"/>
+                              style="width: 100%"/>
               <el-select
                 v-else-if="pv.type===1||pv.type===0"
                 v-model="pv.valueName"
@@ -118,7 +118,7 @@
         <el-form-item label="变量值" v-if="form.type!==3" prop="value">
           <el-input-number v-if="form.type===7" v-model="form.value" :controls="false"
                            :disabled="form.type==null"
-                           :max="10000000000000" style="width: 100%"/>
+                           style="width: 100%"/>
           <el-select v-else-if="form.type===6" v-model="form.value" :disabled="form.type==null">
             <el-option label="true" value="true"/>
             <el-option label="false" value="false"/>

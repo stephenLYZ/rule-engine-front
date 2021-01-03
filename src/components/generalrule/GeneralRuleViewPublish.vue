@@ -139,7 +139,7 @@
                 {{param.name}}
                 <div v-if="param.valueType==='NUMBER'">
                   <el-input-number v-model="param.value" :controls="false"
-                                   :max="10000000000000" style="width: 100%"/>
+                                   style="width: 100%"/>
                 </div>
                 <div v-else-if="param.valueType==='BOOLEAN'">
                   <el-select v-model="param.value">

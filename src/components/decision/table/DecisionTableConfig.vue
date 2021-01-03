@@ -78,7 +78,7 @@
                   <el-input-number v-if="tableData.collConditionHeads[index].leftValue.type===7"
                                    v-model="tableData.collConditionHeads[index].leftValue.value"
                                    :disabled="tableData.collConditionHeads[index].leftValue.type==null"
-                                   :controls="false" :max="10000000000000"
+                                   :controls="false"
                                    style="width: 330px"/>
 
                   <el-select v-else-if="tableData.collConditionHeads[index].leftValue.type===6"
@@ -292,7 +292,7 @@
                   <el-input-number v-if="tableData.collResultHead.defaultAction.type===7"
                                    v-model="tableData.collResultHead.defaultAction.value"
                                    :disabled="tableData.collResultHead.defaultAction.type==null"
-                                   :controls="false" :max="10000000000000"
+                                   :controls="false"
                                    style="width: 330px"/>
 
                   <el-select v-else-if="tableData.collResultHead.defaultAction.type===6"
@@ -372,7 +372,7 @@
               </el-form-item>
               <el-form-item class="el-col-17">
                 <el-input-number v-if="scope.row.result.type===7" v-model="scope.row.result.value"
-                                 :controls="false" :max="10000000000000"
+                                 :controls="false"
                                  :disabled="scope.row.result.type==null"
                                  style="width: 330px"/>
 

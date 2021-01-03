@@ -90,7 +90,7 @@
                 <el-option label="false" value="false"/>
               </el-select>
               <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
-                               :max="10000000000000" style="width: 100%"/>
+                                style="width: 100%"/>
               <el-input v-else v-model="pv.value"/>
             </el-form-item>
           </el-col>
