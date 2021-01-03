@@ -122,8 +122,7 @@
                         v-for="item in symbolSelect.options"
                         :key="item.name"
                         :label="item.explanation"
-                        :value="item.name"
-                        @click.native="tableData.collConditionHeads[index].explanation=item.explanation">
+                        :value="item.name">
                       </el-option>
                     </el-select>
                   </el-col>
@@ -152,7 +151,7 @@
 
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                  {{tableData.collConditionHeads[index].explanation}}
+                {{getSymbolExplanation(tableData.collConditionHeads[index].symbol)}}
               </el-tag>
               </span>
           </el-popover>
@@ -260,7 +259,8 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="默认结果">
-                  <el-switch v-model="tableData.collResultHead.defaultAction.enableDefaultAction" :active-value="0" :inactive-value="1"/>
+                  <el-switch v-model="tableData.collResultHead.defaultAction.enableDefaultAction" :active-value="0"
+                             :inactive-value="1"/>
                 </el-form-item>
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
@@ -555,7 +555,6 @@
                     "name": "条件",
                     "visible": false,
                     "symbol": null,
-                    "explanation": null,
                     "leftValue": {
                         "type": null,
                         "value": undefined,
@@ -947,6 +946,34 @@
                     return new Array(valueType);
                 }
             },
+            getSymbolExplanation(name) {
+                switch (name) {
+                    case "EQ":
+                        return "等于";
+                    case "NE":
+                        return "不等于";
+                    case "GT":
+                        return "大于";
+                    case "LT":
+                        return "小于";
+                    case "GE":
+                        return "大于等于";
+                    case "LE":
+                        return "小于等于";
+                    case "CONTAIN":
+                        return "包含";
+                    case "NOT_CONTAIN":
+                        return "不包含";
+                    case "IN":
+                        return "在";
+                    case "NOT_IN":
+                        return "不在";
+                    case "STARTS_WITH":
+                        return "以..开始";
+                    case "ENDS_WITH":
+                        return "以..结束";
+                }
+            }
         },
         mounted() {
             this.id = this.$route.query.decisionTableId;

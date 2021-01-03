@@ -93,7 +93,7 @@
 
                     &nbsp;
                     <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                      {{c.condition.config.symbol}}
+                      {{getSymbolExplanation(c.condition.config.symbol)}}
                     </el-tag>
 
                     &nbsp;
@@ -747,7 +747,35 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
+            },
+            getSymbolExplanation(name) {
+                switch (name) {
+                    case "EQ":
+                        return "等于";
+                    case "NE":
+                        return "不等于";
+                    case "GT":
+                        return "大于";
+                    case "LT":
+                        return "小于";
+                    case "GE":
+                        return "大于等于";
+                    case "LE":
+                        return "小于等于";
+                    case "CONTAIN":
+                        return "包含";
+                    case "NOT_CONTAIN":
+                        return "不包含";
+                    case "IN":
+                        return "在";
+                    case "NOT_IN":
+                        return "不在";
+                    case "STARTS_WITH":
+                        return "以..开始";
+                    case "ENDS_WITH":
+                        return "以..结束";
+                }
+            },
         }, mounted() {
             this.id = this.$route.query.ruleId;
             this.getRuleConfig();
