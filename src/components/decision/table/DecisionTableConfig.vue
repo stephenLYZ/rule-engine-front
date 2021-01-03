@@ -95,10 +95,10 @@
                     :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                     filterable
                     remote
-                    reserve-keyword
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
+                    @clear="tableData.collConditionHeads[index].leftValue.valueName=null"
                     @change="headConditionValueChange(tableData.collConditionHeads[index],index)">
                     <el-option
                       v-for="item in leftSelect.options"
@@ -165,6 +165,8 @@
             <el-form id="conditionRowFrom">
               <el-form-item class="el-col-6">
                 <el-select v-model="scope.row.conditions[index].type"
+                           clearable
+                           @clear="scope.row.conditions[index].type=null"
                            @change="valueTypeChange(scope.row.conditions[index])">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -191,6 +193,7 @@
                                  style="width: 330px"/>
 
                 <el-select v-else-if="scope.row.conditions[index].type===6" v-model="scope.row.conditions[index].value"
+                           clearable
                            :disabled="scope.row.conditions[index].type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
@@ -203,7 +206,7 @@
                   :disabled="scope.row.conditions[index].type==null"
                   filterable
                   remote
-                  reserve-keyword
+                  clearable
                   placeholder="请输入关键词"
                   :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,tableData.collConditionHeads[index].leftValue.valueType,tableData.collConditionHeads[index].symbol)}"
                   :loading="leftSelect.loading">
@@ -264,6 +267,8 @@
                 </el-form-item>
                 <el-form-item label="默认类型">
                   <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
+                             clearable
+                             @clear="tableData.collResultHead.defaultAction.type=null"
                              :disabled="tableData.collResultHead.type==null"
                              @change="valueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
@@ -291,6 +296,7 @@
                                    style="width: 330px"/>
 
                   <el-select v-else-if="tableData.collResultHead.defaultAction.type===6"
+                             clearable
                              :disabled="tableData.collResultHead.defaultAction.type==null"
                              v-model="tableData.collResultHead.defaultAction.value"
                              placeholder="请选择数据 ">
@@ -304,7 +310,7 @@
                     filterable
                     :disabled="tableData.collResultHead.defaultAction.type==null"
                     remote
-                    reserve-keyword
+                    clearable
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,tableData.collResultHead.valueType,null)}"
                     :loading="leftSelect.loading">
@@ -343,6 +349,8 @@
               <el-form-item class="el-col-6">
 
                 <el-select v-model="scope.row.result.type"
+                           clearable
+                           @clear="scope.row.result.type=null"
                            @change="valueTypeChange(scope.row.result)">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -369,6 +377,7 @@
                                  style="width: 330px"/>
 
                 <el-select v-else-if="scope.row.result.type===6" v-model="scope.row.result.value"
+                           clearable
                            :disabled="scope.row.result.type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
@@ -381,7 +390,7 @@
                   filterable
                   :disabled="scope.row.result.type==null"
                   remote
-                  reserve-keyword
+                  clearable
                   placeholder="请输入关键词"
                   :remote-method="(query)=>{leftRemoteMethod(query,scope.row.result.type,tableData.collResultHead.valueType,null)}"
                   :loading="leftSelect.loading">
@@ -404,7 +413,7 @@
                     disable-transitions>
                     {{getConditionNamePrefix(scope.row.result.type)}}
                   </el-tag>
-                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:scope.row.result.valueName}}
+                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:(scope.row.result.valueName==null?scope.row.result.value:scope.row.result.valueName)}}
             </span>
           </el-popover>
         </template>
@@ -661,12 +670,14 @@
             cellClick(row, column, cell, event) {
             },
             headerRightClick(column, event) {
-                this.menuVisible = false;
-                this.headerMenuVisible = true; // 显示模态窗口，跳出自定义菜单栏
                 event.preventDefault(); //关闭浏览器右键默认事件
-                this.currentColumn = column;
-                var menu = document.querySelector('.headerMenu');
-                this.styleMenu(menu, event)
+                if (column.property === "condition") {
+                    this.menuVisible = false;
+                    this.headerMenuVisible = true; // 显示模态窗口，跳出自定义菜单栏
+                    this.currentColumn = column;
+                    var menu = document.querySelector('.headerMenu');
+                    this.styleMenu(menu, event)
+                }
             },
             rightClick(row, column, event) {
                 this.headerMenuVisible = false;
