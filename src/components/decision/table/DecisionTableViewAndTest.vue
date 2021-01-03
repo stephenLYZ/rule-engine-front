@@ -1,5 +1,5 @@
 <template>
-  <div id="decisionTableConfig">
+  <div id="decisionTableViewAndTest">
     <el-steps :active="2" align-center>
       <el-step title="决策表定义" icon="el-icon-edit"/>
       <el-step title="决策表配置" icon="el-icon-connection"/>
@@ -60,7 +60,7 @@
                   <el-input v-model="tableData.collConditionHeads[index].name"/>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-select v-model="tableData.collConditionHeads[index].leftValue.tempType" placeholder="请选择数据类型"
+                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型"
                              @change="leftValueTypeChange(tableData.collConditionHeads[index],index)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
@@ -75,28 +75,28 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="值">
-                  <el-input-number v-if="tableData.collConditionHeads[index].leftValue.tempType===7"
+                  <el-input-number v-if="tableData.collConditionHeads[index].leftValue.type===7"
                                    v-model="tableData.collConditionHeads[index].leftValue.value"
-                                   :disabled="tableData.collConditionHeads[index].leftValue.tempType==null"
+                                   :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                                    :controls="false"
                                    style="width: 330px"/>
 
-                  <el-select v-else-if="tableData.collConditionHeads[index].leftValue.tempType===6"
+                  <el-select v-else-if="tableData.collConditionHeads[index].leftValue.type===6"
                              v-model="tableData.collConditionHeads[index].leftValue.value"
-                             :disabled="tableData.collConditionHeads[index].leftValue.tempType==null"
+                             :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
                     <el-option label="false" value="false"/>
                   </el-select>
 
                   <el-select
-                    v-else-if="tableData.collConditionHeads[index].leftValue.tempType===0||tableData.collConditionHeads[index].leftValue.tempType===1"
+                    v-else-if="tableData.collConditionHeads[index].leftValue.type===0||tableData.collConditionHeads[index].leftValue.type===1"
                     v-model="tableData.collConditionHeads[index].leftValue.valueName"
-                    :disabled="tableData.collConditionHeads[index].leftValue.tempType==null"
+                    :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                     filterable
                     remote
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.tempType,null,null)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
                     @clear="tableData.collConditionHeads[index].leftValue.valueName=null"
                     @change="headConditionValueChange(tableData.collConditionHeads[index],index)">
@@ -110,7 +110,7 @@
                   </el-select>
 
                   <el-input v-else v-model="tableData.collConditionHeads[index].leftValue.value"
-                            :disabled="tableData.collConditionHeads[index].leftValue.tempType==null"/>
+                            :disabled="tableData.collConditionHeads[index].leftValue.type==null"/>
 
                 </el-form-item>
 
@@ -143,9 +143,9 @@
               <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
               （{{tableData.collConditionHeads[index].name}}）
               </el-tag>
-             <el-tag type="success" v-if="tableData.collConditionHeads[index].leftValue.tempType!=null"
+             <el-tag type="success" v-if="tableData.collConditionHeads[index].leftValue.type!=null"
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                 {{getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.tempType)}}
+                 {{getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type)}}
               </el-tag>
             {{tableData.collConditionHeads[index].leftValue.valueName!=null?tableData.collConditionHeads[index].leftValue.valueName:tableData.collConditionHeads[index].leftValue.value}}
 
@@ -164,9 +164,9 @@
             v-model="scope.row.conditions[index].visible">
             <el-form id="conditionRowFrom">
               <el-form-item class="el-col-6">
-                <el-select v-model="scope.row.conditions[index].tempType"
+                <el-select v-model="scope.row.conditions[index].type"
                            clearable
-                           @clear="scope.row.conditions[index].tempType=null"
+                           @clear="scope.row.conditions[index].type=null"
                            @change="valueTypeChange(scope.row.conditions[index])">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -187,30 +187,28 @@
                 &nbsp;
               </el-form-item>
               <el-form-item class="el-col-17">
-                <el-input-number v-if="scope.row.conditions[index].tempType===7"
-                                 v-model="scope.row.conditions[index].value"
-                                 :disabled="scope.row.conditions[index].tempType==null"
+                <el-input-number v-if="scope.row.conditions[index].type===7" v-model="scope.row.conditions[index].value"
+                                 :disabled="scope.row.conditions[index].type==null"
                                  :controls="false"
                                  style="width: 330px"/>
 
-                <el-select v-else-if="scope.row.conditions[index].tempType===6"
-                           v-model="scope.row.conditions[index].value"
+                <el-select v-else-if="scope.row.conditions[index].type===6" v-model="scope.row.conditions[index].value"
                            clearable
-                           :disabled="scope.row.conditions[index].tempType==null"
+                           :disabled="scope.row.conditions[index].type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
                 </el-select>
 
                 <el-select
-                  v-else-if="scope.row.conditions[index].tempType===0||scope.row.conditions[index].tempType===1"
+                  v-else-if="scope.row.conditions[index].type===0||scope.row.conditions[index].type===1"
                   v-model="scope.row.conditions[index].valueName"
-                  :disabled="scope.row.conditions[index].tempType==null"
+                  :disabled="scope.row.conditions[index].type==null"
                   filterable
                   remote
                   clearable
                   placeholder="请输入关键词"
-                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].tempType,tableData.collConditionHeads[index].leftValue.valueType,tableData.collConditionHeads[index].symbol)}"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,tableData.collConditionHeads[index].leftValue.valueType,tableData.collConditionHeads[index].symbol)}"
                   :loading="leftSelect.loading">
                   <el-option
                     v-for="item in leftSelect.options"
@@ -221,15 +219,15 @@
                   </el-option>
                 </el-select>
                 <el-input v-else v-model="scope.row.conditions[index].value"
-                          :disabled="scope.row.conditions[index].tempType==null"/>
+                          :disabled="scope.row.conditions[index].type==null"/>
               </el-form-item>
             </el-form>
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
                   <el-tag type="success"
-                          v-if="scope.row.conditions[index].tempType!=null"
+                          v-if="scope.row.conditions[index].type!=null"
                           style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
                           disable-transitions>
-                    {{getConditionNamePrefix(scope.row.conditions[index].tempType)}}
+                    {{getConditionNamePrefix(scope.row.conditions[index].type)}}
                   </el-tag>
                   {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:scope.row.conditions[index].value}}
             </span>
@@ -251,7 +249,7 @@
               <br>
               <el-form label-width="70px">
                 <el-form-item label="类型">
-                  <el-select v-model="tableData.collResultHead.tempType" placeholder="请选择数据类型"
+                  <el-select v-model="tableData.collResultHead.type" placeholder="请选择数据类型"
                              @change="actionValueTypeChange(tableData.collResultHead)">
                     <el-option label="字符串" :value="5"
                                @click.native="tableData.collResultHead.valueType='STRING'"/>
@@ -268,38 +266,38 @@
                              :inactive-value="1"/>
                 </el-form-item>
                 <el-form-item label="默认类型">
-                  <el-select v-model="tableData.collResultHead.defaultAction.tempType" placeholder="请选择数据类型"
+                  <el-select v-model="tableData.collResultHead.defaultAction.type" placeholder="请选择数据类型"
                              clearable
-                             @clear="tableData.collResultHead.defaultAction.tempType=null"
-                             :disabled="tableData.collResultHead.tempType==null"
+                             @clear="tableData.collResultHead.defaultAction.type=null"
+                             :disabled="tableData.collResultHead.type==null"
                              @change="valueTypeChange(tableData.collResultHead.defaultAction)">
                     <el-option label="元素" :value="0"/>
                     <el-option label="变量" :value="1"/>
                     <el-option label="字符串" :value="5"
                                v-if="tableData.collResultHead.valueType==='STRING'"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='STRING'"/>
+                               @click.native="tableData.collResultHead.valueType='STRING'"/>
                     <el-option label="布尔" :value="6"
                                v-if="tableData.collResultHead.valueType==='BOOLEAN'"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='BOOLEAN'"/>
+                               @click.native="tableData.collResultHead.valueType='BOOLEAN'"/>
                     <el-option label="数值" :value="7"
                                v-if="tableData.collResultHead.valueType==='NUMBER'"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='NUMBER'"/>
+                               @click.native="tableData.collResultHead.valueType='NUMBER'"/>
                     <el-option label="集合" :value="8"
                                v-if="tableData.collResultHead.valueType==='COLLECTION'"
-                               @click.native="tableData.collResultHead.defaultAction.valueType='COLLECTION'"/>
+                               @click.native="tableData.collResultHead.valueType='COLLECTION'"/>
                   </el-select>
                 </el-form-item>
 
                 <el-form-item label="默认值">
-                  <el-input-number v-if="tableData.collResultHead.defaultAction.tempType===7"
+                  <el-input-number v-if="tableData.collResultHead.defaultAction.type===7"
                                    v-model="tableData.collResultHead.defaultAction.value"
-                                   :disabled="tableData.collResultHead.defaultAction.tempType==null"
+                                   :disabled="tableData.collResultHead.defaultAction.type==null"
                                    :controls="false"
                                    style="width: 330px"/>
 
-                  <el-select v-else-if="tableData.collResultHead.defaultAction.tempType===6"
+                  <el-select v-else-if="tableData.collResultHead.defaultAction.type===6"
                              clearable
-                             :disabled="tableData.collResultHead.defaultAction.tempType==null"
+                             :disabled="tableData.collResultHead.defaultAction.type==null"
                              v-model="tableData.collResultHead.defaultAction.value"
                              placeholder="请选择数据 ">
                     <el-option label="true" value="true"/>
@@ -307,14 +305,14 @@
                   </el-select>
 
                   <el-select
-                    v-else-if="tableData.collResultHead.defaultAction.tempType===0||tableData.collResultHead.defaultAction.tempType===1"
+                    v-else-if="tableData.collResultHead.defaultAction.type===0||tableData.collResultHead.defaultAction.type===1"
                     v-model="tableData.collResultHead.defaultAction.valueName"
                     filterable
-                    :disabled="tableData.collResultHead.defaultAction.tempType==null"
+                    :disabled="tableData.collResultHead.defaultAction.type==null"
                     remote
                     clearable
                     placeholder="请输入关键词"
-                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.tempType,tableData.collResultHead.valueType,null)}"
+                    :remote-method="(query)=>{leftRemoteMethod(query,tableData.collResultHead.defaultAction.type,tableData.collResultHead.valueType,null)}"
                     :loading="leftSelect.loading">
                     <el-option
                       v-for="item in leftSelect.options"
@@ -325,7 +323,7 @@
                     </el-option>
                   </el-select>
                   <el-input v-else v-model="tableData.collResultHead.defaultAction.value"
-                            :disabled="tableData.collResultHead.defaultAction.tempType==null"/>
+                            :disabled="tableData.collResultHead.defaultAction.type==null"/>
                 </el-form-item>
               </el-form>
               <el-button type="primary" size="mini" style="float: right;"
@@ -350,9 +348,9 @@
             <el-form id="resultRow">
               <el-form-item class="el-col-6">
 
-                <el-select v-model="scope.row.result.tempType"
+                <el-select v-model="scope.row.result.type"
                            clearable
-                           @clear="scope.row.result.tempType=null"
+                           @clear="scope.row.result.type=null"
                            @change="valueTypeChange(scope.row.result)">
                   <el-option label="变量" :value="1"/>
                   <el-option label="字符串" :value="5"
@@ -373,28 +371,28 @@
                 &nbsp;
               </el-form-item>
               <el-form-item class="el-col-17">
-                <el-input-number v-if="scope.row.result.tempType===7" v-model="scope.row.result.value"
+                <el-input-number v-if="scope.row.result.type===7" v-model="scope.row.result.value"
                                  :controls="false"
-                                 :disabled="scope.row.result.tempType==null"
+                                 :disabled="scope.row.result.type==null"
                                  style="width: 330px"/>
 
-                <el-select v-else-if="scope.row.result.tempType===6" v-model="scope.row.result.value"
+                <el-select v-else-if="scope.row.result.type===6" v-model="scope.row.result.value"
                            clearable
-                           :disabled="scope.row.result.tempType==null"
+                           :disabled="scope.row.result.type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
                   <el-option label="false" value="false"/>
                 </el-select>
 
                 <el-select
-                  v-else-if="scope.row.result.tempType===0||scope.row.result.tempType===1"
+                  v-else-if="scope.row.result.type===0||scope.row.result.type===1"
                   v-model="scope.row.result.valueName"
                   filterable
-                  :disabled="scope.row.result.tempType==null"
+                  :disabled="scope.row.result.type==null"
                   remote
                   clearable
                   placeholder="请输入关键词"
-                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.result.tempType,tableData.collResultHead.valueType,null)}"
+                  :remote-method="(query)=>{leftRemoteMethod(query,scope.row.result.type,tableData.collResultHead.valueType,null)}"
                   :loading="leftSelect.loading">
                   <el-option
                     v-for="item in leftSelect.options"
@@ -404,16 +402,16 @@
                     @click.native="conditionCollSelectClick(item,scope.row.result)">
                   </el-option>
                 </el-select>
-                <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.tempType==null"/>
+                <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.type==null"/>
               </el-form-item>
             </el-form>
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
                   <el-tag
                     type="success"
-                    v-if="scope.row.result.tempType!=null"
+                    v-if="scope.row.result.type!=null"
                     style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;"
                     disable-transitions>
-                    {{getConditionNamePrefix(scope.row.result.tempType)}}
+                    {{getConditionNamePrefix(scope.row.result.type)}}
                   </el-tag>
                   {{scope.row.result.variableValue!=null?scope.row.result.variableValue:(scope.row.result.valueName==null?scope.row.result.value:scope.row.result.valueName)}}
             </span>
@@ -462,7 +460,7 @@
 
 <script>
     export default {
-        name: "DecisionTableConfig",
+        name: "DecisionTableViewAndTest",
         data() {
             return {
                 menuVisible: false,
@@ -486,9 +484,26 @@
                         },
                     },
                     rows: [{
-                        id: null,
-                        priority: null,
-                        conditions: [],
+                        id: 1,
+                        priority: 1,
+                        conditions: [
+                            {
+                                value: undefined,
+                                valueName: null,
+                                valueType: null,
+                                variableValue: null,
+                                type: null,
+                                visible: false
+                            },
+                            {
+                                value: undefined,
+                                valueName: null,
+                                valueType: null,
+                                variableValue: null,
+                                type: null,
+                                visible: false
+                            }
+                        ],
                         result: {
                             value: undefined,
                             valueName: null,
@@ -497,7 +512,33 @@
                             type: null,
                             visible: false
                         }
-                    }]
+                    }, {
+                        id: 2,
+                        priority: 1,
+                        conditions: [{
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }, {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }],
+                        result: {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                            visible: false
+                        }
+                    }],
                 },
                 leftSelect: {
                     loading: false,
@@ -519,11 +560,11 @@
             },
             getNewColl() {
                 return {
+                    "uuid": null,
                     "name": "条件",
                     "visible": false,
                     "symbol": null,
                     "leftValue": {
-                        "tempType": null,
                         "type": null,
                         "value": undefined,
                         "valueName": null,
@@ -545,7 +586,6 @@
                                 valueName: null,
                                 variableValue: null,
                                 valueType: null,
-                                "tempType": null,
                                 type: null,
                                 visible: false
                             };
@@ -573,7 +613,6 @@
                                 variableValue: null,
                                 valueType: null,
                                 type: null,
-                                "tempType": null,
                                 visible: false
                             };
                             conditions.splice(index + 1, 0, newCondition);
@@ -592,7 +631,6 @@
                         valueType: null,
                         variableValue: null,
                         type: null,
-                        "tempType": null,
                         visible: false
                     })),
                     result: {
@@ -601,7 +639,6 @@
                         variableValue: null,
                         valueType: null,
                         type: null,
-                        "tempType": null,
                         visible: false
                     }
                 };
@@ -682,11 +719,6 @@
             headConditionValueChange(cch, index) {
                 // 清除运算符
                 cch.symbol = null;
-                if (cch.tempType <= 1) {
-                    cch.type = cch.tempType;
-                } else {
-                    cch.type = 2;
-                }
                 // 条件头修改后，此列下所有单元格清空 此次待优化，如果valueType没有修改，则不会执行以下代码
                 this.tableData.rows.forEach((f) => {
                     this.$set(f.conditions, index, {
@@ -695,7 +727,6 @@
                         valueType: null,
                         variableValue: null,
                         type: null,
-                        "tempType": null,
                         visible: false
                     });
                 });
@@ -732,20 +763,7 @@
                 });
             },
             nextStep() {
-                this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
-                    "id": this.id,
-                    "tableData": this.tableData
-                }).then(res => {
-                    let da = res.data;
-                    if (da) {
-                        this.$router.push({
-                            path: '/DecisionTableViewAndTest',
-                            query: {decisionTableId: this.id}
-                        });
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                alert("敬请期待");
             },
             previous() {
                 this.$router.push({path: '/DecisionTableDefinition', query: {decisionTableId: this.id}});
@@ -767,23 +785,16 @@
                 // 如果是变量或者元素
                 if (da.type === 1 || da.type === 0) {
                     da.valueType = null;
-                    da.type = da.tempType;
-                } else {
-                    da.type = 2;
                 }
                 this.leftSelect.options = [];
             },
             actionValueTypeChange(da) {
                 da.defaultAction.type = null;
-                da.defaultAction.tempType = null;
                 da.value = undefined;
                 da.valueName = null;
                 // 如果是变量或者元素
                 if (da.type === 1 || da.type === 0) {
                     da.valueType = null;
-                    da.type = da.tempType;
-                } else {
-                    da.type = 2;
                 }
                 this.leftSelect.options = [];
                 this.tableData.rows.forEach((f) => {
@@ -793,7 +804,6 @@
                         variableValue: null,
                         valueType: null,
                         type: null,
-                        "tempType": null,
                         visible: false
                     };
                 });
@@ -808,7 +818,6 @@
                             valueType: null,
                             variableValue: null,
                             type: null,
-                            "tempType": null,
                             visible: false
                         });
                     });
@@ -816,15 +825,13 @@
                 cch.leftValue.value = undefined;
                 cch.leftValue.valueName = null;
                 // 如果是变量或者元素
-                if (cch.leftValue.tempType === 1 || cch.leftValue.tempType === 0) {
-                    cch.leftValue.type = cch.leftValue.tempType;
+                if (cch.leftValue.type === 1 || cch.leftValue.type === 0) {
                     cch.leftValue.valueType = null;
                 } else {
-                    cch.leftValue.type = 2;
                     //变更运算符
                     this.symbolSelect.options = [];
                     this.$axios.post("/ruleEngine/symbol/getByType", {
-                        "param": this.getValueTypeByType(cch.leftValue.tempType)
+                        "param": this.getValueTypeByType(cch.leftValue.type)
                     }).then(res => {
                         if (res.data != null) {
                             this.symbolSelect.options = res.data;
@@ -912,9 +919,9 @@
                     this.leftSelect.options = [];
                 }
             },
-            getDecisionTableConfig() {
+            getDecisionTableView() {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/decisionTable/getDecisionTableConfig", {
+                this.$axios.post("/ruleEngine/decisionTable/getViewDecisionTable", {
                     "id": this.id
                 }).then(res => {
                     let da = res.data;
@@ -981,7 +988,7 @@
         },
         mounted() {
             this.id = this.$route.query.decisionTableId;
-            this.getDecisionTableConfig();
+            this.getDecisionTableView();
         }
     }
 </script>
@@ -1007,11 +1014,11 @@
     color: #C0C4CC;
   }
 
-  #decisionTableConfig .el-table th {
+  #decisionTableViewAndTest .el-table th {
     padding: 10px 0 10px 0;
   }
 
-  #decisionTableConfig .el-table td {
+  #decisionTableViewAndTest .el-table td {
     padding: 8px 0 8px 0;
   }
 </style>

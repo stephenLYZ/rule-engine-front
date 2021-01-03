@@ -28,6 +28,7 @@ import DecisionTree from '@/components/decision/tree/DecisionTree'
 import DecisionTable from '@/components/decision/table/DecisionTable'
 import DecisionTableDefinition from '@/components/decision/table/DecisionTableDefinition'
 import DecisionTableConfig from '@/components/decision/table/DecisionTableConfig'
+import DecisionTableViewAndTest from "../components/decision/table/DecisionTableViewAndTest";
 
 import Workspace from '@/components/authority/Workspace'
 
@@ -137,6 +138,11 @@ export default new Router({
           path: '/decisionTableConfig',
           name: 'DecisionTableConfig',
           component: DecisionTableConfig
+        },
+        {
+          path: '/decisionTableViewAndTest',
+          name: 'DecisionTableViewAndTest',
+          component: DecisionTableViewAndTest
         },
         {
           path: '/workspace',

@@ -64,8 +64,12 @@ axios.interceptors.response.use(response => {
   }
 }, error => {
   console.log(error);
-  router.push({path: '/500'});
-  //响应出现错误
+  if (error.toString().includes("Error: Request failed with status code 404")) {
+    router.push({path: '/404'});
+  } else {
+    router.push({path: '/500'});
+  }
+  // 响应出现错误
   return Promise.reject(error);
 });
 

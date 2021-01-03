@@ -136,11 +136,11 @@
             },
             edit(row) {
                 // 可执行｜已发布
-                if (row.status === 1 || row.status === 2) {
-                    alert("敬请期待");
-                    //this.$router.push({path: '/DecisionTableViewAndTest', query: {decisionTableId: row.id}});
-                    return;
-                }
+                // if (row.status === 1 || row.status === 2) {
+                //     alert("敬请期待");
+                //     //this.$router.push({path: '/DecisionTableViewAndTest', query: {decisionTableId: row.id}});
+                //     return;
+                // }
                 this.$router.push({path: '/DecisionTableConfig', query: {decisionTableId: row.id}});
             },
             deleteRow(row) {
