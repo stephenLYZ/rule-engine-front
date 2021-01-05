@@ -2,7 +2,7 @@
   <div>
     <el-form>
       <el-form-item prop="workspace">
-        <el-select v-model="workspace.value" placeholder="请选择" @change="changeWorkspace()">
+        <el-select v-model="workspace.value"  @change="changeWorkspace()">
           <el-option v-for="item in workspace.options"
                      :key="item.id"
                      :label="item.name"

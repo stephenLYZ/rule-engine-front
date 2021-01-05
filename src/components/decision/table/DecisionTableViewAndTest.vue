@@ -51,8 +51,8 @@
                    v-if="request.param.length===0">
                 无入参
               </div>
-              <el-form-item v-else style="margin-top: -18px;" v-for="param in request.param" :key="param.code">
-                {{param.name}}
+              <el-form-item v-else style="margin-top: -18px;text-align: left;" v-for="param in request.param" :key="param.code">
+                <span>{{param.name.trim()}}</span>
                 <div v-if="param.valueType==='NUMBER'">
                   <el-input-number v-model="param.value" :controls="false"
                                    style="width: 100%"/>
