@@ -174,7 +174,7 @@
 
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                {{getSymbolExplanation(tableData.collConditionHeads[index].symbol)}}
+                {{$common.getSymbolExplanation(tableData.collConditionHeads[index].symbol)}}
               </el-tag>
               </span>
           </el-popover>
@@ -727,15 +727,7 @@
             handlePopover(cch) {
                 this.symbolSelect.options = [];
                 if (cch.leftValue.valueType != null) {
-                    this.$axios.post("/ruleEngine/symbol/getByType", {
-                        "param": cch.leftValue.valueType
-                    }).then(res => {
-                        if (res.data != null) {
-                            this.symbolSelect.options = res.data;
-                        }
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
+                    this.symbolSelect.options = this.$common.getSymbolByValueType(cch.leftValue.valueType);
                 }
             },
             update() {
@@ -848,16 +840,7 @@
                 } else {
                     cch.leftValue.type = 2;
                     //变更运算符
-                    this.symbolSelect.options = [];
-                    this.$axios.post("/ruleEngine/symbol/getByType", {
-                        "param": this.getValueTypeByType(cch.leftValue.tempType)
-                    }).then(res => {
-                        if (res.data != null) {
-                            this.symbolSelect.options = res.data;
-                        }
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
+                    this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.tempType));
                 }
                 this.leftSelect.options = [];
                 cch.symbol = null;
@@ -890,16 +873,7 @@
                 cch.valueName = item.name;
                 cch.variableValue = item.value;
                 // 变更运算符
-                this.symbolSelect.options = [];
-                this.$axios.post("/ruleEngine/symbol/getByType", {
-                    "param": item.valueType
-                }).then(res => {
-                    if (res.data != null) {
-                        this.symbolSelect.options = res.data;
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
             },
             getConditionNamePrefix(type) {
                 if (type === 0) {
@@ -977,34 +951,6 @@
                     return new Array(valueType);
                 }
             },
-            getSymbolExplanation(name) {
-                switch (name) {
-                    case "EQ":
-                        return "等于";
-                    case "NE":
-                        return "不等于";
-                    case "GT":
-                        return "大于";
-                    case "LT":
-                        return "小于";
-                    case "GE":
-                        return "大于等于";
-                    case "LE":
-                        return "小于等于";
-                    case "CONTAIN":
-                        return "包含";
-                    case "NOT_CONTAIN":
-                        return "不包含";
-                    case "IN":
-                        return "在";
-                    case "NOT_IN":
-                        return "不在";
-                    case "STARTS_WITH":
-                        return "以..开始";
-                    case "ENDS_WITH":
-                        return "以..结束";
-                }
-            }
         },
         mounted() {
             this.id = this.$route.query.decisionTableId;

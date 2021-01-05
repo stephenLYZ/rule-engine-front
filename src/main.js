@@ -4,9 +4,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import router from '@/router';
 import axios from 'axios';
 import userApi from '@/api/userApi';
-import Contextmenu from "vue-contextmenujs"
+import common from '@/common/common';
 
-Vue.use(Contextmenu);
+
 
 import App from './App.vue';
 
@@ -16,6 +16,8 @@ Vue.config.productionTip = false;
 
 // api
 Vue.prototype.$userApi = userApi;
+
+Vue.prototype.$common = common;
 
 //默认头像
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";

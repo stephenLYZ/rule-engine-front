@@ -227,7 +227,7 @@
                 <el-option label="false" value="false"/>
               </el-select>
               <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
-                                style="width: 100%"/>
+                               style="width: 100%"/>
               <el-input v-else v-model="pv.value"/>
             </el-form-item>
           </el-col>
@@ -771,16 +771,7 @@
                 if (newVal == null) {
                     return;
                 }
-                this.symbolSelect.options = [];
-                this.$axios.post("/ruleEngine/symbol/getByType", {
-                    "param": newVal
-                }).then(res => {
-                    if (res.data != null) {
-                        this.symbolSelect.options = res.data;
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                this.symbolSelect.options = this.$common.getSymbolByValueType(newVal);
             });
         }
     }
