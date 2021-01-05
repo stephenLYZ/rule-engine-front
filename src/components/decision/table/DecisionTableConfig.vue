@@ -7,6 +7,29 @@
     </el-steps>
     <br>
     <br>
+    <div style="font-size: 20px;">
+      &nbsp;&nbsp;
+      <el-popover
+        placement="right"
+        width="400"
+        trigger="click">
+        <div>
+          <br>
+          <el-form label-width="70px">
+            <el-form-item label="执行策略">
+              <el-select v-model="strategyType">
+                <el-option label="返回所有优先级命中的结果" :value="1"/>
+                <el-option label="返回最高优先级命中的第一个结果" :value="2"/>
+                <el-option label="返回最高优先级命中的所有结果" :value="3"/>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <i class="el-icon-setting" slot="reference" style="cursor: pointer;color:#909399 "></i>
+      </el-popover>
+
+    </div>
+    <br>
     <el-table
       v-loading="loading"
       :data="tableData.rows"
@@ -470,6 +493,7 @@
                 currentRow: null,
                 currentColumn: null,
                 id: null,
+                strategyType: 1,
                 loading: false,
                 tableData: {
                     collConditionHeads: [],
@@ -717,6 +741,7 @@
             update() {
                 this.$axios.post("/ruleEngine/decisionTable/updateDecisionTable", {
                     "id": this.id,
+                    "strategyType": this.strategyType,
                     "tableData": this.tableData
                 }).then(res => {
                     let da = res.data;
@@ -734,6 +759,7 @@
             nextStep() {
                 this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
                     "id": this.id,
+                    "strategyType": this.strategyType,
                     "tableData": this.tableData
                 }).then(res => {
                     let da = res.data;
@@ -923,6 +949,7 @@
                         this.name = da.name;
                         this.code = da.code;
                         this.description = da.description;
+                        this.strategyType = da.strategyType;
                         this.tableData = da.tableData;
                         if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
                             this.abnormalAlarm = {
@@ -1014,8 +1041,24 @@
   #decisionTableConfig .el-table td {
     padding: 8px 0 8px 0;
   }
+
+  .box-card-header .el-input__inner {
+    border: none;
+    height: 36px;
+    font-size: 16px;
+    color: #303133;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
 </style>
 <style scoped>
+
+  .box-card-header {
+    margin-top: -20px;
+    line-height: 46px;
+    height: 24px;
+  }
+
+
   .contextmenu__item {
     display: block;
     line-height: 34px;

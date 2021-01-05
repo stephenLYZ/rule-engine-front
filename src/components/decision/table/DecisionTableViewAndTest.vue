@@ -7,6 +7,90 @@
     </el-steps>
     <br>
     <br>
+    <div style="font-size: 20px;">
+      &nbsp;&nbsp;
+      <el-popover
+        placement="right"
+        width="400"
+        trigger="click">
+        <div>
+          <br>
+          <el-form label-width="70px">
+            <el-form-item label="执行策略">
+              <el-select :value="strategyType">
+                <el-option label="返回所有优先级命中的结果" :value="1"/>
+                <el-option label="返回最高优先级命中的第一个结果" :value="2"/>
+                <el-option label="返回最高优先级命中的所有结果" :value="3"/>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <i class="el-icon-setting" slot="reference" style="cursor: pointer;color:#909399 "></i>
+      </el-popover>
+      &nbsp;
+      <el-popover
+        placement="right"
+        width="400"
+        trigger="click">
+
+        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
+          <div slot="header" class="box-card-header">
+            <span>模拟运行</span>
+
+            <i class="el-icon-video-play pointer"
+               style="float: right; padding: 14px 0;color: #5ba0f8;" @click="run"/>
+
+            <i class=" el-icon-back pointer"
+               style="float: right; padding: 14px 9px;color: #5ba0f8;" @click="runGoBack" v-if="runEnd"/>
+          </div>
+
+          <div style="min-height: 150px" v-if="!runEnd">
+
+            <el-form label-width="0px" v-if="runPercentage===10">
+              <div style="min-height: 150px;text-align: center;font-size: 15px;color: #606266;"
+                   v-if="request.param.length===0">
+                无入参
+              </div>
+              <el-form-item v-else style="margin-top: -18px;" v-for="param in request.param" :key="param.code">
+                {{param.name}}
+                <div v-if="param.valueType==='NUMBER'">
+                  <el-input-number v-model="param.value" :controls="false"
+                                   style="width: 100%"/>
+                </div>
+                <div v-else-if="param.valueType==='BOOLEAN'">
+                  <el-select v-model="param.value">
+                    <el-option label="true" value="true"/>
+                    <el-option label="false" value="false"/>
+                  </el-select>
+                </div>
+                <div v-else-if="param.valueType==='COLLECTION'">
+                  <el-input type="textarea" :autosize="{ minRows: 2,maxRows:6}" v-model="param.value"/>
+                </div>
+                <el-input v-model="param.value" v-else max="1000"/>
+              </el-form-item>
+            </el-form>
+
+            <div v-else style="text-align: center">
+              <el-progress type="circle" :percentage="runPercentage"/>
+            </div>
+
+          </div>
+
+          <div style="min-height: 150px" v-else>
+            <el-form label-width="40px">
+              <el-form-item label="结果" style="margin-top: -8px;">
+                <el-input type="textarea" :autosize="{ minRows: 5.5}" v-model="runData.value"
+                          :readonly="true"/>
+              </el-form-item>
+            </el-form>
+          </div>
+
+        </el-card>
+
+        <i class="el-icon-video-play" slot="reference" style="cursor: pointer;color:#909399 "></i>
+      </el-popover>
+    </div>
+    <br>
     <el-table
       v-loading="loading"
       :data="tableData.rows"
@@ -120,6 +204,10 @@
                 currentRow: null,
                 currentColumn: null,
                 id: null,
+                code: null,
+                name: null,
+                workspaceCode: null,
+                strategyType: null,
                 loading: false,
                 tableData: {},
                 leftSelect: {
@@ -131,12 +219,57 @@
                 },
                 symbolSelect: {
                     options: [],
+                },
+                runEnd: false,
+                runPercentage: 10,
+                request: {
+                    param: []
+                },
+                runData: {
+                    value: null,
+                    valueType: null,
                 }
             }
         },
         created() {
         },
         methods: {
+            run() {
+                this.runEnd = false;
+                this.runPercentage = 20;
+                const params = {};
+                this.request.param.forEach((e) => {
+                    params[e.code] = e.value === undefined ? '' : e.value;
+                });
+                let requestJson = {
+                    "id": this.id,
+                    "ruleCode": this.code,
+                    "workspaceCode": this.workspaceCode,
+                    "param": params
+                };
+                this.runPercentage = 40;
+                this.$axios.post("/ruleEngine/decisionTableTest/run", requestJson).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.runData.value = da.value + "";
+                        this.runData.valueType = da.valueType;
+                        this.runPercentage = 100;
+                        setTimeout(() => {
+                            this.runEnd = true;
+                            this.runPercentage = 10;
+                        }, 1000);
+                    } else {
+                        this.runPercentage = 10;
+                    }
+                }).catch(error => {
+                    this.runPercentage = 10;
+                    console.log(error);
+                });
+            },
+            runGoBack() {
+                this.runPercentage = 10;
+                this.runEnd = false;
+            },
             publish() {
                 alert("敬请期待")
             },
@@ -165,6 +298,8 @@
                         this.name = da.name;
                         this.code = da.code;
                         this.description = da.description;
+                        this.workspaceCode = da.workspaceCode;
+                        this.strategyType = da.strategyType;
                         this.tableData = da.tableData;
                         if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
                             this.abnormalAlarm = {
@@ -172,6 +307,7 @@
                                 "email": da.abnormalAlarm.email.join(',')
                             }
                         }
+                        this.request.param = da.parameters;
                     }
                     this.loading = false;
                 }).catch(function (error) {
@@ -244,6 +380,15 @@
   }
 </style>
 <style scoped>
+
+  .el-card {
+    border: none;
+  }
+
+  .el-card {
+    margin: -12px;
+  }
+
   .contextmenu__item {
     display: block;
     line-height: 34px;
@@ -278,5 +423,11 @@
 
   #conditionRowFrom .el-form-item, #resultRow .el-form-item {
     margin-bottom: 0;
+  }
+
+  .box-card-header {
+    margin-top: -20px;
+    line-height: 46px;
+    height: 24px;
   }
 </style>

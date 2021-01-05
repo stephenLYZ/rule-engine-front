@@ -129,7 +129,7 @@
                 {{param.name}}
                 <div v-if="param.valueType==='NUMBER'">
                   <el-input-number v-model="param.value" :controls="false"
-                                    style="width: 100%"/>
+                                   style="width: 100%"/>
                 </div>
                 <div v-else-if="param.valueType==='BOOLEAN'">
                   <el-select v-model="param.value">
@@ -178,6 +178,7 @@
                 id: null,
                 name: null,
                 code: null,
+                workspaceCode: null,
                 description: null,
                 request: {
                     param: [{
@@ -186,7 +187,6 @@
                         code: null,
                         valueType: null,
                     }],
-                    example: null
                 },
                 runPercentage: 10,
                 conditionGroup: [],
