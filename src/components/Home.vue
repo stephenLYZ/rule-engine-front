@@ -2,7 +2,7 @@
   <div>
     <el-form>
       <el-form-item prop="workspace">
-        <el-select v-model="workspace.value"  @change="changeWorkspace()">
+        <el-select v-model="workspace.value" @change="changeWorkspace()" filterable>
           <el-option v-for="item in workspace.options"
                      :key="item.id"
                      :label="item.name"
@@ -15,64 +15,62 @@
 </template>
 
 <script>
-  export default {
-    name: "home",
-    data() {
-      return {
-        workspace: {
-          options: [],
-          value: null
+    export default {
+        name: "home",
+        data() {
+            return {
+                workspace: {
+                    options: [],
+                    value: null
+                },
+                workspaceSearch: {
+                    form: {
+                        name: null,
+                        code: null,
+                    }
+                },
+            }
         },
-        workspaceSearch: {
-          form: {
-            name: null,
-            code: null,
-          }
-        },
-      }
-    },
-    created() {
-      this.$axios.post("/workspace/list", {
-        "page": {
-          "pageIndex": 1,
-          "pageSize": 10,
-        },
-        "query": this.workspaceSearch.form,
-        "orders": [
-          {
-            "columnName": "id",
-            "desc": true
-          }
-        ]
-      }).then(res => {
-        if (res.data != null && res.data.length !== 0) {
-          this.workspace.options = res.data.rows;
-        }
-      });
-      this.$axios.post("/workspace/currentWorkspace", {}).then(res => {
-        if (res.data != null) {
-          this.workspace.value = res.data.id;
-        }
-      });
-    },
-    methods: {
-      changeWorkspace() {
-        this.$axios.post("/workspace/change", {
-          "id": this.workspace.value
-        }).then(res => {
-          if (res.data != null) {
-            this.$message({
-              showClose: true,
-              message: '切换成功',
-              type: 'success'
+        created() {
+            this.$workspaceApi.workspaceList({
+                "page": {
+                    "pageIndex": 1,
+                    "pageSize": 10,
+                },
+                "query": this.workspaceSearch.form,
+                "orders": [
+                    {
+                        "columnName": "id",
+                        "desc": true
+                    }
+                ]
+            }).then(res => {
+                if (res.data != null && res.data.length !== 0) {
+                    this.workspace.options = res.data.rows;
+                }
             });
-          }
-        });
-      }
-    },
-    mounted() {
+            this.$workspaceApi.currentWorkspace().then(res => {
+                if (res.data != null) {
+                    this.workspace.value = res.data.id;
+                }
+            });
+        },
+        methods: {
+            changeWorkspace() {
+                this.$workspaceApi.changeWorkspace(this.workspace.value).then(res => {
+                    if (res.data != null) {
+                        this.$message({
+                            showClose: true,
+                            message: '切换成功',
+                            type: 'success'
+                        });
+                    }
+                });
+            }
+        },
+        mounted() {
+        }
     }
-  }
 </script>
 
 <style scoped>
