@@ -1,4 +1,6 @@
 import * as common from '@/common/common'
+import Clipboard from 'clipboard';
+import ElementUI from "element-ui";
 
 export default common
 
@@ -74,4 +76,31 @@ export function getSymbolByValueType(valueType) {
         "symbol": "contain"
       }, {"explanation": "不包含", "name": "NOT_CONTAIN", "symbol": "not contain"}];
   }
+}
+
+export function copy(e, code) {
+  const clipboard = new Clipboard(e.target, {
+    // 点击copy按钮，直接通过text直接返回复印的内容
+    text: () => code
+  });
+  clipboard.on('success', (e) => {
+    ElementUI.Message({
+      message: '复制成功',
+      type: 'success'
+    });
+    clipboard.off('error');
+    clipboard.off('success');
+    clipboard.destroy()
+  });
+  clipboard.on('error', (e) => {
+    console.log(e);
+    ElementUI.Message({
+      message: '该浏览器不支持此方式复制',
+      type: 'success'
+    });
+    clipboard.off('error');
+    clipboard.off('success');
+    clipboard.destroy()
+  });
+  clipboard.onClick(e)
 }

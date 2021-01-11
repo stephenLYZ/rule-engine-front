@@ -170,6 +170,9 @@
                     });
                 });
             },
+            show(row) {
+                this.$router.push({path: '/DecisionTableViewPublish', query: {decisionTableId: row.id}});
+            },
             list() {
                 this.loading = true;
                 this.$axios.post("/ruleEngine/decisionTable/list", {

@@ -100,6 +100,7 @@
           <div slot="header" class="box-card-header">
             <span>接口地址/参数</span>
             <i class="el-icon-document-copy pointer"
+               @click="$common.copy($event,(request.url + ' \n' + request.requestJson))"
                style="float: right; padding: 14px 0;color: #5ba0f8;"/>
           </div>
           <div>
@@ -186,7 +187,6 @@
     name: "GeneralRuleViewPublish",
     data() {
       return {
-        clipboard: null,
         loading: false,
         id: null,
         name: null,
@@ -201,7 +201,6 @@
             code: null,
             valueType: null,
           }],
-          example: null
         },
         runPercentage: 10,
         conditionGroup: [],
@@ -338,28 +337,6 @@
       let ruleId = this.$route.query.ruleId;
       this.getPublishRule(ruleId);
 
-      this.clipboard = new Clipboard('.el-icon-document-copy', {
-        // 点击copy按钮，直接通过text直接返回复印的内容
-        text: () => this.request.url + "\n" + this.request.requestJson
-      });
-
-      this.clipboard.on('success', (e) => {
-        this.$message({
-          message: '复制成功',
-          type: 'success'
-        });
-      });
-      this.clipboard.on('error', (e) => {
-        console.log(e);
-        this.$message({
-          message: '该浏览器不支持此方式复制',
-          type: 'success'
-        });
-      });
-    },
-    beforeDestroy() {
-      // 释放内存
-      this.clipboard.destroy();
     },
   }
 

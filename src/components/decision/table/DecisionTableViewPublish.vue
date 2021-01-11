@@ -90,6 +90,34 @@
 
         <i class="el-icon-video-play" slot="reference" style="cursor: pointer;color:#909399 "></i>
       </el-popover>
+      &nbsp;
+      <el-popover
+        placement="right"
+        width="400"
+        trigger="click">
+
+        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
+          <div slot="header" class="box-card-header">
+            <span>接口地址/参数</span>
+            <i class="el-icon-document-copy pointer"
+               @click="$common.copy($event,(request.url + ' \n' + request.requestJson))"
+            style="float: right; padding: 14px 0;color: #5ba0f8;"/>
+          </div>
+          <div>
+            <el-form label-width="40px">
+              <el-form-item label="接口" style="margin-top: -8px;">
+                <el-input v-model="request.url" :readonly="true"/>
+              </el-form-item>
+              <el-form-item label="入参" style="margin-top: -8px;">
+                <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="request.requestJson"
+                          :readonly="true"/>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+
+        <i class="el-icon-warning-outline" slot="reference" style="cursor: pointer;color:#909399 "></i>
+      </el-popover>
     </div>
     <br>
     <el-table
@@ -178,18 +206,6 @@
       </el-table-column>
     </el-table>
 
-    <br><br>
-    <el-row>
-      <el-col :span="1">&nbsp;</el-col>
-      <el-col :span="22">
-        <el-button type="primary" @click="publish()" style="float: right;margin-left: 20px;">发 布
-        </el-button>
-        <el-button type="primary" @click="previous()" style="float: right;margin-left: 20px;">上 一 步
-        </el-button>
-      </el-col>
-      <el-col :span="1">&nbsp;</el-col>
-    </el-row>
-
     <el-backtop/>
 
   </div>
@@ -224,15 +240,15 @@
                 runEnd: false,
                 runPercentage: 10,
                 request: {
-                    param: []
+                    url: "http://ruleserver.cn/ruleEngine/decisionTable/execute",
+                    param: [],
+                    requestJson: null,
                 },
                 runData: {
                     value: null,
                     valueType: null,
                 }
             }
-        },
-        created() {
         },
         methods: {
             run() {
@@ -271,37 +287,6 @@
                 this.runPercentage = 10;
                 this.runEnd = false;
             },
-            publish() {
-                this.$confirm('此操作将会改变线上决策表运行, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$axios.post("/ruleEngine/decisionTable/publish",
-                        {
-                            id: this.id
-                        }
-                    ).then(res => {
-                        if (res.data) {
-                            this.$message({
-                                showClose: true,
-                                message: '发布成功',
-                                type: 'success'
-                            });
-                        }
-                    }).catch(error => {
-                        console.log(error);
-                    });
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消发布'
-                    });
-                });
-            },
-            previous() {
-                this.$router.push({path: '/DecisionTableConfig', query: {decisionTableId: this.id}});
-            },
             getConditionNamePrefix(type) {
                 if (type === 0) {
                     return "元素";
@@ -315,7 +300,7 @@
             },
             getDecisionTableView() {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/decisionTable/getViewDecisionTable", {
+                this.$axios.post("/ruleEngine/decisionTable/getPublishDecisionTable", {
                     "id": this.id
                 }).then(res => {
                     let da = res.data;
@@ -333,6 +318,21 @@
                                 "email": da.abnormalAlarm.email.join(',')
                             }
                         }
+
+                        let param = {};
+                        if (da.parameters != null && da.parameters.length !== 0) {
+                            da.parameters.forEach((e) => {
+                                param[e.code] = '略';
+                            });
+                        }
+                        this.request.requestJson = JSON.stringify({
+                            "code": da.code,
+                            "workspaceCode": da.workspaceCode,
+                            "accessKeyId": '略',
+                            "accessKeySecret": '略',
+                            "param": param
+                        }, null, 6);
+
                         this.request.param = da.parameters;
                     }
                     this.loading = false;

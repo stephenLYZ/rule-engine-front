@@ -29,6 +29,7 @@ import DecisionTable from '@/components/decision/table/DecisionTable'
 import DecisionTableDefinition from '@/components/decision/table/DecisionTableDefinition'
 import DecisionTableConfig from '@/components/decision/table/DecisionTableConfig'
 import DecisionTableViewAndTest from "../components/decision/table/DecisionTableViewAndTest";
+import DecisionTableViewPublish from "../components/decision/table/DecisionTableViewPublish";
 
 import Workspace from '@/components/authority/Workspace'
 
@@ -143,6 +144,11 @@ export default new Router({
           path: '/decisionTableViewAndTest',
           name: 'DecisionTableViewAndTest',
           component: DecisionTableViewAndTest
+        },
+        {
+          path: '/decisionTableViewPublish',
+          name: 'DecisionTableViewPublish',
+          component: DecisionTableViewPublish
         },
         {
           path: '/workspace',
