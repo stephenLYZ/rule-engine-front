@@ -749,6 +749,63 @@
                 });
             },
             nextStep() {
+                let collConditionHeadsLength = this.tableData.collConditionHeads.length;
+                for (let i = 0; i < collConditionHeadsLength; i++) {
+                    let collConditionHead = this.tableData.collConditionHeads[i];
+                    if (collConditionHead.leftValue.type == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件类型不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (collConditionHead.leftValue.value == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件值不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (collConditionHead.symbol == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件运算符不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                }
+                if (this.tableData.collResultHead.type == null) {
+                    this.$message({
+                        showClose: true,
+                        message: '表头结果类型不能为空',
+                        type: 'warning'
+                    });
+                    return;
+                }
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let row = this.tableData.rows[i];
+                    if (row.result.type == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '单元格第' + (i + 1) + '行结果值类型不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (row.result.value == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '单元格第' + (i + 1) + '行结果值不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                }
+
                 this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
                     "id": this.id,
                     "strategyType": this.strategyType,
