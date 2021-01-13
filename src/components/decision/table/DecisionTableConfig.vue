@@ -254,7 +254,7 @@
                           disable-transitions>
                     {{getConditionNamePrefix(scope.row.conditions[index].tempType)}}
                   </el-tag>
-                  {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:scope.row.conditions[index].value}}
+              {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:(scope.row.conditions[index].valueName==null?scope.row.conditions[index].value:scope.row.conditions[index].valueName)}}
             </span>
           </el-popover>
         </template>
@@ -783,7 +783,7 @@
                 da.value = undefined;
                 da.valueName = null;
                 // 如果是变量或者元素
-                if (da.type === 1 || da.type === 0) {
+                if (da.tempType === 1 || da.tempType === 0) {
                     da.valueType = null;
                     da.type = da.tempType;
                 } else {
@@ -797,7 +797,7 @@
                 da.value = undefined;
                 da.valueName = null;
                 // 如果是变量或者元素
-                if (da.type === 1 || da.type === 0) {
+                if (da.tempType === 1 || da.tempType === 0) {
                     da.valueType = null;
                     da.type = da.tempType;
                 } else {
