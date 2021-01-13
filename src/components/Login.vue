@@ -6,8 +6,13 @@
           <img src="../assets/logo4.png" class="logo" alt=""/>
         </div>
       </el-col>
-      <el-col :span="22">
+      <el-col :span="20">
         &nbsp;
+      </el-col>
+      <el-col :span="2">
+        <a href="https://gitee.com/qwding/rule-engine"> <img
+          src="https://gitee.com/static/images/logo-black.svg?t=158106664"
+          style="width: 66px;height: 30px; margin-top: 20px;margin-left:46px;cursor: pointer"/></a>
       </el-col>
     </el-row>
     <div class="login-container">
