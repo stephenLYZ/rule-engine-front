@@ -183,8 +183,7 @@
         <template slot-scope="scope">
           <el-popover
             placement="right"
-            :disabled="tableData.collConditionHeads[index].leftValue.valueType==null"
-            v-model="scope.row.conditions[index].visible">
+            :disabled="tableData.collConditionHeads[index].leftValue.valueType==null">
             <el-form id="conditionRowFrom">
               <el-form-item class="el-col-6">
                 <el-select v-model="scope.row.conditions[index].tempType"
@@ -269,7 +268,7 @@
           <el-popover
             placement="right"
             width="400"
-            v-model="tableData.collResultHead.defaultAction.visible">
+            v-model="tableData.collResultHead.visible">
             <div>
               <br>
               <el-form label-width="70px">
@@ -352,10 +351,10 @@
                 </el-form-item>
               </el-form>
               <el-button type="primary" size="mini" style="float: right;"
-                         @click="tableData.collResultHead.defaultAction.visible = false">确认
+                         @click="tableData.collResultHead.visible = false">确认
               </el-button>
               <el-button size="mini" style="float: right;margin-right: 12px;"
-                         @click="tableData.collResultHead.defaultAction.visible = false">取消
+                         @click="tableData.collResultHead.visible = false">取消
               </el-button>
             </div>
 
@@ -368,8 +367,7 @@
           <el-popover
             placement="right"
             width="400"
-            :disabled="tableData.collResultHead.valueType==null"
-            v-model="scope.row.result.visible">
+            :disabled="tableData.collResultHead.valueType==null">
             <el-form id="resultRow">
               <el-form-item class="el-col-6">
 
@@ -500,9 +498,9 @@
                     collResultHead: {
                         type: null,
                         valueType: null,
+                        visible: false,
                         defaultAction: {
                             type: null,
-                            visible: false,
                             variableValue: null,
                             enableDefaultAction: 1,
                             value: undefined,
@@ -519,7 +517,6 @@
                             variableValue: null,
                             valueType: null,
                             type: null,
-                            visible: false
                         }
                     }]
                 },
@@ -571,7 +568,6 @@
                                 valueType: null,
                                 "tempType": null,
                                 type: null,
-                                visible: false
                             };
                             conditions.splice(index, 0, newCondition);
                             break;
@@ -598,7 +594,6 @@
                                 valueType: null,
                                 type: null,
                                 "tempType": null,
-                                visible: false
                             };
                             conditions.splice(index + 1, 0, newCondition);
                             break;
@@ -617,7 +612,6 @@
                         variableValue: null,
                         type: null,
                         "tempType": null,
-                        visible: false
                     })),
                     result: {
                         value: undefined,
@@ -626,7 +620,6 @@
                         valueType: null,
                         type: null,
                         "tempType": null,
-                        visible: false
                     }
                 };
             },
@@ -720,7 +713,6 @@
                         variableValue: null,
                         type: null,
                         "tempType": null,
-                        visible: false
                     });
                 });
             },
@@ -869,7 +861,6 @@
                         valueType: null,
                         type: null,
                         "tempType": null,
-                        visible: false
                     };
                 });
             },
@@ -884,7 +875,6 @@
                             variableValue: null,
                             type: null,
                             "tempType": null,
-                            visible: false
                         });
                     });
                 }
