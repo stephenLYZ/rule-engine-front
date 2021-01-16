@@ -116,7 +116,7 @@
                     }
                 });
             },
-            getRuleDefinition() {
+            getRuleSetDefinition() {
                 if (this.form.id === undefined) {
                     return;
                 }
@@ -137,8 +137,8 @@
             }
         },
         mounted() {
-            this.form.id = this.$route.query.ruleId;
-            this.getRuleDefinition();
+            this.form.id = this.$route.query.ruleSetId;
+            this.getRuleSetDefinition();
         }
     }
 </script>

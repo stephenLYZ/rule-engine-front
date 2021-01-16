@@ -16,6 +16,7 @@
 
 ### 技术文档
 简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
+详细文档：http://ruleengine.cn/doc
 
 ### 技术栈/版本介绍：
 - 所涉及的相关的技术有：
