@@ -177,11 +177,11 @@
                 <span>默认规则</span>
               </div>
               <div>
-                <el-form ref="defaultRuleForm" :model="defaultRule">
+                <el-form ref="defaultRule" :model="defaultRule">
                   <el-switch v-model="enableDefaultRule" :active-value="0" :inactive-value="1"/>
                   <br>
                   <br>
-                  <el-form-item prop="valueType" class="el-col-6"
+                  <el-form-item prop="action.valueType" class="el-col-6"
                                 :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger: 'blur'}:{}">
                     <el-select v-model="defaultRule.action.type"
                                @change="defaultRuleTypeChange()">
@@ -200,7 +200,7 @@
                   <el-form-item class="el-col-1">
                     &nbsp;
                   </el-form-item>
-                  <el-form-item prop="value" class="el-col-17"
+                  <el-form-item prop="action.value" class="el-col-17"
                                 :rules="enableDefaultRule===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{}">
 
                     <el-select v-if="defaultRule.action.type===3" v-model="defaultRule.action.value"
@@ -448,7 +448,7 @@
             },
             nextStep() {
                 // 先更新规则，到待发布
-                this.$refs["defaultRuleForm"].validate((valid) => {
+                this.$refs["defaultRule"].validate((valid) => {
                     if (valid) {
 
                     }
@@ -459,6 +459,7 @@
                     "id": this.id,
                     "ruleSet": this.ruleSet,
                     "enableDefaultRule": 1,
+                    "enableDefaultRule": this.enableDefaultRule,
                     "defaultRule": this.defaultRule,
                     "strategyType": this.strategyType,
                     "abnormalAlarm": {
@@ -709,6 +710,7 @@
                         this.ruleSet = da.ruleSet;
                         this.strategyType = da.strategyType;
                         // default rule
+                        this.enableDefaultRule = da.enableDefaultRule;
                         this.defaultRule = da.defaultRule;
                         if (da.abnormalAlarm != null) {
                             this.abnormalAlarm = {
