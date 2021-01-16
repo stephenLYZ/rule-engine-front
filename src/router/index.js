@@ -34,7 +34,10 @@ import DecisionTableViewPublish from "../components/decision/table/DecisionTable
 import Workspace from '@/components/authority/Workspace'
 
 import RuleSet from "../components/ruleset/RuleSet";
-
+import RuleSetDefinition from "../components/ruleset/RuleSetDefinition";
+import RuleSetConfig from "../components/ruleset/RuleSetConfig";
+import RuleSetViewAndTest from "../components/ruleset/RuleSetViewAndTest";
+import RuleSetViewPublish from "../components/ruleset/RuleSetViewPublish";
 
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -164,6 +167,26 @@ export default new Router({
           path: '/ruleSet',
           name: 'RuleSet',
           component: RuleSet
+        },
+        {
+          path: '/ruleSetDefinition',
+          name: 'RuleSetDefinition',
+          component: RuleSetDefinition
+        },
+        {
+          path: '/ruleSetConfig',
+          name: 'RuleSetConfig',
+          component: RuleSetConfig
+        },
+        {
+          path: '/ruleSetViewAndTest',
+          name: 'RuleSetViewAndTest',
+          component: RuleSetViewAndTest
+        },
+        {
+          path: '/ruleSetViewPublish',
+          name: 'RuleSetViewPublish',
+          component: RuleSetViewPublish
         },
       ]
     },

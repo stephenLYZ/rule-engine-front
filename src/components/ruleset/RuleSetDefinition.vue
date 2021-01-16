@@ -1,9 +1,9 @@
 <template>
-  <div id="generalRuleDefinition">
+  <div id="ruleSetDefinition">
     <el-steps :active="1" align-center>
-      <el-step title="规则定义" icon="el-icon-edit"/>
-      <el-step title="规则配置" icon="el-icon-connection" class="stepp"/>
-      <el-step title="规则预览" icon="el-icon-view" class="stepp"/>
+      <el-step title="规则集定义" icon="el-icon-edit"/>
+      <el-step title="规则集配置" icon="el-icon-connection" class="stepp"/>
+      <el-step title="规则集预览" icon="el-icon-view" class="stepp"/>
     </el-steps>
     <br>
     <br>
@@ -48,7 +48,7 @@
 
 <script>
     export default {
-        name: "GeneralRuleDefinition",
+        name: "RuleSetDefinition",
         data() {
             var patter = /^[a-zA-Z][a-zA-Z0-9_&#\-]*$/;
             const validateIsExists = (rule, value, callback) => {
@@ -59,12 +59,12 @@
                 if (!patter.test(value)) {
                     return callback(new Error('字母开头，以及字母数字_&#-组成'));
                 }
-                this.$axios.post("/ruleEngine/generalRule/codeIsExists",
+                this.$axios.post("/ruleEngine/ruleSet/codeIsExists",
                     {
                         "param": value
                     }).then(res => {
                     if (res.data) {
-                        callback(new Error('规则Code已经存在'));
+                        callback(new Error('规则集Code已经存在'));
                     } else {
                         callback();
                     }
@@ -80,11 +80,11 @@
                 },
                 rules: {
                     name: [
-                        {required: true, message: '请输入规则名称', trigger: 'blur'},
+                        {required: true, message: '请输入规则集名称', trigger: 'blur'},
                         {min: 1, max: 25, message: '长度在 1 到 25 个字符', trigger: 'blur'}
                     ],
                     code: [
-                        {required: true, message: '请输入规则编码', trigger: 'blur'},
+                        {required: true, message: '请输入规则集编码', trigger: 'blur'},
                         {min: 1, max: 25, message: '长度在 1 到 25 个字符', trigger: 'blur'},
                         {validator: validateIsExists, trigger: 'blur'}
                     ],
@@ -96,7 +96,7 @@
                 // 先执行保存
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        this.$axios.post("/ruleEngine/generalRule/saveOrUpdateRuleDefinition", {
+                        this.$axios.post("/ruleEngine/ruleSet/saveOrUpdateRuleSetDefinition", {
                             "id": this.form.id,
                             "code": this.form.code,
                             "name": this.form.name,
@@ -105,7 +105,7 @@
                             let da = res.data;
                             if (da != null) {
                                 this.form.id = da;
-                                this.$router.push({path: '/GeneralRuleConfig', query: {ruleId: da}});
+                                this.$router.push({path: '/RuleSetConfig', query: {ruleSetId: da}});
                             }
                         }).catch(function (error) {
                             console.log(error);
@@ -121,7 +121,7 @@
                     return;
                 }
                 this.loading = true;
-                this.$axios.post("/ruleEngine/generalRule/getRuleDefinition", {
+                this.$axios.post("/ruleEngine/ruleSet/getRuleSetDefinition", {
                     "id": this.form.id,
                 }).then(res => {
                     let da = res.data;

@@ -1,12 +1,217 @@
 <template>
-  <div>
-    待开发
+  <div  id="app">
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="85px">
+      <el-form-item label="规则集名称" prop="name">
+        <el-input v-model="search.form.name"/>
+      </el-form-item>
+      <el-form-item label="规则集编码" prop="code">
+        <el-input v-model="search.form.code"/>
+      </el-form-item>
+      <el-form-item label="规则集状态">
+        <el-select v-model="search.form.status"
+                   placeholder="请选择数据 ">
+          <el-option label="全部" :value="null"/>
+          <el-option label="编辑中" value="0"/>
+          <el-option label="待发布" value="1"/>
+          <el-option label="已发布" value="2"/>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
+        <el-button type="reset" @click="reset('searchForm')">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-button type="primary" @click="createRule()">新建规则集</el-button>
+
+
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      style="width: 100%"
+      :default-sort="{prop: 'id', order: 'descending'}">
+      <el-table-column
+        prop="id"
+        label="编号"
+        sortable
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="规则集名称">
+      </el-table-column>
+
+      <el-table-column
+        prop="code"
+        label="编码"
+        width="230">
+      </el-table-column>
+
+      <el-table-column
+        prop="createUserName"
+        label="创建人"
+        width="180">
+      </el-table-column>
+
+      <el-table-column
+        label="规则集状态"
+        width="180">
+        <template slot-scope="scope">
+          <!-- !scope.row.isPublish 防止消息队列延迟-->
+          <el-tag v-if="scope.row.isPublish||(!scope.row.isPublish&&scope.row.status===2)" @click="show(scope.row)"
+                  size="medium" effect="plain" style="cursor: pointer">
+            （ 已发布 ）
+          </el-tag>
+          <el-tag v-if="scope.row.status===0" @click="edit(scope.row)" type="warning" size="medium" effect="plain"
+                  style="cursor: pointer">
+            （ 编辑中 ）
+          </el-tag>
+          <el-tag v-else-if="scope.row.status===1" @click="edit(scope.row)" type="success" size="medium" effect="plain"
+                  style="cursor: pointer">
+            （ 待发布 ）
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="createTime"
+        sortable
+        width="180"
+        label="创建日期">
+      </el-table-column>
+
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="120">
+        <template slot-scope="scope">
+          <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+          <el-button @click="deleteRow(scope.row)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <br>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="page.pageIndex"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="page.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="page.total">
+    </el-pagination>
   </div>
 </template>
 
 <script>
     export default {
-        name: "RuleSet"
+        name: "RuleSet",
+        data() {
+            return {
+                tableData: [],
+                loading: true,
+                page: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    total: 0
+                },
+                search: {
+                    form: {
+                        name: null,//根据规则集名称搜索
+                        code: null,
+                        status: null//规则集状态搜索 编辑中，已发布，待发布规则集
+                    }
+                },
+            }
+        }, methods: {
+            reset(formName) {
+                this.search.form.status = null;
+                this.$refs[formName].resetFields();
+                this.list();
+            }, handleSizeChange(val) {
+                this.page.pageSize = val;
+                this.list();
+            },
+            handleCurrentChange(val) {
+                this.page.pageIndex = val;
+                this.list();
+            },
+            edit(row) {
+                // 可执行｜已发布
+                if (row.status === 1 || row.status === 2) {
+                    this.$router.push({path: '/RuleSetViewAndTest', query: {ruleSetId: row.id}});
+                    return;
+                }
+                this.$router.push({path: '/RuleSetConfig', query: {ruleSetId: row.id}});
+            },
+            show(row) {
+                this.$router.push({path: '/RuleSetViewPublish', query: {ruleSetId: row.id}});
+            },
+            deleteRow(row) {
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post("/ruleEngine/ruleSet/delete", {
+                        "id": row.id
+                    }).then(res => {
+                        let da = res.data;
+                        if (da) {
+                            this.$message({
+                                showClose: true,
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.list();
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            list() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/ruleSet/list", {
+                    "page": {
+                        "pageSize": this.page.pageSize,
+                        "pageIndex": this.page.pageIndex
+                    },
+                    "query": {
+                        "name": this.search.form.name,
+                        "code": this.search.form.code,
+                        "status": this.search.form.status,
+                    },
+                    "orders": [
+                        {
+                            "columnName": "id",
+                            "desc": true
+                        }
+                    ]
+                }).then(res => {
+                    if (res.data != null) {
+                        this.tableData = res.data.rows;
+
+                        this.page.total = res.data.page.total;
+                    } else {
+                        this.tableData = [];
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, createRule() {
+                this.$router.push("/RuleSetDefinition")
+            }
+        }, mounted() {
+            this.list();
+        }
     }
 </script>
 
