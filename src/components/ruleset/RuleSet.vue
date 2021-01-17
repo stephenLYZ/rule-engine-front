@@ -216,5 +216,7 @@
 </script>
 
 <style scoped>
-
+  .el-tag {
+    padding: 0;
+  }
 </style>

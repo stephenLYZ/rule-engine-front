@@ -227,16 +227,6 @@
                 strategyType: null,
                 loading: false,
                 tableData: {},
-                leftSelect: {
-                    loading: false,
-                    options: [],
-                    query: {
-                        name: null,
-                    }
-                },
-                symbolSelect: {
-                    options: [],
-                },
                 runEnd: false,
                 runPercentage: 10,
                 request: {
