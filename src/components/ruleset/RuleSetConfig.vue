@@ -33,9 +33,7 @@
                     <span><el-input v-model="rs.name" style="width: 200px;margin-left: -20px;"/></span>
                     <i class="el-icon-delete pointer" @click="deleteRuleSet(rs)"
                        style="float: right; padding: 14px 0;color: #5ba0f8;"/>
-                    <i class="el-icon-circle-plus-outline pointer" @click="addRule(rs)"
-                       style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
-                    <i class="el-icon-rank pointer" style="float: right; padding: 14px 4px;color: #5ba0f8;"
+                    <i class="el-icon-rank pointer" style="float: right; padding: 14px 8px;color: #5ba0f8;"
                        @mouseover="ruleSetDraggable=true"
                        @mouseleave="ruleSetDraggable=false"/>
                   </div>
@@ -55,7 +53,7 @@
                                v-on:dragend.native="handleDragEndCG($event)">
                         <div slot="header" class="box-card-header">
                           <span><el-input v-model="cg.name" style="width: 200px;margin-left: -20px;"/></span>
-                          <i class="el-icon-delete pointer" @click="deleteConditionGroup(cg)"
+                          <i class="el-icon-delete pointer" @click="deleteConditionGroup(rs,cg)"
                              style="float: right; padding: 14px 0;color: #5ba0f8;"/>
                           <i class="el-icon-circle-plus-outline pointer" @click="addCondition(cg)"
                              style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
@@ -447,10 +445,39 @@
                 this.$router.push({path: '/RuleSetDefinition', query: {ruleSetId: this.id}});
             },
             nextStep() {
-                // 先更新规则，到待发布
+                // 先更新规则set，到待发布
                 this.$refs["defaultRule"].validate((valid) => {
                     if (valid) {
-
+                        this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
+                            "id": this.id,
+                            "ruleSet": this.ruleSet,
+                            "enableDefaultRule": this.enableDefaultRule,
+                            "strategyType": this.strategyType,
+                            "abnormalAlarm": {
+                                "enable": this.abnormalAlarm.enable,
+                                "email": this.abnormalAlarm.email.split(",")
+                            },
+                            "defaultRule": {
+                                id: this.defaultRule.id,
+                                name: this.defaultRule.name,
+                                conditionGroup: this.defaultRule.conditionGroup, //扩展
+                                action: {
+                                    "value": this.defaultRule.action.value,
+                                    "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
+                                    "valueType": this.defaultRule.action.valueType
+                                }
+                            },
+                        }).then(res => {
+                            let da = res.data;
+                            if (da) {
+                                this.$router.push({
+                                    path: '/RuleSetViewAndTest',
+                                    query: {ruleSetId: this.id}
+                                });
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 });
             },
@@ -458,14 +485,22 @@
                 this.$axios.post("/ruleEngine/ruleSet/updateRuleSet", {
                     "id": this.id,
                     "ruleSet": this.ruleSet,
-                    "enableDefaultRule": 1,
                     "enableDefaultRule": this.enableDefaultRule,
-                    "defaultRule": this.defaultRule,
                     "strategyType": this.strategyType,
                     "abnormalAlarm": {
                         "enable": this.abnormalAlarm.enable,
                         "email": this.abnormalAlarm.email.split(",")
-                    }
+                    },
+                    "defaultRule": {
+                        id: this.defaultRule.id,
+                        name: this.defaultRule.name,
+                        conditionGroup: this.defaultRule.conditionGroup, //扩展
+                        action: {
+                            "value": this.defaultRule.action.value,
+                            "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
+                            "valueType": this.defaultRule.action.valueType
+                        }
+                    },
                 }).then(res => {
                     let da = res.data;
                     if (da) {
@@ -579,10 +614,11 @@
                 this.ruleSet.push(newRuleSet);
             },
             deleteRuleSet(rs) {
-
-            },
-            addRule(rs) {
-
+                this.ruleSet.forEach((value, index) => {
+                    if (this.getUniqueMark(value) === this.getUniqueMark(rs)) {
+                        this.ruleSet.splice(index, 1);
+                    }
+                });
             },
             handleDragStartCG(e, item) {
                 this.currentConditionDraggingCG = item;
@@ -617,11 +653,11 @@
                     return a.orderNo - b.orderNo
                 });
             },
-            deleteConditionGroup(cg) {
+            deleteConditionGroup(rs, cg) {
                 // 删除
-                this.conditionGroup.forEach((value, index) => {
+                rs.conditionGroup.forEach((value, index) => {
                     if (this.getUniqueMark(value) === this.getUniqueMark(cg)) {
-                        this.conditionGroup.splice(index, 1);
+                        rs.conditionGroup.splice(index, 1);
                     }
                 });
             },
