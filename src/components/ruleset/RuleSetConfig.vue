@@ -455,7 +455,19 @@
                             if (valid) {
                                 this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
                                     "id": this.id,
-                                    "ruleSet": this.form.ruleSet,
+                                    "ruleSet": Array.from(this.form.ruleSet).map(m => ({
+                                        id: m.id,
+                                        uuid: m.uuid,
+                                        name: m.name,
+                                        orderNo: m.orderNo,
+                                        conditionGroup: m.conditionGroup,
+                                        action: {
+                                            value: m.action.value,
+                                            valueName: m.action.valueName,
+                                            valueType: m.action.valueType,
+                                            type: m.action.type > 1 ? 2 : m.action.type,
+                                        }
+                                    })),
                                     "enableDefaultRule": this.enableDefaultRule,
                                     "strategyType": this.strategyType,
                                     "abnormalAlarm": {
@@ -491,7 +503,19 @@
             update() {
                 this.$axios.post("/ruleEngine/ruleSet/updateRuleSet", {
                     "id": this.id,
-                    "ruleSet": this.form.ruleSet,
+                    "ruleSet": Array.from(this.form.ruleSet).map(m => ({
+                        id: m.id,
+                        uuid: m.uuid,
+                        name: m.name,
+                        orderNo: m.orderNo,
+                        conditionGroup: m.conditionGroup,
+                        action: {
+                            value: m.action.value,
+                            valueName: m.action.valueName,
+                            valueType: m.action.valueType,
+                            type: m.action.type > 1 ? 2 : m.action.type,
+                        }
+                    })),
                     "enableDefaultRule": this.enableDefaultRule,
                     "strategyType": this.strategyType,
                     "abnormalAlarm": {
@@ -749,8 +773,20 @@
                         this.name = da.name;
                         this.code = da.code;
                         this.description = da.description;
-                        // condition group
-                        this.form.ruleSet = da.ruleSet;
+                        // ruleSet
+                        this.form.ruleSet = Array.from(da.ruleSet).map(m => ({
+                            id: m.id,
+                            uuid: m.uuid,
+                            name: m.name,
+                            orderNo: m.orderNo,
+                            conditionGroup: m.conditionGroup,
+                            action: {
+                                value: m.action.value,
+                                valueName: m.action.valueName,
+                                valueType: m.action.valueType,
+                                type: this.getType(m.action.type, m.action.valueType),
+                            }
+                        }));
                         this.strategyType = da.strategyType;
                         // default rule
                         this.enableDefaultRule = da.enableDefaultRule;
@@ -766,6 +802,20 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            getType(type, valueType) {
+                if (type > 1) {
+                    if (valueType === "COLLECTION") {
+                        return 5;
+                    } else if (valueType === "STRING") {
+                        return 2;
+                    } else if (valueType === "BOOLEAN") {
+                        return 3;
+                    } else if (valueType === "NUMBER") {
+                        return 4;
+                    }
+                }
+                return type;
             }
         }, mounted() {
             this.id = this.$route.query.ruleSetId;
