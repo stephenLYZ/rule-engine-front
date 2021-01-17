@@ -22,96 +22,98 @@
                    style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
               </div>
               <div>
-                <el-card v-for="rs in ruleSet" class="box-card ruleSetCard" :key="rs.id"
-                         :body-style="{ padding: '6px 6px 0px 6px' }"
-                         :draggable="ruleSetDraggable"
-                         v-on:dragstart.native="handleDragStartRuleSet($event, rs)"
-                         v-on:dragover.prevent.native="handleDragOverRuleSet($event)"
-                         v-on:dragenter.native="handleDragEnterRuleSet($event, rs, ruleSet)"
-                         v-on:dragend.native="handleDragEndRuleSet($event)">
-                  <div slot="header" class="box-card-header">
-                    <span><el-input v-model="rs.name" style="width: 200px;margin-left: -20px;"/></span>
-                    <i class="el-icon-delete pointer" @click="deleteRuleSet(rs)"
-                       style="float: right; padding: 14px 0;color: #5ba0f8;"/>
-                    <i class="el-icon-rank pointer" style="float: right; padding: 14px 8px;color: #5ba0f8;"
-                       @mouseover="ruleSetDraggable=true"
-                       @mouseleave="ruleSetDraggable=false"/>
-                  </div>
-                  <el-card class="box-card" style="margin-bottom: 7px;">
+                <el-form :model="form" ref="form">
+                  <el-card class="box-card ruleSetCard" v-for="(rs,index) in form.ruleSet" :key="rs.id"
+                           :body-style="{ padding: '6px 6px 0px 6px' }"
+                           :draggable="ruleSetDraggable"
+                           v-on:dragstart.native="handleDragStartRuleSet($event, rs)"
+                           v-on:dragover.prevent.native="handleDragOverRuleSet($event)"
+                           v-on:dragenter.native="handleDragEnterRuleSet($event, rs, ruleSet)"
+                           v-on:dragend.native="handleDragEndRuleSet($event)">
                     <div slot="header" class="box-card-header">
-                      <span>条件集</span>
-                      <i class="el-icon-circle-plus-outline pointer" @click="addConditionGroup(rs)"
-                         style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
+                      <span><el-input v-model="rs.name" style="width: 200px;margin-left: -20px;"/></span>
+                      <i class="el-icon-delete pointer" @click="deleteRuleSet(rs)"
+                         style="float: right; padding: 14px 0;color: #5ba0f8;"/>
+                      <i class="el-icon-rank pointer" style="float: right; padding: 14px 8px;color: #5ba0f8;"
+                         @mouseover="ruleSetDraggable=true"
+                         @mouseleave="ruleSetDraggable=false"/>
                     </div>
-                    <div>
-                      <el-card v-for="cg in rs.conditionGroup" class="box-card conditionGroupCard" :key="cg.id"
-                               :body-style="{ padding: '6px 6px 6px 6px' }"
-                               :draggable="conditionGroupDraggable"
-                               v-on:dragstart.native="handleDragStartCG($event, cg)"
-                               v-on:dragover.prevent.native="handleDragOverCG($event)"
-                               v-on:dragenter.native="handleDragEnterCG($event, cg, rs.conditionGroup)"
-                               v-on:dragend.native="handleDragEndCG($event)">
-                        <div slot="header" class="box-card-header">
-                          <span><el-input v-model="cg.name" style="width: 200px;margin-left: -20px;"/></span>
-                          <i class="el-icon-delete pointer" @click="deleteConditionGroup(rs,cg)"
-                             style="float: right; padding: 14px 0;color: #5ba0f8;"/>
-                          <i class="el-icon-circle-plus-outline pointer" @click="addCondition(cg)"
-                             style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
-                          <i class="el-icon-rank pointer" style="float: right; padding: 14px 4px;color: #5ba0f8;"
-                             @mouseover="conditionGroupDraggable=true"
-                             @mouseleave="conditionGroupDraggable=false"/>
-                        </div>
+                    <el-card class="box-card" style="margin-bottom: 7px;">
+                      <div slot="header" class="box-card-header">
+                        <span>条件集</span>
+                        <i class="el-icon-circle-plus-outline pointer" @click="addConditionGroup(rs)"
+                           style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
+                      </div>
+                      <div>
+                        <el-card v-for="cg in rs.conditionGroup" class="box-card conditionGroupCard" :key="cg.id"
+                                 :body-style="{ padding: '6px 6px 6px 6px' }"
+                                 :draggable="conditionGroupDraggable"
+                                 v-on:dragstart.native="handleDragStartCG($event, cg)"
+                                 v-on:dragover.prevent.native="handleDragOverCG($event)"
+                                 v-on:dragenter.native="handleDragEnterCG($event, cg, rs.conditionGroup)"
+                                 v-on:dragend.native="handleDragEndCG($event)">
+                          <div slot="header" class="box-card-header">
+                            <span><el-input v-model="cg.name" style="width: 200px;margin-left: -20px;"/></span>
+                            <i class="el-icon-delete pointer" @click="deleteConditionGroup(rs,cg)"
+                               style="float: right; padding: 14px 0;color: #5ba0f8;"/>
+                            <i class="el-icon-circle-plus-outline pointer" @click="addCondition(cg)"
+                               style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
+                            <i class="el-icon-rank pointer" style="float: right; padding: 14px 4px;color: #5ba0f8;"
+                               @mouseover="conditionGroupDraggable=true"
+                               @mouseleave="conditionGroupDraggable=false"/>
+                          </div>
 
-                        <el-alert
-                          style="padding: 6px 0 8.5px 0"
-                          :id="c.id" class="item"
-                          v-for="c in cg.conditionGroupCondition"
-                          :key="c.id"
-                          :closable="false"
+                          <el-alert
+                            style="padding: 6px 0 8.5px 0"
+                            :id="c.id" class="item"
+                            v-for="c in cg.conditionGroupCondition"
+                            :key="c.id"
+                            :closable="false"
 
-                          draggable="true"
-                          v-on:dragstart.native="handleDragStart($event, c,cg.id)"
-                          v-on:dragover.prevent.native="handleDragOver($event)"
-                          v-on:dragenter.native="handleDragEnter($event, c, cg.conditionGroupCondition,cg.id)"
-                          v-on:dragend.native="handleDragEnd($event)">
+                            draggable="true"
+                            v-on:dragstart.native="handleDragStart($event, c,cg.id)"
+                            v-on:dragover.prevent.native="handleDragOver($event)"
+                            v-on:dragenter.native="handleDragEnter($event, c, cg.conditionGroupCondition,cg.id)"
+                            v-on:dragend.native="handleDragEnd($event)">
 
-                          <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
-                            （{{c.condition.name}}）
-                          </el-tag>
-                          &nbsp;
+                            <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
+                              （{{c.condition.name}}）
+                            </el-tag>
+                            &nbsp;
 
-                          <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                            {{getConditionNamePrefix(c.condition.config.leftValue.type)}}
-                          </el-tag>
-                          <span style="color: #606266">  {{c.condition.config.leftValue.valueName}}</span>
+                            <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                              {{getConditionNamePrefix(c.condition.config.leftValue.type)}}
+                            </el-tag>
+                            <span style="color: #606266">  {{c.condition.config.leftValue.valueName}}</span>
 
-                          &nbsp;
-                          <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                            {{$common.getSymbolExplanation(c.condition.config.symbol)}}
-                          </el-tag>
+                            &nbsp;
+                            <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                              {{$common.getSymbolExplanation(c.condition.config.symbol)}}
+                            </el-tag>
 
-                          &nbsp;
-                          <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                            {{ getConditionNamePrefix(c.condition.config.rightValue.type)}}
-                          </el-tag>
+                            &nbsp;
+                            <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                              {{ getConditionNamePrefix(c.condition.config.rightValue.type)}}
+                            </el-tag>
 
 
-                          <span style="color: #606266">   {{c.condition.config.rightValue.valueName}}</span>
+                            <span style="color: #606266">   {{c.condition.config.rightValue.valueName}}</span>
 
-                          <i class="el-alert__closebtn el-icon-close" style="color: rgb(91, 160, 248)"
-                             @click="removeCondition(cg.conditionGroupCondition,c.condition.id)"/>
-                        </el-alert>
-                      </el-card>
-                    </div>
-                  </el-card>
+                            <i class="el-alert__closebtn el-icon-close" style="color: rgb(91, 160, 248)"
+                               @click="removeCondition(cg.conditionGroupCondition,c.condition.id)"/>
+                          </el-alert>
+                        </el-card>
+                      </div>
+                    </el-card>
 
-                  <el-card class="box-card" style="margin-bottom: 7px;">
-                    <div slot="header" class="box-card-header">
-                      <span>结果</span>
-                    </div>
-                    <div>
-                      <el-form ref="actionForm" :model="rs.action">
-                        <el-form-item prop="type" class="el-col-6">
+                    <el-card class="box-card" style="margin-bottom: 7px;">
+                      <div slot="header" class="box-card-header">
+                        <span>结果</span>
+                      </div>
+                      <div>
+
+                        <el-form-item :prop="'ruleSet.' + index + '.action.type'" class="el-col-6"
+                                      :rules="{required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}">
                           <el-select v-model="rs.action.type" @change="actionTypeChange(rs)">
                             <el-option label="元素" :value="0"/>
                             <el-option label="变量" :value="1"/>
@@ -126,7 +128,8 @@
                           &nbsp;
                         </el-form-item>
 
-                        <el-form-item prop="value" class="el-col-17">
+                        <el-form-item :prop="'ruleSet.' + index + '.action.value'" class="el-col-17"
+                                      :rules="{required: true, message: '请输入结果值', trigger: 'blur'}">
 
                           <el-select v-if="rs.action.type===3" v-model="rs.action.value"
                                      :disabled="rs.action.type==null">
@@ -160,13 +163,10 @@
                           <el-input v-else v-model="rs.action.value" :disabled="rs.action.type==null"/>
 
                         </el-form-item>
-
-                      </el-form>
-
-                    </div>
-
+                      </div>
+                    </el-card>
                   </el-card>
-                </el-card>
+                </el-form>
               </div>
             </el-card>
             <br> <br>
@@ -180,7 +180,7 @@
                   <br>
                   <br>
                   <el-form-item prop="action.valueType" class="el-col-6"
-                                :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger: 'blur'}:{}">
+                                :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}:{}">
                     <el-select v-model="defaultRule.action.type"
                                @change="defaultRuleTypeChange()">
                       <el-option label="元素" :value="0"/>
@@ -324,7 +324,9 @@
                 currentConditionGroup: {
                     conditionGroupCondition: []
                 },
-                ruleSet: [],
+                form: {
+                    ruleSet: [],
+                },
                 strategyType: 1,
                 abnormalAlarm: {
                     enable: false,
@@ -447,37 +449,41 @@
             },
             nextStep() {
                 // 先更新规则set，到待发布
-                this.$refs["defaultRule"].validate((valid) => {
+                this.$refs["form"].validate((valid) => {
                     if (valid) {
-                        this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
-                            "id": this.id,
-                            "ruleSet": this.ruleSet,
-                            "enableDefaultRule": this.enableDefaultRule,
-                            "strategyType": this.strategyType,
-                            "abnormalAlarm": {
-                                "enable": this.abnormalAlarm.enable,
-                                "email": this.abnormalAlarm.email.split(",")
-                            },
-                            "defaultRule": {
-                                id: this.defaultRule.id,
-                                name: this.defaultRule.name,
-                                conditionGroup: this.defaultRule.conditionGroup, //扩展
-                                action: {
-                                    "value": this.defaultRule.action.value,
-                                    "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
-                                    "valueType": this.defaultRule.action.valueType
-                                }
-                            },
-                        }).then(res => {
-                            let da = res.data;
-                            if (da) {
-                                this.$router.push({
-                                    path: '/RuleSetViewAndTest',
-                                    query: {ruleSetId: this.id}
+                        this.$refs["defaultRule"].validate((valid) => {
+                            if (valid) {
+                                this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
+                                    "id": this.id,
+                                    "ruleSet": this.form.ruleSet,
+                                    "enableDefaultRule": this.enableDefaultRule,
+                                    "strategyType": this.strategyType,
+                                    "abnormalAlarm": {
+                                        "enable": this.abnormalAlarm.enable,
+                                        "email": this.abnormalAlarm.email.split(",")
+                                    },
+                                    "defaultRule": {
+                                        id: this.defaultRule.id,
+                                        name: this.defaultRule.name,
+                                        conditionGroup: this.defaultRule.conditionGroup, //扩展
+                                        action: {
+                                            "value": this.defaultRule.action.value,
+                                            "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
+                                            "valueType": this.defaultRule.action.valueType
+                                        }
+                                    },
+                                }).then(res => {
+                                    let da = res.data;
+                                    if (da) {
+                                        this.$router.push({
+                                            path: '/RuleSetViewAndTest',
+                                            query: {ruleSetId: this.id}
+                                        });
+                                    }
+                                }).catch(function (error) {
+                                    console.log(error);
                                 });
                             }
-                        }).catch(function (error) {
-                            console.log(error);
                         });
                     }
                 });
@@ -485,7 +491,7 @@
             update() {
                 this.$axios.post("/ruleEngine/ruleSet/updateRuleSet", {
                     "id": this.id,
-                    "ruleSet": this.ruleSet,
+                    "ruleSet": this.form.ruleSet,
                     "enableDefaultRule": this.enableDefaultRule,
                     "strategyType": this.strategyType,
                     "abnormalAlarm": {
@@ -590,14 +596,14 @@
             },
             addRuleSet() {
                 let newOrderNo = 1;
-                if (this.ruleSet != null) {
-                    let length = this.ruleSet.length;
-                    let ruleSetElement = this.ruleSet[length - 1];
+                if (this.form.ruleSet != null) {
+                    let length = this.form.ruleSet.length;
+                    let ruleSetElement = this.form.ruleSet[length - 1];
                     if (ruleSetElement !== undefined) {
                         newOrderNo = ruleSetElement.orderNo + 1;
                     }
                 } else {
-                    this.ruleSet = [];
+                    this.form.ruleSet = [];
                 }
                 let newRuleSet = {
                     id: null,
@@ -612,12 +618,12 @@
                         type: null,
                     }
                 };
-                this.ruleSet.push(newRuleSet);
+                this.form.ruleSet.push(newRuleSet);
             },
             deleteRuleSet(rs) {
-                this.ruleSet.forEach((value, index) => {
+                this.form.ruleSet.forEach((value, index) => {
                     if (this.getUniqueMark(value) === this.getUniqueMark(rs)) {
-                        this.ruleSet.splice(index, 1);
+                        this.form.ruleSet.splice(index, 1);
                     }
                 });
             },
@@ -744,7 +750,7 @@
                         this.code = da.code;
                         this.description = da.description;
                         // condition group
-                        this.ruleSet = da.ruleSet;
+                        this.form.ruleSet = da.ruleSet;
                         this.strategyType = da.strategyType;
                         // default rule
                         this.enableDefaultRule = da.enableDefaultRule;
