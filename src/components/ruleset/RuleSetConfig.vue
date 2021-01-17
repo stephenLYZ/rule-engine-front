@@ -28,7 +28,7 @@
                            :draggable="ruleSetDraggable"
                            v-on:dragstart.native="handleDragStartRuleSet($event, rs)"
                            v-on:dragover.prevent.native="handleDragOverRuleSet($event)"
-                           v-on:dragenter.native="handleDragEnterRuleSet($event, rs, ruleSet)"
+                           v-on:dragenter.native="handleDragEnterRuleSet($event, rs, form.ruleSet)"
                            v-on:dragend.native="handleDragEndRuleSet($event)">
                     <div slot="header" class="box-card-header">
                       <span><el-input v-model="rs.name" style="width: 200px;margin-left: -20px;"/></span>
@@ -663,6 +663,9 @@
                 e.dataTransfer.dropEffect = 'move';
             },
             handleDragEnterCG(e, item, conditions) {
+                if (this.currentConditionDraggingCG === undefined || this.currentConditionDraggingCG === null) {
+                    return;
+                }
                 //为需要移动的元素设置dragstart事件
                 e.dataTransfer.effectAllowed = "move";
                 if (item === this.currentConditionDraggingCG) {

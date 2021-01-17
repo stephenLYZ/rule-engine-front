@@ -25,7 +25,7 @@ Vue.prototype.$common = common;
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";
 
 //请求后端服务器接口前缀
-const requestBaseURL = "http://localhost";
+const requestBaseURL = "http://ruleserver.cn";
 Vue.prototype.$requestBaseURL = requestBaseURL;
 
 //axios配置
