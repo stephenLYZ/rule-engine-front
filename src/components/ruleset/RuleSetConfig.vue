@@ -45,7 +45,7 @@
                     </div>
                     <div>
                       <el-card v-for="cg in rs.conditionGroup" class="box-card conditionGroupCard" :key="cg.id"
-                               :body-style="{ padding: '6px 6px 0px 6px' }"
+                               :body-style="{ padding: '6px 6px 6px 6px' }"
                                :draggable="conditionGroupDraggable"
                                v-on:dragstart.native="handleDragStartCG($event, cg)"
                                v-on:dragover.prevent.native="handleDragOverCG($event)"
