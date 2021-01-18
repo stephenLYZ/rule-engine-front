@@ -14,9 +14,35 @@
             </div>
           </el-col>
           <el-col :span="3">
-            <div class="grid-content bg-purple user" style="width: 100%">
+            <div style="width: 100%;line-height: 60px;" class="header_left">
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <el-badge :value="4" type="warning">
+                <el-dropdown trigger="hover">
+                <span class="el-dropdown-link pointer">
+                    <i class="el-icon-bell" style="color: #606266;height: 30px;cursor: pointer"/>
+                </span>
+                  <!--暂时先这样写死，后期有时间改为可以配置的-->
+                  <el-dropdown-menu slot="dropdown" style="width: 200px">
+                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                      <a href="https://gitee.com/qwding/rule-engine" style="color: #606266;text-decoration: none">开源不易，欢迎点我来Star</a>
+                    </el-dropdown-item>
+                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                      接下来一段时间不会进行开发新功能，接下来会对决策表以及规则集配置体验进行优化！
+                    </el-dropdown-item>
+                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                      后期版本普通规则如果发布后则不能修改返回值类型，规则集条件以及结果可以引用普通规则！
+                    </el-dropdown-item>
+                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;">
+                      欢迎有兴趣人可以来编写文档，贡献一份力量！
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </el-badge>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="http://ruleengine.cn/doc"><i class="el-icon-document" style="color: #606266;cursor: pointer"/></a>
+              &nbsp;&nbsp;&nbsp;
               <el-dropdown @command="rightHandleCommand" trigger="click">
-                <span class="el-dropdown-link username pointer" style="float: right">
+                <span class="el-dropdown-link username pointer">
                   {{username}}&nbsp;<i class="el-icon-arrow-down"/>
                 </span>
                 <el-dropdown-menu slot="dropdown" style="width: 96px">
@@ -145,7 +171,11 @@
         }
     }
 </script>
-
+<style>
+  .header_left .el-badge__content {
+    margin-top: 16px;
+  }
+</style>
 <style scoped>
   .el-header, .el-footer {
     color: #333;
@@ -199,4 +229,5 @@
   .user {
     text-align: right;
   }
+
 </style>
