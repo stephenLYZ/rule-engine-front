@@ -67,8 +67,13 @@
                     </div>
                   </div>
                 </el-card>
-                <br>
-                <span style="color: #606266;font-size: 14px;">否则返回</span>
+                <span v-if="ruleSet.length===0">
+                  <span style="color: #606266;font-size: 14px;">返回</span>
+                </span>
+                <span v-else>
+                  <br>
+                  <span style="color: #606266;font-size: 14px;">否则返回</span>
+                </span>
                 <br>
                 <div style="margin-left: 20px;">
                   <el-alert :closable="false" type="warning" style="padding: 6px 0 8px 0">
