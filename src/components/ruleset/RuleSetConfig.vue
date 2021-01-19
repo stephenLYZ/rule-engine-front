@@ -107,12 +107,12 @@
                       </div>
                     </el-card>
 
-                    <el-card class="box-card" style="margin-bottom: 7px;-webkit-backface-visibility: hidden;" shadow="never">
+                    <el-card class="box-card" style="margin-bottom: 7px;-webkit-backface-visibility: hidden;"
+                             shadow="never">
                       <div slot="header" class="box-card-header">
                         <span>结果</span>
                       </div>
                       <div>
-
                         <el-form-item :prop="'ruleSet.' + index + '.action.type'" class="el-col-6"
                                       :rules="{required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}">
                           <el-select v-model="rs.action.type" @change="actionTypeChange(rs)">
@@ -306,573 +306,574 @@
 </template>
 
 <script>
-import uuidv1 from 'uuid/v1'
+    import uuidv1 from 'uuid/v1'
 
-export default {
-  name: "RuleSetConfig",
-  data() {
-    return {
-      loading: false,
-      ruleSetDraggable: null,
-      currentRuleSetDragging: null,
-      currentRuleSetId: null,
-      conditionGroupDraggable: null,
-      condition: {
-        dialogFormVisible: false,
-        value: null,
-        options: null
-      },
-      currentConditionGroup: {
-        conditionGroupCondition: []
-      },
-      form: {
-        ruleSet: [],
-      },
-      strategyType: 1,
-      abnormalAlarm: {
-        enable: false,
-        email: "",
-      },
-      actionOptions: [],
-      actionLoading: false,
-      enableDefaultRule: false,
-      defaultRule: {
-        id: null,
-        name: "默认规则",
-        conditionGroup: [], //扩展
-        action: {
-          value: undefined,
-          valueName: null,
-          valueType: null,
-          type: null,
-        }
-      }
-    }
-  },
-  methods: {
-    defaultRuleTypeChange() {
-      this.actionOptions = [];
-      this.defaultRule.action.value = undefined;
-      this.defaultRule.action.valueName = null;
-    },
-    defaultRuleSelectClick(item) {
-      this.defaultRule.action.valueType = item.valueType;
-      this.defaultRule.action.value = item.id.toString();
-    },
-    defaultRuleRemoteMethod(query) {
-      if (query !== '') {
-        this.actionLoading = true;
-        this.actionOptions = [];
-        let type = this.defaultRule.action.type;
-        this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
-          "page": {
-            "pageSize": 10,
-            "pageIndex": 1
-          },
-          "query": {
-            "name": query,
-          },
-          "orders": []
-        }).then(res => {
-          if (res.data != null) {
-            this.actionOptions = res.data.rows;
-          }
-          this.actionLoading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      } else {
-        this.actionLoading = [];
-      }
-    },
-    getConditionNamePrefix(type) {
-      if (type === 0) {
-        return "元素";
-      }
-      if (type === 1) {
-        return "变量";
-      }
-      if (type === 2) {
-        return "固定值";
-      }
-    },
-    selectCondition(item) {
-      let newOrderNo = 1;
-      // 如果存在条件组与条件的关系
-      if (this.currentConditionGroup.conditionGroupCondition != null) {
-        if (this.currentConditionGroup.conditionGroupCondition[this.currentConditionGroup.conditionGroupCondition.length - 1] !== undefined) {
-          newOrderNo = this.currentConditionGroup.conditionGroupCondition[this.currentConditionGroup.conditionGroupCondition.length - 1].orderNo + 1;
-        }
-      } else {
-        // 初始化
-        this.currentConditionGroup.conditionGroupCondition = [];
-      }
-      this.currentConditionGroup.conditionGroupCondition.push({
-        orderNo: newOrderNo,
-        condition: {
-          id: item.id,
-          name: item.name,
-          config: item.config
-        }
-      });
-      this.condition.dialogFormVisible = false;
-      this.condition.value = null;
-      this.condition.options = [];
-    },
-    conditionRemoteMethod(query) {
-      if (query !== '') {
-        this.condition.loading = true;
-        this.condition.options = [];
-        let url = "/ruleEngine/condition/list";
-        this.$axios.post(url, {
-          "page": {
-            "pageSize": 10,
-            "pageIndex": 1
-          },
-          "query": {
-            "name": query
-          },
-          "orders": []
-        }).then(res => {
-          if (res.data != null) {
-            this.condition.options = res.data.rows;
-          }
-          this.condition.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      } else {
-        this.condition.options = [];
-      }
-    },
-    previous() {
-      this.$router.push({path: '/RuleSetDefinition', query: {ruleSetId: this.id}});
-    },
-    nextStep() {
-      // 先更新规则set，到待发布
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          this.$refs["defaultRule"].validate((valid) => {
-            if (valid) {
-              this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
-                "id": this.id,
-                "ruleSet": Array.from(this.form.ruleSet).map(m => ({
-                  id: m.id,
-                  uuid: m.uuid,
-                  name: m.name,
-                  orderNo: m.orderNo,
-                  conditionGroup: m.conditionGroup,
-                  action: {
-                    value: m.action.value,
-                    valueName: m.action.valueName,
-                    valueType: m.action.valueType,
-                    type: m.action.type > 1 ? 2 : m.action.type,
-                  }
-                })),
-                "enableDefaultRule": this.enableDefaultRule,
-                "strategyType": this.strategyType,
-                "abnormalAlarm": {
-                  "enable": this.abnormalAlarm.enable,
-                  "email": this.abnormalAlarm.email.split(",")
+    export default {
+        name: "RuleSetConfig",
+        data() {
+            return {
+                loading: false,
+                ruleSetDraggable: null,
+                currentRuleSetDragging: null,
+                currentRuleSetId: null,
+                conditionGroupDraggable: null,
+                condition: {
+                    dialogFormVisible: false,
+                    value: null,
+                    options: null
                 },
-                "defaultRule": {
-                  id: this.defaultRule.id,
-                  name: this.defaultRule.name,
-                  conditionGroup: this.defaultRule.conditionGroup, //扩展
-                  action: {
-                    "value": this.defaultRule.action.value,
-                    "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
-                    "valueType": this.defaultRule.action.valueType
-                  }
+                currentConditionGroup: {
+                    conditionGroupCondition: []
                 },
-              }).then(res => {
-                let da = res.data;
-                if (da) {
-                  this.$router.push({
-                    path: '/RuleSetViewAndTest',
-                    query: {ruleSetId: this.id}
-                  });
+                form: {
+                    ruleSet: [],
+                },
+                strategyType: 1,
+                abnormalAlarm: {
+                    enable: false,
+                    email: "",
+                },
+                actionOptions: [],
+                actionLoading: false,
+                enableDefaultRule: false,
+                defaultRule: {
+                    id: null,
+                    name: "默认规则",
+                    conditionGroup: [], //扩展
+                    action: {
+                        value: undefined,
+                        valueName: null,
+                        valueType: null,
+                        type: null,
+                    }
                 }
-              }).catch(function (error) {
-                console.log(error);
-              });
             }
-          });
-        }
-      });
-    },
-    update() {
-      this.$axios.post("/ruleEngine/ruleSet/updateRuleSet", {
-        "id": this.id,
-        "ruleSet": Array.from(this.form.ruleSet).map(m => ({
-          id: m.id,
-          uuid: m.uuid,
-          name: m.name,
-          orderNo: m.orderNo,
-          conditionGroup: m.conditionGroup,
-          action: {
-            value: m.action.value,
-            valueName: m.action.valueName,
-            valueType: m.action.valueType,
-            type: m.action.type > 1 ? 2 : m.action.type,
-          }
-        })),
-        "enableDefaultRule": this.enableDefaultRule,
-        "strategyType": this.strategyType,
-        "abnormalAlarm": {
-          "enable": this.abnormalAlarm.enable,
-          "email": this.abnormalAlarm.email.split(",")
         },
-        "defaultRule": {
-          id: this.defaultRule.id,
-          name: this.defaultRule.name,
-          conditionGroup: this.defaultRule.conditionGroup, //扩展
-          action: {
-            "value": this.defaultRule.action.value,
-            "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
-            "valueType": this.defaultRule.action.valueType
-          }
-        },
-      }).then(res => {
-        let da = res.data;
-        if (da) {
-          this.$message({
-            showClose: true,
-            message: '保存成功',
-            type: 'success'
-          });
-        }
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
-    actionRemoteMethod(query, rs) {
-      if (query !== '') {
-        this.actionOptions = true;
-        this.actionOptions = [];
-        let type = rs.action.type;
-        this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
-          "page": {
-            "pageSize": 10,
-            "pageIndex": 1
-          },
-          "query": {
-            "name": query,
-          },
-          "orders": []
-        }).then(res => {
-          if (res.data != null) {
-            this.actionOptions = res.data.rows;
-          }
-          this.actionLoading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      } else {
-        this.actionOptions = [];
-      }
-    },
-    actionSelectClick(rs, item) {
-      rs.action.valueType = item.valueType;
-      rs.action.value = item.id.toString();
-    },
-    actionTypeChange(rs) {
-      rs.action.options = [];
-      rs.action.value = undefined;
-      rs.action.valueName = null;
-    },
-    handleDragStartRuleSet(e, item) {
-      this.currentRuleSetDragging = item;
-    },
-    handleDragOverRuleSet(e) {
-      // 在dragenter中针对放置目标来设置!
-      e.dataTransfer.dropEffect = 'move';
-    },
-    handleDragEnterRuleSet(e, item, ruleSet) {
-      //为需要移动的元素设置dragstart事件
-      e.dataTransfer.effectAllowed = "move";
-      if (item === this.currentRuleSetDragging) {
-        return;
-      }
-      let no = item.orderNo;
-      let orderNo = this.currentRuleSetDragging.orderNo;
-      ruleSet.forEach((e) => {
-        let uniqueMarkE = this.getUniqueMark(e);
-        let uniqueMarkItem = this.getUniqueMark(item);
-        if (uniqueMarkE === uniqueMarkItem) {
-          e.orderNo = orderNo;
-        } else if (uniqueMarkE === this.getUniqueMark(this.currentRuleSetDragging)) {
-          e.orderNo = no;
-        }
-      });
-      //页面显示排序
-      ruleSet.sort(function (a, b) {
-        return a.orderNo - b.orderNo
-      });
-    },
-    handleDragEndRuleSet(e) {
-      this.currentRuleSetDragging = null;
-    },
-    getUniqueMark(value) {
-      if (value.id != null) {
-        return value.id;
-      }
-      return value.uuid;
-    },
-    addRuleSet() {
-      let newOrderNo = 1;
-      if (this.form.ruleSet != null) {
-        let length = this.form.ruleSet.length;
-        let ruleSetElement = this.form.ruleSet[length - 1];
-        if (ruleSetElement !== undefined) {
-          newOrderNo = ruleSetElement.orderNo + 1;
-        }
-      } else {
-        this.form.ruleSet = [];
-      }
-      let newRuleSet = {
-        id: null,
-        uuid: uuidv1(),
-        name: "规则",
-        orderNo: newOrderNo,
-        conditionGroup: [],
-        action: {
-          value: undefined,
-          valueName: null,
-          valueType: null,
-          type: null,
-        }
-      };
-      this.form.ruleSet.push(newRuleSet);
-    },
-    deleteRuleSet(rs) {
-      this.form.ruleSet.forEach((value, index) => {
-        if (this.getUniqueMark(value) === this.getUniqueMark(rs)) {
-          this.form.ruleSet.splice(index, 1);
-        }
-      });
-    },
-    handleDragStartCG(e, item) {
-      this.currentConditionDraggingCG = item;
-    },
-    handleDragEndCG(e) {
-      this.currentConditionDraggingCG = null;
-    },
-    //首先把div变成可以放置的元素，即重写dragenter/dragover
-    handleDragOverCG(e) {
-      // 在dragenter中针对放置目标来设置!
-      e.dataTransfer.dropEffect = 'move';
-    },
-    handleDragEnterCG(e, item, conditions) {
-      if (this.currentConditionDraggingCG === undefined || this.currentConditionDraggingCG === null) {
-        return;
-      }
-      //为需要移动的元素设置dragstart事件
-      e.dataTransfer.effectAllowed = "move";
-      if (item === this.currentConditionDraggingCG) {
-        return;
-      }
-      let no = item.orderNo;
-      let orderNo = this.currentConditionDraggingCG.orderNo;
-      conditions.forEach((e) => {
-        let uniqueMarkE = this.getUniqueMark(e);
-        let uniqueMarkItem = this.getUniqueMark(item);
-        if (uniqueMarkE === uniqueMarkItem) {
-          e.orderNo = orderNo;
-        } else if (uniqueMarkE === this.getUniqueMark(this.currentConditionDraggingCG)) {
-          e.orderNo = no;
-        }
-      });
-      //页面显示排序
-      conditions.sort(function (a, b) {
-        return a.orderNo - b.orderNo
-      });
-    },
-    deleteConditionGroup(rs, cg) {
-      // 删除
-      rs.conditionGroup.forEach((value, index) => {
-        if (this.getUniqueMark(value) === this.getUniqueMark(cg)) {
-          rs.conditionGroup.splice(index, 1);
-        }
-      });
-    },
-    addCondition(cg) {
-      // 选择，或者创建
-      this.condition.dialogFormVisible = true;
-      this.currentConditionGroup = cg;
-    },
-    handleDragStart(e, item, cgId) {
-      this.currentConditionDragging = item;
-      this.currentConditionCgId = cgId;
-    },
-    handleDragEnd(e) {
-      this.currentConditionDragging = null;
-      this.currentConditionCgId = null;
-    },
-    //首先把div变成可以放置的元素，即重写dragenter/dragover
-    handleDragOver(e) {
-      // 在dragenter中针对放置目标来设置!
-      e.dataTransfer.dropEffect = 'move'
-    },
-    handleDragEnter(e, item, conditions, cgId) {
-      // 如果一个条件组的条件移动到另一个条件组，阻止
-      if (cgId !== this.currentConditionCgId) {
-        return;
-      }
-      //为需要移动的元素设置dragstart事件
-      e.dataTransfer.effectAllowed = "move";
-      // if (item.id === this.currentConditionDragging.id) {
-      //   return;
-      // }
-      let no = item.orderNo;
-      let orderNo = this.currentConditionDragging.orderNo;
-      conditions.forEach((e) => {
-        if (e.condition.id === item.condition.id) {
-          e.orderNo = orderNo;
-        } else if (e.condition.id === this.currentConditionDragging.condition.id) {
-          e.orderNo = no;
-        }
-      });
-      //页面显示排序
-      conditions.sort(function (a, b) {
-        return a.orderNo - b.orderNo
-      });
-    },
-    removeCondition(conditionGroupCondition, id) {
-      // 删除
-      conditionGroupCondition.forEach((value, index) => {
-        if (value.condition.id === id) {
-          conditionGroupCondition.splice(index, 1);
-        }
-      });
-    },
-    addConditionGroup(rs) {
-      let newOrderNo = 1;
-      if (rs.conditionGroup != null) {
-        let length = rs.conditionGroup.length;
-        let conditionGroupElement = rs.conditionGroup[length - 1];
-        if (conditionGroupElement !== undefined) {
-          newOrderNo = conditionGroupElement.orderNo + 1;
-        }
-      } else {
-        rs.conditionGroup = [];
-      }
-      let newConditionGroup = {
-        id: null,
-        uuid: uuidv1(),
-        name: "条件组",
-        orderNo: newOrderNo,
-        conditionGroupCondition: []
-      };
-      rs.conditionGroup.push(newConditionGroup);
-    },
-    getRuleSetConfig() {
-      this.loading = true;
-      this.$axios.post("/ruleEngine/ruleSet/getRuleSetConfig", {
-        "id": this.id
-      }).then(res => {
-        let da = res.data;
-        if (da != null) {
-          this.id = da.id;
-          this.name = da.name;
-          this.code = da.code;
-          this.description = da.description;
-          // ruleSet
-          this.form.ruleSet = Array.from(da.ruleSet).map(m => ({
-            id: m.id,
-            uuid: m.uuid,
-            name: m.name,
-            orderNo: m.orderNo,
-            conditionGroup: m.conditionGroup,
-            action: {
-              value: m.action.value,
-              valueName: m.action.valueName,
-              valueType: m.action.valueType,
-              type: this.getType(m.action.type, m.action.valueType),
+        methods: {
+            defaultRuleTypeChange() {
+                this.actionOptions = [];
+                this.defaultRule.action.value = undefined;
+                this.defaultRule.action.valueName = null;
+                this.defaultRule.action.valueType = null;
+            },
+            defaultRuleSelectClick(item) {
+                this.defaultRule.action.valueType = item.valueType;
+                this.defaultRule.action.value = item.id.toString();
+            },
+            defaultRuleRemoteMethod(query) {
+                if (query !== '') {
+                    this.actionLoading = true;
+                    this.actionOptions = [];
+                    let type = this.defaultRule.action.type;
+                    this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query,
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.actionOptions = res.data.rows;
+                        }
+                        this.actionLoading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.actionLoading = [];
+                }
+            },
+            getConditionNamePrefix(type) {
+                if (type === 0) {
+                    return "元素";
+                }
+                if (type === 1) {
+                    return "变量";
+                }
+                if (type === 2) {
+                    return "固定值";
+                }
+            },
+            selectCondition(item) {
+                let newOrderNo = 1;
+                // 如果存在条件组与条件的关系
+                if (this.currentConditionGroup.conditionGroupCondition != null) {
+                    if (this.currentConditionGroup.conditionGroupCondition[this.currentConditionGroup.conditionGroupCondition.length - 1] !== undefined) {
+                        newOrderNo = this.currentConditionGroup.conditionGroupCondition[this.currentConditionGroup.conditionGroupCondition.length - 1].orderNo + 1;
+                    }
+                } else {
+                    // 初始化
+                    this.currentConditionGroup.conditionGroupCondition = [];
+                }
+                this.currentConditionGroup.conditionGroupCondition.push({
+                    orderNo: newOrderNo,
+                    condition: {
+                        id: item.id,
+                        name: item.name,
+                        config: item.config
+                    }
+                });
+                this.condition.dialogFormVisible = false;
+                this.condition.value = null;
+                this.condition.options = [];
+            },
+            conditionRemoteMethod(query) {
+                if (query !== '') {
+                    this.condition.loading = true;
+                    this.condition.options = [];
+                    let url = "/ruleEngine/condition/list";
+                    this.$axios.post(url, {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.condition.options = res.data.rows;
+                        }
+                        this.condition.loading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.condition.options = [];
+                }
+            },
+            previous() {
+                this.$router.push({path: '/RuleSetDefinition', query: {ruleSetId: this.id}});
+            },
+            nextStep() {
+                // 先更新规则set，到待发布
+                this.$refs["form"].validate((valid) => {
+                    if (valid) {
+                        this.$refs["defaultRule"].validate((valid) => {
+                            if (valid) {
+                                this.$axios.post("/ruleEngine/ruleSet/generationRelease", {
+                                    "id": this.id,
+                                    "ruleSet": Array.from(this.form.ruleSet).map(m => ({
+                                        id: m.id,
+                                        uuid: m.uuid,
+                                        name: m.name,
+                                        orderNo: m.orderNo,
+                                        conditionGroup: m.conditionGroup,
+                                        action: {
+                                            value: m.action.value,
+                                            valueName: m.action.valueName,
+                                            valueType: m.action.valueType,
+                                            type: m.action.type > 1 ? 2 : m.action.type,
+                                        }
+                                    })),
+                                    "enableDefaultRule": this.enableDefaultRule,
+                                    "strategyType": this.strategyType,
+                                    "abnormalAlarm": {
+                                        "enable": this.abnormalAlarm.enable,
+                                        "email": this.abnormalAlarm.email.split(",")
+                                    },
+                                    "defaultRule": {
+                                        id: this.defaultRule.id,
+                                        name: this.defaultRule.name,
+                                        conditionGroup: this.defaultRule.conditionGroup, //扩展
+                                        action: {
+                                            "value": this.defaultRule.action.value,
+                                            "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
+                                            "valueType": this.defaultRule.action.valueType
+                                        }
+                                    },
+                                }).then(res => {
+                                    let da = res.data;
+                                    if (da) {
+                                        this.$router.push({
+                                            path: '/RuleSetViewAndTest',
+                                            query: {ruleSetId: this.id}
+                                        });
+                                    }
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            update() {
+                this.$axios.post("/ruleEngine/ruleSet/updateRuleSet", {
+                    "id": this.id,
+                    "ruleSet": Array.from(this.form.ruleSet).map(m => ({
+                        id: m.id,
+                        uuid: m.uuid,
+                        name: m.name,
+                        orderNo: m.orderNo,
+                        conditionGroup: m.conditionGroup,
+                        action: {
+                            value: m.action.value,
+                            valueName: m.action.valueName,
+                            valueType: m.action.valueType,
+                            type: m.action.type > 1 ? 2 : m.action.type,
+                        }
+                    })),
+                    "enableDefaultRule": this.enableDefaultRule,
+                    "strategyType": this.strategyType,
+                    "abnormalAlarm": {
+                        "enable": this.abnormalAlarm.enable,
+                        "email": this.abnormalAlarm.email.split(",")
+                    },
+                    "defaultRule": {
+                        id: this.defaultRule.id,
+                        name: this.defaultRule.name,
+                        conditionGroup: this.defaultRule.conditionGroup, //扩展
+                        action: {
+                            "value": this.defaultRule.action.value,
+                            "type": this.defaultRule.action.type > 1 ? 2 : this.defaultRule.action.type,
+                            "valueType": this.defaultRule.action.valueType
+                        }
+                    },
+                }).then(res => {
+                    let da = res.data;
+                    if (da) {
+                        this.$message({
+                            showClose: true,
+                            message: '保存成功',
+                            type: 'success'
+                        });
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            actionRemoteMethod(query, rs) {
+                if (query !== '') {
+                    this.actionOptions = true;
+                    this.actionOptions = [];
+                    let type = rs.action.type;
+                    this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query,
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.actionOptions = res.data.rows;
+                        }
+                        this.actionLoading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.actionOptions = [];
+                }
+            },
+            actionSelectClick(rs, item) {
+                rs.action.valueType = item.valueType;
+                rs.action.value = item.id.toString();
+            },
+            actionTypeChange(rs) {
+                rs.action.value = undefined;
+                rs.action.valueName = null;
+                rs.action.valueType = null;
+            },
+            handleDragStartRuleSet(e, item) {
+                this.currentRuleSetDragging = item;
+            },
+            handleDragOverRuleSet(e) {
+                // 在dragenter中针对放置目标来设置!
+                e.dataTransfer.dropEffect = 'move';
+            },
+            handleDragEnterRuleSet(e, item, ruleSet) {
+                //为需要移动的元素设置dragstart事件
+                e.dataTransfer.effectAllowed = "move";
+                if (item === this.currentRuleSetDragging) {
+                    return;
+                }
+                let no = item.orderNo;
+                let orderNo = this.currentRuleSetDragging.orderNo;
+                ruleSet.forEach((e) => {
+                    let uniqueMarkE = this.getUniqueMark(e);
+                    let uniqueMarkItem = this.getUniqueMark(item);
+                    if (uniqueMarkE === uniqueMarkItem) {
+                        e.orderNo = orderNo;
+                    } else if (uniqueMarkE === this.getUniqueMark(this.currentRuleSetDragging)) {
+                        e.orderNo = no;
+                    }
+                });
+                //页面显示排序
+                ruleSet.sort(function (a, b) {
+                    return a.orderNo - b.orderNo
+                });
+            },
+            handleDragEndRuleSet(e) {
+                this.currentRuleSetDragging = null;
+            },
+            getUniqueMark(value) {
+                if (value.id != null) {
+                    return value.id;
+                }
+                return value.uuid;
+            },
+            addRuleSet() {
+                let newOrderNo = 1;
+                if (this.form.ruleSet != null) {
+                    let length = this.form.ruleSet.length;
+                    let ruleSetElement = this.form.ruleSet[length - 1];
+                    if (ruleSetElement !== undefined) {
+                        newOrderNo = ruleSetElement.orderNo + 1;
+                    }
+                } else {
+                    this.form.ruleSet = [];
+                }
+                let newRuleSet = {
+                    id: null,
+                    uuid: uuidv1(),
+                    name: "规则",
+                    orderNo: newOrderNo,
+                    conditionGroup: [],
+                    action: {
+                        value: undefined,
+                        valueName: null,
+                        valueType: null,
+                        type: null,
+                    }
+                };
+                this.form.ruleSet.push(newRuleSet);
+            },
+            deleteRuleSet(rs) {
+                this.form.ruleSet.forEach((value, index) => {
+                    if (this.getUniqueMark(value) === this.getUniqueMark(rs)) {
+                        this.form.ruleSet.splice(index, 1);
+                    }
+                });
+            },
+            handleDragStartCG(e, item) {
+                this.currentConditionDraggingCG = item;
+            },
+            handleDragEndCG(e) {
+                this.currentConditionDraggingCG = null;
+            },
+            //首先把div变成可以放置的元素，即重写dragenter/dragover
+            handleDragOverCG(e) {
+                // 在dragenter中针对放置目标来设置!
+                e.dataTransfer.dropEffect = 'move';
+            },
+            handleDragEnterCG(e, item, conditions) {
+                if (this.currentConditionDraggingCG === undefined || this.currentConditionDraggingCG === null) {
+                    return;
+                }
+                //为需要移动的元素设置dragstart事件
+                e.dataTransfer.effectAllowed = "move";
+                if (item === this.currentConditionDraggingCG) {
+                    return;
+                }
+                let no = item.orderNo;
+                let orderNo = this.currentConditionDraggingCG.orderNo;
+                conditions.forEach((e) => {
+                    let uniqueMarkE = this.getUniqueMark(e);
+                    let uniqueMarkItem = this.getUniqueMark(item);
+                    if (uniqueMarkE === uniqueMarkItem) {
+                        e.orderNo = orderNo;
+                    } else if (uniqueMarkE === this.getUniqueMark(this.currentConditionDraggingCG)) {
+                        e.orderNo = no;
+                    }
+                });
+                //页面显示排序
+                conditions.sort(function (a, b) {
+                    return a.orderNo - b.orderNo
+                });
+            },
+            deleteConditionGroup(rs, cg) {
+                // 删除
+                rs.conditionGroup.forEach((value, index) => {
+                    if (this.getUniqueMark(value) === this.getUniqueMark(cg)) {
+                        rs.conditionGroup.splice(index, 1);
+                    }
+                });
+            },
+            addCondition(cg) {
+                // 选择，或者创建
+                this.condition.dialogFormVisible = true;
+                this.currentConditionGroup = cg;
+            },
+            handleDragStart(e, item, cgId) {
+                this.currentConditionDragging = item;
+                this.currentConditionCgId = cgId;
+            },
+            handleDragEnd(e) {
+                this.currentConditionDragging = null;
+                this.currentConditionCgId = null;
+            },
+            //首先把div变成可以放置的元素，即重写dragenter/dragover
+            handleDragOver(e) {
+                // 在dragenter中针对放置目标来设置!
+                e.dataTransfer.dropEffect = 'move'
+            },
+            handleDragEnter(e, item, conditions, cgId) {
+                // 如果一个条件组的条件移动到另一个条件组，阻止
+                if (cgId !== this.currentConditionCgId) {
+                    return;
+                }
+                //为需要移动的元素设置dragstart事件
+                e.dataTransfer.effectAllowed = "move";
+                // if (item.id === this.currentConditionDragging.id) {
+                //   return;
+                // }
+                let no = item.orderNo;
+                let orderNo = this.currentConditionDragging.orderNo;
+                conditions.forEach((e) => {
+                    if (e.condition.id === item.condition.id) {
+                        e.orderNo = orderNo;
+                    } else if (e.condition.id === this.currentConditionDragging.condition.id) {
+                        e.orderNo = no;
+                    }
+                });
+                //页面显示排序
+                conditions.sort(function (a, b) {
+                    return a.orderNo - b.orderNo
+                });
+            },
+            removeCondition(conditionGroupCondition, id) {
+                // 删除
+                conditionGroupCondition.forEach((value, index) => {
+                    if (value.condition.id === id) {
+                        conditionGroupCondition.splice(index, 1);
+                    }
+                });
+            },
+            addConditionGroup(rs) {
+                let newOrderNo = 1;
+                if (rs.conditionGroup != null) {
+                    let length = rs.conditionGroup.length;
+                    let conditionGroupElement = rs.conditionGroup[length - 1];
+                    if (conditionGroupElement !== undefined) {
+                        newOrderNo = conditionGroupElement.orderNo + 1;
+                    }
+                } else {
+                    rs.conditionGroup = [];
+                }
+                let newConditionGroup = {
+                    id: null,
+                    uuid: uuidv1(),
+                    name: "条件组",
+                    orderNo: newOrderNo,
+                    conditionGroupCondition: []
+                };
+                rs.conditionGroup.push(newConditionGroup);
+            },
+            getRuleSetConfig() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/ruleSet/getRuleSetConfig", {
+                    "id": this.id
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.id = da.id;
+                        this.name = da.name;
+                        this.code = da.code;
+                        this.description = da.description;
+                        // ruleSet
+                        this.form.ruleSet = Array.from(da.ruleSet).map(m => ({
+                            id: m.id,
+                            uuid: m.uuid,
+                            name: m.name,
+                            orderNo: m.orderNo,
+                            conditionGroup: m.conditionGroup,
+                            action: {
+                                value: m.action.value,
+                                valueName: m.action.valueName,
+                                valueType: m.action.valueType,
+                                type: this.getType(m.action.type, m.action.valueType),
+                            }
+                        }));
+                        this.strategyType = da.strategyType;
+                        // default rule
+                        this.enableDefaultRule = da.enableDefaultRule;
+                        this.defaultRule = da.defaultRule;
+                        if (da.abnormalAlarm != null) {
+                            this.abnormalAlarm = {
+                                "enable": da.abnormalAlarm.enable,
+                                "email": da.abnormalAlarm.email.join(',')
+                            }
+                        }
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getType(type, valueType) {
+                if (type > 1) {
+                    if (valueType === "COLLECTION") {
+                        return 5;
+                    } else if (valueType === "STRING") {
+                        return 2;
+                    } else if (valueType === "BOOLEAN") {
+                        return 3;
+                    } else if (valueType === "NUMBER") {
+                        return 4;
+                    }
+                }
+                return type;
             }
-          }));
-          this.strategyType = da.strategyType;
-          // default rule
-          this.enableDefaultRule = da.enableDefaultRule;
-          this.defaultRule = da.defaultRule;
-          if (da.abnormalAlarm != null) {
-            this.abnormalAlarm = {
-              "enable": da.abnormalAlarm.enable,
-              "email": da.abnormalAlarm.email.join(',')
-            }
-          }
+        }, mounted() {
+            this.id = this.$route.query.ruleSetId;
+            this.getRuleSetConfig();
         }
-        this.loading = false;
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
-    getType(type, valueType) {
-      if (type > 1) {
-        if (valueType === "COLLECTION") {
-          return 5;
-        } else if (valueType === "STRING") {
-          return 2;
-        } else if (valueType === "BOOLEAN") {
-          return 3;
-        } else if (valueType === "NUMBER") {
-          return 4;
-        }
-      }
-      return type;
     }
-  }, mounted() {
-    this.id = this.$route.query.ruleSetId;
-    this.getRuleSetConfig();
-  }
-}
 </script>
 <style>
-.box-card-header .el-input__inner {
-  border: none;
-  height: 36px;
-  font-size: 16px;
-  color: #303133;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
+  .box-card-header .el-input__inner {
+    border: none;
+    height: 36px;
+    font-size: 16px;
+    color: #303133;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
 
-.el-input-number .el-input__inner {
-  text-align: left;
-}
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
 
-.stepp .el-step__title.is-process {
-  font-weight: 400;
-  color: #C0C4CC;
-}
+  .stepp .el-step__title.is-process {
+    font-weight: 400;
+    color: #C0C4CC;
+  }
 
-.stepp .el-step__icon-inner {
-  color: #C0C4CC;
-}
+  .stepp .el-step__icon-inner {
+    color: #C0C4CC;
+  }
 </style>
 <style scoped>
 
-.item {
-  line-height: 36px;
-  height: 36px;
-  padding-left: 6px;
-  margin-bottom: 6px;
-}
+  .item {
+    line-height: 36px;
+    height: 36px;
+    padding-left: 6px;
+    margin-bottom: 6px;
+  }
 
-.box-card-header {
-  margin-top: -20px;
-  line-height: 46px;
-  height: 24px;
-}
+  .box-card-header {
+    margin-top: -20px;
+    line-height: 46px;
+    height: 24px;
+  }
 
-.ruleSetCard {
-  margin-bottom: 12px;
-}
+  .ruleSetCard {
+    margin-bottom: 12px;
+  }
 
-.conditionGroupCard {
-  margin-bottom: 12px;
-}
+  .conditionGroupCard {
+    margin-bottom: 12px;
+  }
 
-.conditionGroupCard:last-child {
-  margin-bottom: 0;
-}
+  .conditionGroupCard:last-child {
+    margin-bottom: 0;
+  }
 </style>

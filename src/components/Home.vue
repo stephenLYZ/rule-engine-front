@@ -30,8 +30,7 @@
                     }
                 },
             }
-        },
-        created() {
+        },created() {
             this.$workspaceApi.workspaceList({
                 "page": {
                     "pageIndex": 1,
