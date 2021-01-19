@@ -183,9 +183,10 @@
         <template slot-scope="scope">
           <el-popover
             placement="right"
+            width="326"
             :disabled="tableData.collConditionHeads[index].leftValue.valueType==null">
             <el-form id="conditionRowFrom">
-              <el-form-item class="el-col-6">
+              <el-form-item class="el-col-7">
                 <el-select v-model="scope.row.conditions[index].tempType"
                            clearable
                            @clear="scope.row.conditions[index].tempType=null"
@@ -208,12 +209,12 @@
               <el-form-item class="el-col-1">
                 &nbsp;
               </el-form-item>
-              <el-form-item class="el-col-17">
+              <el-form-item class="el-col-16">
                 <el-input-number v-if="scope.row.conditions[index].tempType===7"
                                  v-model="scope.row.conditions[index].value"
                                  :disabled="scope.row.conditions[index].tempType==null"
                                  :controls="false"
-                                 style="width: 330px"/>
+                                 style="width: 217px"/>
 
                 <el-select v-else-if="scope.row.conditions[index].tempType===6"
                            v-model="scope.row.conditions[index].value"
@@ -243,7 +244,7 @@
                   </el-option>
                 </el-select>
                 <el-input v-else v-model="scope.row.conditions[index].value"
-                          :disabled="scope.row.conditions[index].tempType==null"/>
+                          :disabled="scope.row.conditions[index].tempType==null" style="width: 217px"/>
               </el-form-item>
             </el-form>
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
@@ -366,10 +367,10 @@
         <template slot-scope="scope">
           <el-popover
             placement="right"
-            width="400"
+            width="326"
             :disabled="tableData.collResultHead.valueType==null">
             <el-form id="resultRow">
-              <el-form-item class="el-col-6">
+              <el-form-item class="el-col-7">
 
                 <el-select v-model="scope.row.result.tempType"
                            clearable
@@ -393,11 +394,11 @@
               <el-form-item class="el-col-1">
                 &nbsp;
               </el-form-item>
-              <el-form-item class="el-col-17">
+              <el-form-item class="el-col-16">
                 <el-input-number v-if="scope.row.result.tempType===7" v-model="scope.row.result.value"
                                  :controls="false"
                                  :disabled="scope.row.result.tempType==null"
-                                 style="width: 330px"/>
+                                 style="width: 217px"/>
 
                 <el-select v-else-if="scope.row.result.tempType===6" v-model="scope.row.result.value"
                            clearable
@@ -425,7 +426,7 @@
                     @click.native="conditionCollSelectClick(item,scope.row.result)">
                   </el-option>
                 </el-select>
-                <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.tempType==null"/>
+                <el-input v-else v-model="scope.row.result.value" :disabled="scope.row.result.tempType==null"   style="width: 217px"/>
               </el-form-item>
             </el-form>
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
