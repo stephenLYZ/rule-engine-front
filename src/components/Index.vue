@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container v-loading.fullscreen.lock="fullscreenLoading">
-      <el-header style="min-width: 1400px">
+      <el-header style="min-width: 1500px">
         <el-row>
           <el-col :span="2">
             <div class="grid-content bg-purple">
@@ -23,23 +23,28 @@
                 </span>
                   <!--暂时先这样写死，后期有时间改为可以配置的-->
                   <el-dropdown-menu slot="dropdown" style="width: 200px">
-                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                    <el-dropdown-item
+                      style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
                       <a href="https://gitee.com/qwding/rule-engine" style="color: #606266;text-decoration: none">开源不易，欢迎点我来Star</a>
                     </el-dropdown-item>
-                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                    <el-dropdown-item
+                      style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
                       接下来一段时间不会进行开发新功能，接下来会对决策表以及规则集配置体验进行优化！
                     </el-dropdown-item>
-                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                    <el-dropdown-item
+                      style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
                       后期版本普通规则如果发布后则不能修改返回值类型，规则集条件以及结果可以引用普通规则！
                     </el-dropdown-item>
-                    <el-dropdown-item style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;">
+                    <el-dropdown-item
+                      style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;">
                       欢迎有兴趣人可以来编写文档，贡献一份力量！
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-badge>
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <a href="http://ruleengine.cn/doc"><i class="el-icon-document" style="color: #606266;cursor: pointer"/></a>
+              <a href="http://ruleengine.cn/doc"><i class="el-icon-document"
+                                                    style="color: #606266;cursor: pointer"/></a>
               &nbsp;&nbsp;&nbsp;
               <el-dropdown @command="rightHandleCommand" trigger="click">
                 <span class="el-dropdown-link username pointer">
@@ -88,7 +93,7 @@
 
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1200px">
+        <el-main style="min-width: 1300px">
           <router-view/>
         </el-main>
       </el-container>
@@ -109,28 +114,27 @@
         },
         created() {
             this.fullscreenLoading = true;
-            this.$userApi.getUserInfo().then(res => {
-                let data = res.data;
-                if (data != null) {
-                    this.username = data.username;
-                    this.avatar = data.avatar;
-                    sessionStorage.setItem('user', JSON.stringify(data));
-                    this.loadMenuTree();
-                    this.fullscreenLoading = false;
-                } else {
-                    this.$message({
-                        showClose: true,
-                        message: '请先登陆',
-                        type: 'warning'
-                    });
-                    this.$router.push({path: '/login'});
-                }
-            }).catch(function (error) {
-                console.log(error);
+            const getUserInfoRequest = new Promise((resolve, reject) => {
+                this.$userApi.getUserInfo().then(res => {
+                    let data = res.data;
+                    if (data != null) {
+                        this.username = data.username;
+                        this.avatar = data.avatar;
+                        sessionStorage.setItem('user', JSON.stringify(data));
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: '请先登陆',
+                            type: 'warning'
+                        });
+                        this.$router.push({path: '/login'});
+                    }
+                    resolve();
+                }).catch(function (error) {
+                    console.log(error);
+                });
             });
-        },
-        methods: {
-            loadMenuTree() {
+            const menuTreeRequest = new Promise((resolve, reject) => {
                 this.$axios.post("/menu/menuTree")
                     .then(res => {
                         let data = res.data;
@@ -143,10 +147,16 @@
                                 type: 'warning'
                             });
                         }
+                        resolve();
                     }).catch(function (error) {
                     console.log(error);
                 });
-            },
+            });
+            Promise.all([getUserInfoRequest, menuTreeRequest]).then((result) => {
+                this.fullscreenLoading = false;
+            });
+        },
+        methods: {
             rightHandleCommand(command) {
                 if (command === 'logout') {
                     this.$userApi.logout().then(res => {
