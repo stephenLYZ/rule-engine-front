@@ -38,7 +38,7 @@
                          @mouseover="ruleSetDraggable=true"
                          @mouseleave="ruleSetDraggable=false"/>
                     </div>
-                    <el-card class="box-card" style="margin-bottom: 7px;">
+                    <el-card class="box-card" style="margin-bottom: 7px;" shadow="never">
                       <div slot="header" class="box-card-header">
                         <span>条件集</span>
                         <i class="el-icon-circle-plus-outline pointer" @click="addConditionGroup(rs)"
@@ -46,6 +46,7 @@
                       </div>
                       <div>
                         <el-card v-for="cg in rs.conditionGroup" class="box-card conditionGroupCard" :key="cg.id"
+                                 shadow="never"
                                  :body-style="{ padding: '6px 6px 0px 6px' }"
                                  :draggable="conditionGroupDraggable"
                                  v-on:dragstart.native="handleDragStartCG($event, cg)"
@@ -106,7 +107,7 @@
                       </div>
                     </el-card>
 
-                    <el-card class="box-card" style="margin-bottom: 7px;">
+                    <el-card class="box-card" style="margin-bottom: 7px;-webkit-backface-visibility: hidden;" shadow="never">
                       <div slot="header" class="box-card-header">
                         <span>结果</span>
                       </div>
@@ -874,5 +875,4 @@ export default {
 .conditionGroupCard:last-child {
   margin-bottom: 0;
 }
-
 </style>
