@@ -59,9 +59,7 @@
             <el-input-number v-model="scope.row.priority" controls-position="right" :min="1" :max="10"
                              @change="(value)=>{handlePriorityChange(value,scope.row)}"/>
             <span slot="reference"
-                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{
-                scope.row.priority
-              }}</span>
+                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{scope.row.priority}}</span>
           </el-popover>
         </template>
 
@@ -173,10 +171,7 @@
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  {{ getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type) }}
               </el-tag>
-            {{
-                tableData.collConditionHeads[index].leftValue.valueName != null ? tableData.collConditionHeads[index].leftValue.valueName : tableData.collConditionHeads[index].leftValue.value
-              }}
-
+            {{viewConfig(tableData.collConditionHeads[index].leftValue)}}
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                 {{ $common.getSymbolExplanation(tableData.collConditionHeads[index].symbol) }}
@@ -261,9 +256,7 @@
                           disable-transitions>
                     {{ getConditionNamePrefix(scope.row.conditions[index].type) }}
                   </el-tag>
-              {{
-                scope.row.conditions[index].variableValue != null ? scope.row.conditions[index].variableValue : (scope.row.conditions[index].valueName == null ? scope.row.conditions[index].value : scope.row.conditions[index].valueName)
-              }}
+              {{viewConfig(scope.row.conditions[index])}}
             </span>
           </el-popover>
         </template>
@@ -449,9 +442,7 @@
                     disable-transitions>
                     {{ getConditionNamePrefix(scope.row.result.type) }}
                   </el-tag>
-                  {{
-                scope.row.result.variableValue != null ? scope.row.result.variableValue : (scope.row.result.valueName == null ? scope.row.result.value : scope.row.result.valueName)
-              }}
+                  {{viewConfig(scope.row.result)}}
             </span>
           </el-popover>
         </template>
@@ -550,6 +541,9 @@ export default {
   created() {
   },
   methods: {
+    viewConfig(config) {
+      return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
+    },
     getConditionHeadInfo() {
 
     },
@@ -739,7 +733,7 @@ export default {
         this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
       }
       if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type =   this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
       }
       let rowsLength = this.tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
@@ -810,7 +804,7 @@ export default {
       }
       this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
       if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type =   this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
       }
       let rowsLength = this.tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
@@ -1027,10 +1021,10 @@ export default {
               collConditionHead.leftValue.type = this.getType(collConditionHead.leftValue.type, collConditionHead.leftValue.valueType);
             }
             if (da.tableData.collResultHead.type != null) {
-              da.tableData.collResultHead.type =  this.getType(da.tableData.collResultHead.type, da.tableData.collResultHead.valueType);
+              da.tableData.collResultHead.type = this.getType(da.tableData.collResultHead.type, da.tableData.collResultHead.valueType);
             }
             if (da.tableData.collResultHead.defaultAction.type != null) {
-              da.tableData.collResultHead.defaultAction.type =  this.getType(da.tableData.collResultHead.defaultAction.type, da.tableData.collResultHead.defaultAction.valueType);
+              da.tableData.collResultHead.defaultAction.type = this.getType(da.tableData.collResultHead.defaultAction.type, da.tableData.collResultHead.defaultAction.valueType);
             }
             let rowsLength = da.tableData.rows.length;
             for (let i = 0; i < rowsLength; i++) {
