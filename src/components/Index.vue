@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container v-loading.fullscreen.lock="fullscreenLoading">
-      <el-header style="min-width: 1250px">
+      <el-header style="min-width: 1270px">
         <el-row>
           <el-col :span="2">
             <div class="grid-content bg-purple">
@@ -63,7 +63,7 @@
         </el-row>
       </el-header>
       <el-container>
-        <el-aside width="180px">
+        <el-aside width="200px">
           <el-menu
             router :default-active="$route.path"
             class="el-menu-vertical-aside"
