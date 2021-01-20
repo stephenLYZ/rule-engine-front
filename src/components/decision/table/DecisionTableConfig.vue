@@ -224,6 +224,7 @@
                 <el-select v-else-if="scope.row.conditions[index].type===6"
                            v-model="scope.row.conditions[index].value"
                            clearable
+                           style="width: 217px"
                            :disabled="scope.row.conditions[index].type==null"
                            placeholder="请选择数据 ">
                   <el-option label="true" value="true"/>
@@ -236,6 +237,7 @@
                   :disabled="scope.row.conditions[index].type==null"
                   filterable
                   remote
+                  style="width: 217px"
                   clearable
                   placeholder="请输入关键词"
                   :remote-method="(query)=>{leftRemoteMethod(query,scope.row.conditions[index].type,tableData.collConditionHeads[index].leftValue.valueType,tableData.collConditionHeads[index].symbol)}"
@@ -408,6 +410,7 @@
                                  style="width: 217px"/>
 
                 <el-select v-else-if="scope.row.result.type===6" v-model="scope.row.result.value"
+                           style="width: 217px"
                            clearable
                            :disabled="scope.row.result.type==null"
                            placeholder="请选择数据 ">
@@ -419,6 +422,7 @@
                   v-else-if="scope.row.result.type===0||scope.row.result.type===1"
                   v-model="scope.row.result.valueName"
                   filterable
+                  style="width: 217px"
                   :disabled="scope.row.result.type==null"
                   remote
                   clearable
