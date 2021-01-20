@@ -1,7 +1,5 @@
 # 📌 规则引擎前端 RuleEngine 📌
 
-前端写的不够优秀刚刚开放，见笑，欢迎有能力的大神合作开发！
-
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![GitHub Stars](https://img.shields.io/github/stars/DingQianWen/rule-engine-front)](https://github.com/DingQianWen/rule-engine-front/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/DingQianWen/rule-engine-front)](https://github.com/DingQianWen/rule-engine-front/fork)
