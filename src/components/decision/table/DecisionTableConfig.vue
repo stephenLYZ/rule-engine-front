@@ -982,13 +982,13 @@ export default {
     getType(type, valueType) {
       if (type > 1) {
         if (valueType === "COLLECTION") {
-          return 5;
+          return 8;
         } else if (valueType === "STRING") {
-          return 2;
+          return 5;
         } else if (valueType === "BOOLEAN") {
-          return 3;
+          return 6;
         } else if (valueType === "NUMBER") {
-          return 4;
+          return 7;
         }
       }
       return type;
