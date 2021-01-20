@@ -11,17 +11,7 @@
 
     <el-row v-loading="loading">
       <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="box-card-header">
-            <span>异常报警</span>
-          </div>
-          <div>
-            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false" disabled/>
-            <br>
-            <br>
-            <el-input v-model="abnormalAlarm.email" type="textarea" :readonly="true"/>
-          </div>
-        </el-card>
+       &nbsp;
       </el-col>
       <el-col :span="12">
         <el-row>
@@ -46,9 +36,7 @@
                         <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                           {{getConditionNamePrefix(c.condition.config.leftValue.type)}}
                         </el-tag>
-                        <span style="color: #606266">
-                          {{viewConfig(c.condition.config.leftValue)}}
-                        </span>
+                        <span style="color: #606266">{{c.condition.config.leftValue.variableValue!=null?c.condition.config.leftValue.variableValue:c.condition.config.leftValue.valueName}}</span>
 
                         &nbsp;
                         <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
@@ -59,9 +47,7 @@
                         <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                           {{ getConditionNamePrefix(c.condition.config.rightValue.type)}}
                         </el-tag>
-                        <span style="color: #606266">
-                          {{viewConfig(c.condition.config.rightValue)}}
-                        </span>
+                        <span style="color: #606266"> {{c.condition.config.rightValue.variableValue!=null?c.condition.config.rightValue.variableValue:c.condition.config.rightValue.valueName}}</span>
                       </el-tag>
 
                       <br>
@@ -218,15 +204,8 @@
                     loading: false,
                     options: [],
                 },
-                abnormalAlarm: {
-                    enable: false,
-                    email: ''
-                }
             }
         }, methods: {
-            viewConfig(config) {
-              return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
-            },
             runGoBack() {
                 this.runPercentage = 10;
                 this.runEnd = false;
@@ -332,10 +311,6 @@
                             this.defaultAction.valueName = da.defaultAction.valueName;
                             this.defaultAction.variableValue = da.defaultAction.variableValue;
                         }
-                        this.abnormalAlarm = {
-                            "enable": da.abnormalAlarm.enable,
-                            "email": da.abnormalAlarm.email.join(',')
-                        };
                         this.request.param = da.parameters;
                     }
                     this.loading = false;

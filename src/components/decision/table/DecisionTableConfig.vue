@@ -1040,12 +1040,6 @@ export default {
             }
           }
           this.tableData = da.tableData;
-          if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
-            this.abnormalAlarm = {
-              "enable": da.abnormalAlarm.enable,
-              "email": da.abnormalAlarm.email.join(',')
-            }
-          }
         }
         this.loading = false;
       }).catch(function (error) {

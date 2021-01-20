@@ -303,12 +303,6 @@
                         // default rule
                         this.enableDefaultRule = da.enableDefaultRule;
                         this.defaultRule = da.defaultRule;
-                        if (da.abnormalAlarm != null) {
-                            this.abnormalAlarm = {
-                                "enable": da.abnormalAlarm.enable,
-                                "email": da.abnormalAlarm.email.join(',')
-                            }
-                        }
                         this.request.param = da.parameters;
                     }
                     this.loading = false;

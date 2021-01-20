@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container v-loading.fullscreen.lock="fullscreenLoading">
-      <el-header style="min-width: 1300px">
+      <el-header style="min-width: 1250px">
         <el-row>
           <el-col :span="2">
             <div class="grid-content bg-purple">
@@ -92,7 +92,7 @@
 
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1120px">
+        <el-main style="min-width: 1070px">
           <router-view/>
         </el-main>
       </el-container>

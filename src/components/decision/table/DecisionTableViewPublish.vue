@@ -304,13 +304,6 @@
                         this.workspaceCode = da.workspaceCode;
                         this.strategyType = da.strategyType;
                         this.tableData = da.tableData;
-                        if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
-                            this.abnormalAlarm = {
-                                "enable": da.abnormalAlarm.enable,
-                                "email": da.abnormalAlarm.email.join(',')
-                            }
-                        }
-
                         let param = {};
                         if (da.parameters != null && da.parameters.length !== 0) {
                             da.parameters.forEach((e) => {

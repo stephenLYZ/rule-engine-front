@@ -11,17 +11,7 @@
 
     <el-row v-loading="loading">
       <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="box-card-header">
-            <span>异常报警</span>
-          </div>
-          <div>
-            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false" disabled/>
-            <br>
-            <br>
-            <el-input v-model="abnormalAlarm.email" type="textarea" :readonly="true"/>
-          </div>
-        </el-card>
+        &nbsp;
       </el-col>
       <el-col :span="12">
         <el-row>
@@ -232,10 +222,6 @@
           loading: false,
           options: [],
         },
-        abnormalAlarm: {
-          enable: false,
-          email: ''
-        }
       }
     }, methods: {
       viewConfig(config) {
@@ -315,10 +301,6 @@
               this.defaultAction.valueName = da.defaultAction.valueName;
               this.defaultAction.variableValue = da.defaultAction.variableValue;
             }
-            this.abnormalAlarm = {
-              "enable": da.abnormalAlarm.enable,
-              "email": da.abnormalAlarm.email.join(',')
-            };
             let param = {};
             if (da.parameters != null && da.parameters.length !== 0) {
               da.parameters.forEach((e) => {

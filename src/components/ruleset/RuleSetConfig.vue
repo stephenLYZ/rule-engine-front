@@ -329,10 +329,6 @@
                     ruleSet: [],
                 },
                 strategyType: 1,
-                abnormalAlarm: {
-                    enable: false,
-                    email: "",
-                },
                 actionOptions: [],
                 actionLoading: false,
                 enableDefaultRule: false,
@@ -472,10 +468,6 @@
                                     })),
                                     "enableDefaultRule": this.enableDefaultRule,
                                     "strategyType": this.strategyType,
-                                    "abnormalAlarm": {
-                                        "enable": this.abnormalAlarm.enable,
-                                        "email": this.abnormalAlarm.email.split(",")
-                                    },
                                     "defaultRule": {
                                         id: this.defaultRule.id,
                                         name: this.defaultRule.name,
@@ -520,10 +512,6 @@
                     })),
                     "enableDefaultRule": this.enableDefaultRule,
                     "strategyType": this.strategyType,
-                    "abnormalAlarm": {
-                        "enable": this.abnormalAlarm.enable,
-                        "email": this.abnormalAlarm.email.split(",")
-                    },
                     "defaultRule": {
                         id: this.defaultRule.id,
                         name: this.defaultRule.name,
@@ -796,12 +784,6 @@
                         // default rule
                         this.enableDefaultRule = da.enableDefaultRule;
                         this.defaultRule = da.defaultRule;
-                        if (da.abnormalAlarm != null) {
-                            this.abnormalAlarm = {
-                                "enable": da.abnormalAlarm.enable,
-                                "email": da.abnormalAlarm.email.join(',')
-                            }
-                        }
                     }
                     this.loading = false;
                 }).catch(function (error) {

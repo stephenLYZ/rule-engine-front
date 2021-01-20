@@ -329,12 +329,6 @@
                         this.workspaceCode = da.workspaceCode;
                         this.strategyType = da.strategyType;
                         this.tableData = da.tableData;
-                        if (da.abnormalAlarm != null && da.abnormalAlarm.enable) {
-                            this.abnormalAlarm = {
-                                "enable": da.abnormalAlarm.enable,
-                                "email": da.abnormalAlarm.email.join(',')
-                            }
-                        }
                         this.request.param = da.parameters;
                     }
                     this.loading = false;
