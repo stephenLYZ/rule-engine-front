@@ -39,20 +39,21 @@
                             <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                               {{getConditionNamePrefix(c.condition.config.leftValue.type)}}
                             </el-tag>
-                            <span style="color: #606266">{{c.condition.config.leftValue.variableValue!=null?c.condition.config.leftValue.variableValue:c.condition.config.leftValue.valueName}}</span>
-
+                            <span style="color: #606266">
+                                {{viewConfig(c.condition.config.leftValue)}}
+                            </span>
                             &nbsp;
                             <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                               {{c.condition.config.symbol}}
                             </el-tag>
-
                             &nbsp;
                             <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                               {{ getConditionNamePrefix(c.condition.config.rightValue.type)}}
                             </el-tag>
-                            <span style="color: #606266"> {{c.condition.config.rightValue.variableValue!=null?c.condition.config.rightValue.variableValue:c.condition.config.rightValue.valueName}}</span>
+                            <span style="color: #606266">
+                                {{viewConfig(c.condition.config.rightValue)}}
+                            </span>
                           </el-tag>
-
                           <br>
                           <span style="color: #606266;font-size: 14px;">   {{cg.conditionGroupCondition.length-1===ci?'':'并且'}}</span>
                         </div>
@@ -62,7 +63,7 @@
                     <br>
                     <div style="margin-left: 20px;">
                       <el-alert :closable="false" type="success" style="padding: 6px 0 8px 0">
-                        {{rs.action.variableValue!=null?rs.action.variableValue:(rs.action.valueName===''?'空':rs.action.valueName)}}
+                        {{viewConfig(rs.action)}}
                       </el-alert>
                     </div>
                   </div>
@@ -203,6 +204,9 @@
             }
         },
         methods: {
+            viewConfig(config) {
+              return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
+            },
             runGoBack() {
                 this.runPercentage = 10;
                 this.runEnd = false;

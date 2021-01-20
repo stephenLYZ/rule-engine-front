@@ -131,8 +131,7 @@
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  {{getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type)}}
               </el-tag>
-            {{tableData.collConditionHeads[index].leftValue.valueName!=null?tableData.collConditionHeads[index].leftValue.valueName:tableData.collConditionHeads[index].leftValue.value}}
-
+               {{viewConfig(tableData.collConditionHeads[index].leftValue)}}
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                 {{$common.getSymbolExplanation(tableData.collConditionHeads[index].symbol)}}
@@ -148,7 +147,7 @@
                           disable-transitions>
                     {{getConditionNamePrefix(scope.row.conditions[index].type)}}
                   </el-tag>
-                  {{scope.row.conditions[index].variableValue!=null?scope.row.conditions[index].variableValue:scope.row.conditions[index].value}}
+                  {{viewConfig(scope.row.conditions[index])}}
             </span>
         </template>
       </el-table-column>
@@ -172,7 +171,7 @@
                     disable-transitions>
                     {{getConditionNamePrefix(scope.row.result.type)}}
                   </el-tag>
-                  {{scope.row.result.variableValue!=null?scope.row.result.variableValue:(scope.row.result.valueName==null?scope.row.result.value:scope.row.result.valueName)}}
+                  {{viewConfig(scope.row.result)}}
             </span>
         </template>
       </el-table-column>
@@ -235,6 +234,9 @@
         created() {
         },
         methods: {
+            viewConfig(config) {
+              return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
+            },
             run() {
                 this.runEnd = false;
                 this.runPercentage = 20;
