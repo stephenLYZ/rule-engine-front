@@ -734,6 +734,9 @@ export default {
       if (this.tableData.collResultHead.type != null) {
         this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
       }
+      if (this.tableData.collResultHead.defaultAction.type != null) {
+        this.tableData.collResultHead.defaultAction.type =   this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+      }
       let rowsLength = this.tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
         let row = this.tableData.rows[i];
@@ -802,7 +805,9 @@ export default {
         return;
       }
       this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
-
+      if (this.tableData.collResultHead.defaultAction.type != null) {
+        this.tableData.collResultHead.defaultAction.type =   this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+      }
       let rowsLength = this.tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
         let row = this.tableData.rows[i];
@@ -870,6 +875,9 @@ export default {
     },
     actionValueTypeChange(da) {
       da.defaultAction.type = null;
+      da.defaultAction.value = null;
+      da.defaultAction.valueType = null;
+      da.defaultAction.valueName = null;
       da.value = undefined;
       da.valueName = null;
       // 如果是变量或者元素
@@ -1016,6 +1024,9 @@ export default {
             }
             if (da.tableData.collResultHead.type != null) {
               da.tableData.collResultHead.type =  this.getType(da.tableData.collResultHead.type, da.tableData.collResultHead.valueType);
+            }
+            if (da.tableData.collResultHead.defaultAction.type != null) {
+              da.tableData.collResultHead.defaultAction.type =  this.getType(da.tableData.collResultHead.defaultAction.type, da.tableData.collResultHead.defaultAction.valueType);
             }
             let rowsLength = da.tableData.rows.length;
             for (let i = 0; i < rowsLength; i++) {
