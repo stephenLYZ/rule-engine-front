@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="75px">
-      <el-form-item label="规则名称" prop="name">
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="60px">
+      <el-form-item label="名称" prop="name">
         <el-input v-model="search.form.name"/>
       </el-form-item>
-      <el-form-item label="规则编码" prop="code">
+      <el-form-item label="编码" prop="code">
         <el-input v-model="search.form.code"/>
       </el-form-item>
-      <el-form-item label="规则状态">
+      <el-form-item label="状态">
         <el-select v-model="search.form.status"
                    placeholder="请选择数据 ">
           <el-option label="全部" :value="null"/>
@@ -39,7 +39,8 @@
       </el-table-column>
       <el-table-column
         prop="name"
-        label="规则名称">
+        min-width="200"
+        label="名称">
       </el-table-column>
 
       <el-table-column
@@ -55,7 +56,7 @@
       </el-table-column>
 
       <el-table-column
-        label="规则状态"
+        label="状态"
         width="180">
         <template slot-scope="scope">
           <!-- !scope.row.isPublish 防止消息队列延迟-->

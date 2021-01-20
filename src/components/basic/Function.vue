@@ -124,6 +124,7 @@
       </el-table-column>
       <el-table-column
         prop="name"
+        min-width="200"
         label="名称">
       </el-table-column>
       <el-table-column

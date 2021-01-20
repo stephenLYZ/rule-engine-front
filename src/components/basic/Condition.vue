@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
 
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
@@ -265,9 +265,9 @@
         label="名称"
         width="200">
       </el-table-column>
-
       <el-table-column
         prop="configInfo"
+        min-width="200"
         label="配置信息">
       </el-table-column>
 

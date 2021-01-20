@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container v-loading.fullscreen.lock="fullscreenLoading">
-      <el-header style="min-width: 1500px">
+      <el-header style="min-width: 1300px">
         <el-row>
           <el-col :span="2">
             <div class="grid-content bg-purple">
@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="3">
             <div style="width: 100%;line-height: 60px;" class="header_left">
-              &nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;
               <el-badge :value="4" type="warning">
                 <el-dropdown trigger="hover">
                 <span class="el-dropdown-link pointer">
@@ -64,7 +64,7 @@
         </el-row>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="180px">
           <el-menu
             router :default-active="$route.path"
             class="el-menu-vertical-aside"
@@ -93,7 +93,7 @@
 
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1300px">
+        <el-main style="min-width: 1120px">
           <router-view/>
         </el-main>
       </el-container>
