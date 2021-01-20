@@ -14,8 +14,7 @@
             </div>
           </el-col>
           <el-col :span="3">
-            <div style="width: 100%;line-height: 60px;" class="header_left">
-              &nbsp;
+            <div style="width: 100%;line-height: 60px;text-align: right" class="header_left">
               <el-badge :value="4" type="warning">
                 <el-dropdown trigger="hover">
                 <span class="el-dropdown-link pointer">
