@@ -14,7 +14,7 @@
             </div>
           </el-col>
           <el-col :span="3">
-            <div style="width: 100%;line-height: 60px;text-align: right" class="header_left">
+            <div style="line-height: 60px;text-align: right" class="header_left">
               <el-badge :value="4" type="warning">
                 <el-dropdown trigger="hover">
                 <span class="el-dropdown-link pointer">
@@ -46,10 +46,10 @@
                                                     style="color: #606266;cursor: pointer"/></a>
               &nbsp;&nbsp;&nbsp;
               <el-dropdown @command="rightHandleCommand" trigger="click">
-                <span class="el-dropdown-link username pointer">
+                <span class="el-dropdown-link pointer">
                   {{username}}&nbsp;<i class="el-icon-arrow-down"/>
                 </span>
-                <el-dropdown-menu slot="dropdown" style="width: 96px">
+                <el-dropdown-menu slot="dropdown" style="width: 100px">
                   <el-dropdown-item command="userInfo">个人信息</el-dropdown-item>
                   <el-dropdown-item command="logout" divided>退出</el-dropdown-item>
                 </el-dropdown-menu>
@@ -233,10 +233,6 @@
   .logo {
     width: 180px;
     height: 59px;
-  }
-
-  .user {
-    text-align: right;
   }
 
 </style>
