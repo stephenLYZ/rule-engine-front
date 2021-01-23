@@ -181,7 +181,7 @@
                   <br>
                   <br>
                   <el-form-item prop="action.type" class="el-col-6"
-                                :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}:{}">
+                                :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}:{required: false}">
                     <el-select v-model="defaultRule.action.type"
                                @change="defaultRuleTypeChange()">
                       <el-option label="元素" :value="0"/>
@@ -200,7 +200,7 @@
                     &nbsp;
                   </el-form-item>
                   <el-form-item prop="action.value" class="el-col-17"
-                                :rules="enableDefaultRule===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{}">
+                                :rules="enableDefaultRule===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{required: false}">
 
                     <el-select v-if="defaultRule.action.type===3" v-model="defaultRule.action.value"
                                :disabled="defaultRule.action.type==null">
@@ -331,7 +331,7 @@
                 strategyType: 1,
                 actionOptions: [],
                 actionLoading: false,
-                enableDefaultRule: false,
+                enableDefaultRule: 0,
                 defaultRule: {
                     id: null,
                     name: "默认规则",
