@@ -180,7 +180,7 @@
                   <el-switch v-model="enableDefaultRule" :active-value="0" :inactive-value="1"/>
                   <br>
                   <br>
-                  <el-form-item prop="action.valueType" class="el-col-6"
+                  <el-form-item prop="action.type" class="el-col-6"
                                 :rules="enableDefaultRule===0? {required: true, message: '请选择结果类型', trigger:  ['blur', 'change']}:{}">
                     <el-select v-model="defaultRule.action.type"
                                @change="defaultRuleTypeChange()">
