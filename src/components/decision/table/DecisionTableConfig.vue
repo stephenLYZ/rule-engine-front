@@ -944,7 +944,10 @@ export default {
       cch.valueType = item.valueType;
       cch.value = item.id;
       cch.valueName = item.name;
-      cch.variableValue = item.value;
+      // 函数时显示函数名称
+      if (item.type !== 3) {
+        cch.variableValue = item.value;
+      }
       // 变更运算符
       this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
     },
