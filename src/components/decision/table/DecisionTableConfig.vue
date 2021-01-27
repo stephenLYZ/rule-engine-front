@@ -124,14 +124,13 @@
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
-                    @clear="tableData.collConditionHeads[index].leftValue.valueName=null"
-                    @change="tableData.collConditionHeads[index].symbol=null">
+                    @clear="tableData.collConditionHeads[index].leftValue.valueName=null">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item,tableData.collConditionHeads[index].leftValue,index)">
+                      @click.native="leftSelectClick(item,index)">
                     </el-option>
                   </el-select>
 
@@ -923,7 +922,11 @@ export default {
       cch.valueName = item.name;
       cch.variableValue = item.variableValue;
     },
-    leftSelectClick(item, cch, index) {
+    leftSelectClick(item, index) {
+      let collConditionHead = this.tableData.collConditionHeads[index];
+      let cch = collConditionHead.leftValue;
+      // 清除运算符
+      collConditionHead.symbol = null;
       // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
       if (cch.valueType !== item.valueType) {
         this.tableData.rows.forEach((f) => {
