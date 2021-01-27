@@ -86,18 +86,19 @@
                   <el-input v-model="tableData.collConditionHeads[index].name"/>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型"
-                             @change="leftValueTypeChange(tableData.collConditionHeads[index],index)">
-                    <el-option label="元素" :value="0"/>
-                    <el-option label="变量" :value="1"/>
+                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型">
+                    <el-option label="元素" :value="0"
+                               @click.native="leftValueTypeChange(index,null)"/>
+                    <el-option label="变量" :value="1"
+                               @click.native="leftValueTypeChange(index,null)"/>
                     <el-option label="字符串" :value="5"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='STRING'"/>
+                               @click.native="leftValueTypeChange(index,'STRING')"/>
                     <el-option label="布尔" :value="6"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='BOOLEAN'"/>
+                               @click.native="leftValueTypeChange(index,'BOOLEAN')"/>
                     <el-option label="数值" :value="7"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='NUMBER'"/>
+                               @click.native="leftValueTypeChange(index,'NUMBER')"/>
                     <el-option label="集合" :value="8"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='COLLECTION'"/>
+                               @click.native="leftValueTypeChange(index,'COLLECTION')"/>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="值">
@@ -875,7 +876,8 @@ export default {
         };
       });
     },
-    leftValueTypeChange(cch, index) {
+    leftValueTypeChange(index, valueType) {
+      let cch = this.tableData.collConditionHeads[index];
       cch.leftValue.value = undefined;
       cch.leftValue.variableValue = null;
       cch.leftValue.valueName = null;
@@ -884,10 +886,10 @@ export default {
       this.leftSelect.options = [];
       cch.symbol = null;
       // 选择变量或者元素不会出发删除单元格数据
-      if (cch.leftValue.type === 0 || cch.leftValue.type === 1) {
+      if (valueType == null) {
         return;
       }
-      if (cch.leftValue.valueType != null) {
+      if (cch.leftValue.valueType !== valueType) {
         // 条件头修改后，此列下所有单元格清空
         this.tableData.rows.forEach((f) => {
           this.$set(f.conditions, index, {
