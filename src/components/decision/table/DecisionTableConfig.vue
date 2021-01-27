@@ -59,7 +59,9 @@
             <el-input-number v-model="scope.row.priority" controls-position="right" :min="1" :max="10"
                              @change="(value)=>{handlePriorityChange(value,scope.row)}"/>
             <span slot="reference"
-                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{scope.row.priority}}</span>
+                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{
+                scope.row.priority
+              }}</span>
           </el-popover>
         </template>
 
@@ -123,13 +125,13 @@
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
                     @clear="tableData.collConditionHeads[index].leftValue.valueName=null"
-                    @change="headConditionValueChange(tableData.collConditionHeads[index],index)">
+                    @change="tableData.collConditionHeads[index].symbol=null">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item,tableData.collConditionHeads[index].leftValue)">
+                      @click.native="leftSelectClick(item,tableData.collConditionHeads[index].leftValue,index)">
                     </el-option>
                   </el-select>
 
@@ -171,7 +173,7 @@
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  {{ getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type) }}
               </el-tag>
-            {{viewConfig(tableData.collConditionHeads[index].leftValue)}}
+            {{ viewConfig(tableData.collConditionHeads[index].leftValue) }}
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                 {{ $common.getSymbolExplanation(tableData.collConditionHeads[index].symbol) }}
@@ -256,7 +258,7 @@
                           disable-transitions>
                     {{ getConditionNamePrefix(scope.row.conditions[index].type) }}
                   </el-tag>
-              {{viewConfig(scope.row.conditions[index])}}
+              {{ viewConfig(scope.row.conditions[index]) }}
             </span>
           </el-popover>
         </template>
@@ -442,7 +444,7 @@
                     disable-transitions>
                     {{ getConditionNamePrefix(scope.row.result.type) }}
                   </el-tag>
-                  {{viewConfig(scope.row.result)}}
+                  {{ viewConfig(scope.row.result) }}
             </span>
           </el-popover>
         </template>
@@ -700,20 +702,6 @@ export default {
         row.priority = 0;
       }
     },
-    headConditionValueChange(cch, index) {
-      // 清除运算符
-      cch.symbol = null;
-      // 条件头修改后，此列下所有单元格清空 此次待优化，如果valueType没有修改，则不会执行以下代码
-      this.tableData.rows.forEach((f) => {
-        this.$set(f.conditions, index, {
-          value: null,
-          valueName: null,
-          valueType: null,
-          variableValue: null,
-          type: null,
-        });
-      });
-    },
     handlePopover(cch) {
       this.symbolSelect.options = [];
       if (cch.leftValue.valueType != null) {
@@ -878,11 +866,6 @@ export default {
       da.defaultAction.valueName = null;
       da.value = undefined;
       da.valueName = null;
-      // 如果是变量或者元素
-      if (da.type === 1 || da.type === 0) {
-        da.valueType = null;
-      }
-      this.leftSelect.options = [];
       this.tableData.rows.forEach((f) => {
         f.result = {
           value: undefined,
@@ -894,6 +877,17 @@ export default {
       });
     },
     leftValueTypeChange(cch, index) {
+      cch.leftValue.value = undefined;
+      cch.leftValue.variableValue = null;
+      cch.leftValue.valueName = null;
+      // 变更运算符
+      this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
+      this.leftSelect.options = [];
+      cch.symbol = null;
+      // 选择变量或者元素不会出发删除单元格数据
+      if (cch.leftValue.type === 0 || cch.leftValue.type === 1) {
+        return;
+      }
       if (cch.leftValue.valueType != null) {
         // 条件头修改后，此列下所有单元格清空
         this.tableData.rows.forEach((f) => {
@@ -906,17 +900,6 @@ export default {
           });
         });
       }
-      cch.leftValue.value = undefined;
-      cch.leftValue.valueName = null;
-      // 如果是变量或者元素
-      if (cch.leftValue.type === 1 || cch.leftValue.type === 0) {
-        cch.leftValue.valueType = null;
-      } else {
-        //变更运算符
-        this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
-      }
-      this.leftSelect.options = [];
-      cch.symbol = null;
     },
     isRightTypeSelectView(valueType, cch) {
       if (cch.leftValue.valueType === null) {
@@ -940,7 +923,19 @@ export default {
       cch.valueName = item.name;
       cch.variableValue = item.variableValue;
     },
-    leftSelectClick(item, cch) {
+    leftSelectClick(item, cch, index) {
+      // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
+      if (cch.valueType !== item.valueType) {
+        this.tableData.rows.forEach((f) => {
+          this.$set(f.conditions, index, {
+            value: null,
+            valueName: null,
+            valueType: null,
+            variableValue: null,
+            type: null,
+          });
+        });
+      }
       cch.valueType = item.valueType;
       cch.value = item.id;
       cch.valueName = item.name;
