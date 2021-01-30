@@ -317,8 +317,9 @@
             },
             getDecisionTableView() {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/decisionTable/getViewDecisionTable", {
-                    "id": this.id
+                this.$axios.post("/ruleEngine/decisionTable/view", {
+                    "id": this.id,
+                    "type": 1
                 }).then(res => {
                     let da = res.data;
                     if (da != null) {

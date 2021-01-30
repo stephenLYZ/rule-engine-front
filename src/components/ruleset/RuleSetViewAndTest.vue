@@ -287,8 +287,9 @@
             },
             getRuleSetView(id) {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/ruleSet/getViewRuleSet", {
-                    "id": id
+                this.$axios.post("/ruleEngine/ruleSet/view", {
+                    "id": id,
+                    "type": 1
                 }).then(res => {
                     let da = res.data;
                     if (da != null) {

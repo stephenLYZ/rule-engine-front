@@ -291,8 +291,9 @@
             },
             getPublishRuleSet(id) {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/ruleSet/getPublishRuleSet", {
-                    "id": id
+                this.$axios.post("/ruleEngine/ruleSet/view", {
+                    "id": id,
+                    "type": 2
                 }).then(res => {
                     let da = res.data;
                     if (da != null) {

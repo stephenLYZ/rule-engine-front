@@ -286,8 +286,9 @@
             },
             getRuleView(id) {
                 this.loading = true;
-                this.$axios.post("/ruleEngine/generalRule/getViewRule", {
-                    "id": id
+                this.$axios.post("/ruleEngine/generalRule/view", {
+                    "id": id,
+                    "type": 1
                 }).then(res => {
                     let da = res.data;
                     if (da != null) {
