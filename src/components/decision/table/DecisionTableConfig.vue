@@ -59,7 +59,9 @@
             <el-input-number v-model="scope.row.priority" controls-position="right" :min="1" :max="10"
                              @change="(value)=>{handlePriorityChange(value,scope.row)}"/>
             <span slot="reference"
-                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{scope.row.priority}}</span>
+                  style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">{{
+                scope.row.priority
+              }}</span>
           </el-popover>
         </template>
 
@@ -84,18 +86,19 @@
                   <el-input v-model="tableData.collConditionHeads[index].name"/>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型"
-                             @change="leftValueTypeChange(tableData.collConditionHeads[index],index)">
-                    <el-option label="元素" :value="0"/>
-                    <el-option label="变量" :value="1"/>
+                  <el-select v-model="tableData.collConditionHeads[index].leftValue.type" placeholder="请选择数据类型">
+                    <el-option label="元素" :value="0"
+                               @click.native="leftValueTypeChange(index,null)"/>
+                    <el-option label="变量" :value="1"
+                               @click.native="leftValueTypeChange(index,null)"/>
                     <el-option label="字符串" :value="5"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='STRING'"/>
+                               @click.native="leftValueTypeChange(index,'STRING')"/>
                     <el-option label="布尔" :value="6"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='BOOLEAN'"/>
+                               @click.native="leftValueTypeChange(index,'BOOLEAN')"/>
                     <el-option label="数值" :value="7"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='NUMBER'"/>
+                               @click.native="leftValueTypeChange(index,'NUMBER')"/>
                     <el-option label="集合" :value="8"
-                               @click.native="tableData.collConditionHeads[index].leftValue.valueType='COLLECTION'"/>
+                               @click.native="leftValueTypeChange(index,'COLLECTION')"/>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="值">
@@ -122,14 +125,13 @@
                     placeholder="请输入关键词"
                     :remote-method="(query)=>{leftRemoteMethod(query,tableData.collConditionHeads[index].leftValue.type,null,null)}"
                     :loading="leftSelect.loading"
-                    @clear="tableData.collConditionHeads[index].leftValue.valueName=null"
-                    @change="headConditionValueChange(tableData.collConditionHeads[index],index)">
+                    @clear="tableData.collConditionHeads[index].leftValue.valueName=null">
                     <el-option
                       v-for="item in leftSelect.options"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
-                      @click.native="leftSelectClick(item,tableData.collConditionHeads[index].leftValue)">
+                      @click.native="leftSelectClick(item,index)">
                     </el-option>
                   </el-select>
 
@@ -171,7 +173,7 @@
                      style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                  {{ getConditionNamePrefix(tableData.collConditionHeads[index].leftValue.type) }}
               </el-tag>
-            {{viewConfig(tableData.collConditionHeads[index].leftValue)}}
+            {{ viewConfig(tableData.collConditionHeads[index].leftValue) }}
               <el-tag v-if="tableData.collConditionHeads[index].symbol!=null" type="warning"
                       style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                 {{ $common.getSymbolExplanation(tableData.collConditionHeads[index].symbol) }}
@@ -256,7 +258,7 @@
                           disable-transitions>
                     {{ getConditionNamePrefix(scope.row.conditions[index].type) }}
                   </el-tag>
-              {{viewConfig(scope.row.conditions[index])}}
+              {{ viewConfig(scope.row.conditions[index]) }}
             </span>
           </el-popover>
         </template>
@@ -442,7 +444,7 @@
                     disable-transitions>
                     {{ getConditionNamePrefix(scope.row.result.type) }}
                   </el-tag>
-                  {{viewConfig(scope.row.result)}}
+                  {{ viewConfig(scope.row.result) }}
             </span>
           </el-popover>
         </template>
@@ -700,20 +702,6 @@ export default {
         row.priority = 0;
       }
     },
-    headConditionValueChange(cch, index) {
-      // 清除运算符
-      cch.symbol = null;
-      // 条件头修改后，此列下所有单元格清空 此次待优化，如果valueType没有修改，则不会执行以下代码
-      this.tableData.rows.forEach((f) => {
-        this.$set(f.conditions, index, {
-          value: null,
-          valueName: null,
-          valueType: null,
-          variableValue: null,
-          type: null,
-        });
-      });
-    },
     handlePopover(cch) {
       this.symbolSelect.options = [];
       if (cch.leftValue.valueType != null) {
@@ -878,11 +866,6 @@ export default {
       da.defaultAction.valueName = null;
       da.value = undefined;
       da.valueName = null;
-      // 如果是变量或者元素
-      if (da.type === 1 || da.type === 0) {
-        da.valueType = null;
-      }
-      this.leftSelect.options = [];
       this.tableData.rows.forEach((f) => {
         f.result = {
           value: undefined,
@@ -893,8 +876,20 @@ export default {
         };
       });
     },
-    leftValueTypeChange(cch, index) {
-      if (cch.leftValue.valueType != null) {
+    leftValueTypeChange(index, valueType) {
+      let cch = this.tableData.collConditionHeads[index];
+      cch.leftValue.value = undefined;
+      cch.leftValue.variableValue = null;
+      cch.leftValue.valueName = null;
+      // 变更运算符
+      this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
+      this.leftSelect.options = [];
+      cch.symbol = null;
+      // 选择变量或者元素不会出发删除单元格数据
+      if (valueType == null) {
+        return;
+      }
+      if (cch.leftValue.valueType !== valueType) {
         // 条件头修改后，此列下所有单元格清空
         this.tableData.rows.forEach((f) => {
           this.$set(f.conditions, index, {
@@ -906,17 +901,7 @@ export default {
           });
         });
       }
-      cch.leftValue.value = undefined;
-      cch.leftValue.valueName = null;
-      // 如果是变量或者元素
-      if (cch.leftValue.type === 1 || cch.leftValue.type === 0) {
-        cch.leftValue.valueType = null;
-      } else {
-        //变更运算符
-        this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
-      }
-      this.leftSelect.options = [];
-      cch.symbol = null;
+      cch.leftValue.valueType = valueType;
     },
     isRightTypeSelectView(valueType, cch) {
       if (cch.leftValue.valueType === null) {
@@ -940,11 +925,30 @@ export default {
       cch.valueName = item.name;
       cch.variableValue = item.variableValue;
     },
-    leftSelectClick(item, cch) {
+    leftSelectClick(item, index) {
+      let collConditionHead = this.tableData.collConditionHeads[index];
+      let cch = collConditionHead.leftValue;
+      // 清除运算符
+      collConditionHead.symbol = null;
+      // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
+      if (cch.valueType !== item.valueType) {
+        this.tableData.rows.forEach((f) => {
+          this.$set(f.conditions, index, {
+            value: null,
+            valueName: null,
+            valueType: null,
+            variableValue: null,
+            type: null,
+          });
+        });
+      }
       cch.valueType = item.valueType;
       cch.value = item.id;
       cch.valueName = item.name;
-      cch.variableValue = item.value;
+      // 函数时显示函数名称
+      if (item.type !== 3) {
+        cch.variableValue = item.value;
+      }
       // 变更运算符
       this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
     },
