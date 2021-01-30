@@ -901,6 +901,7 @@ export default {
           });
         });
       }
+      cch.leftValue.valueType = valueType;
     },
     isRightTypeSelectView(valueType, cch) {
       if (cch.leftValue.valueType === null) {
