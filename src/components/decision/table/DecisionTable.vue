@@ -60,7 +60,7 @@
         width="180">
         <template slot-scope="scope">
           <!-- !scope.row.isPublish 防止消息队列延迟-->
-          <el-tag v-if="scope.row.isPublish||(!scope.row.isPublish&&scope.row.status===2)" @click="show(scope.row)"
+          <el-tag v-if="scope.row.publishVersion!==null" @click="show(scope.row)"
                   size="medium" effect="plain" style="cursor: pointer">
             （ 已发布 ）
           </el-tag>
