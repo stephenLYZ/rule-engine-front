@@ -146,6 +146,7 @@
                                :disabled="tableData.collConditionHeads[index].leftValue.valueType==null">
                       <el-option
                         v-for="item in symbolSelect.options"
+                        @click.native="symbolSelectClick(item.name,index)"
                         :key="item.name"
                         :label="item.explanation"
                         :value="item.name">
@@ -157,12 +158,12 @@
                   </el-col>
                 </el-form-item>
               </el-form>
-              <el-button type="primary" size="mini" style="float: right;"
-                         @click="tableData.collConditionHeads[index].visible = false">确认
-              </el-button>
-              <el-button size="mini" style="float: right;margin-right: 12px;"
-                         @click="tableData.collConditionHeads[index].visible = false">取消
-              </el-button>
+<!--              <el-button type="primary" size="mini" style="float: right;"-->
+<!--                         @click="tableData.collConditionHeads[index].visible = false">确认-->
+<!--              </el-button>-->
+<!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
+<!--                         @click="tableData.collConditionHeads[index].visible = false">取消-->
+<!--              </el-button>-->
             </div>
 
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
@@ -355,12 +356,12 @@
                             :disabled="tableData.collResultHead.defaultAction.type==null"/>
                 </el-form-item>
               </el-form>
-              <el-button type="primary" size="mini" style="float: right;"
-                         @click="tableData.collResultHead.visible = false">确认
-              </el-button>
-              <el-button size="mini" style="float: right;margin-right: 12px;"
-                         @click="tableData.collResultHead.visible = false">取消
-              </el-button>
+<!--              <el-button type="primary" size="mini" style="float: right;"-->
+<!--                         @click="tableData.collResultHead.visible = false">确认-->
+<!--              </el-button>-->
+<!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
+<!--                         @click="tableData.collResultHead.visible = false">取消-->
+<!--              </el-button>-->
             </div>
 
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
@@ -884,7 +885,6 @@ export default {
       // 变更运算符
       this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
       this.leftSelect.options = [];
-      cch.symbol = null;
       // 选择变量或者元素不会出发删除单元格数据
       if (valueType == null) {
         return;
@@ -900,8 +900,24 @@ export default {
             type: null,
           });
         });
+      } else {
+        // 变更运算符
+        this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
+        cch.symbol = null;
       }
       cch.leftValue.valueType = valueType;
+      cch.symbol = null;
+      cch.leftValue.valueType = valueType;
+      // 条件头修改后，此列下所有单元格清空
+      this.tableData.rows.forEach((f) => {
+        this.$set(f.conditions, index, {
+          value: null,
+          valueName: null,
+          valueType: null,
+          variableValue: null,
+          type: null,
+        });
+      });
     },
     isRightTypeSelectView(valueType, cch) {
       if (cch.leftValue.valueType === null) {
@@ -925,11 +941,34 @@ export default {
       cch.valueName = item.name;
       cch.variableValue = item.variableValue;
     },
+    symbolSelectClick(name, index) {
+      let collConditionHead = this.tableData.collConditionHeads[index];
+      let cch = collConditionHead.leftValue;
+      if (cch.valueType !== "COLLECTION") {
+        return;
+      }
+      // 如果现在为
+      if (name === "EQ" || name === "IN" || name === "NOT_IN") {
+        // 清除匹配不上的
+        this.tableData.rows.filter((f) => {
+          // 如果右值为eq in notIN 左面只能为COLLECTION
+          let condition = f.conditions[index];
+          return !(condition.valueType === null || condition.valueType === "COLLECTION");
+          // 剩余全部清除
+        }).forEach((f) => {
+          this.$set(f.conditions, index, {
+            value: null,
+            valueName: null,
+            valueType: null,
+            variableValue: null,
+            type: null,
+          });
+        });
+      }
+    },
     leftSelectClick(item, index) {
       let collConditionHead = this.tableData.collConditionHeads[index];
       let cch = collConditionHead.leftValue;
-      // 清除运算符
-      collConditionHead.symbol = null;
       // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
       if (cch.valueType !== item.valueType) {
         this.tableData.rows.forEach((f) => {
@@ -941,7 +980,14 @@ export default {
             type: null,
           });
         });
+      } else {
+        // 清除运算符
+        collConditionHead.symbol = null;
+        // 变更运算符
+        this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
       }
+      // 清除运算符
+      collConditionHead.symbol = null;
       cch.valueType = item.valueType;
       cch.value = item.id;
       cch.valueName = item.name;
@@ -951,6 +997,16 @@ export default {
       }
       // 变更运算符
       this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
+      // 条件头修改后，此列下所有单元格清空
+      this.tableData.rows.forEach((f) => {
+        this.$set(f.conditions, index, {
+          value: null,
+          valueName: null,
+          valueType: null,
+          variableValue: null,
+          type: null,
+        });
+      });
     },
     getConditionNamePrefix(type) {
       if (type === 0) {
@@ -1154,3 +1210,4 @@ export default {
   margin-bottom: 0;
 }
 </style>
+
