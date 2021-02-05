@@ -158,12 +158,12 @@
                   </el-col>
                 </el-form-item>
               </el-form>
-<!--              <el-button type="primary" size="mini" style="float: right;"-->
-<!--                         @click="tableData.collConditionHeads[index].visible = false">确认-->
-<!--              </el-button>-->
-<!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
-<!--                         @click="tableData.collConditionHeads[index].visible = false">取消-->
-<!--              </el-button>-->
+              <!--              <el-button type="primary" size="mini" style="float: right;"-->
+              <!--                         @click="tableData.collConditionHeads[index].visible = false">确认-->
+              <!--              </el-button>-->
+              <!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
+              <!--                         @click="tableData.collConditionHeads[index].visible = false">取消-->
+              <!--              </el-button>-->
             </div>
 
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
@@ -356,12 +356,12 @@
                             :disabled="tableData.collResultHead.defaultAction.type==null"/>
                 </el-form-item>
               </el-form>
-<!--              <el-button type="primary" size="mini" style="float: right;"-->
-<!--                         @click="tableData.collResultHead.visible = false">确认-->
-<!--              </el-button>-->
-<!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
-<!--                         @click="tableData.collResultHead.visible = false">取消-->
-<!--              </el-button>-->
+              <!--              <el-button type="primary" size="mini" style="float: right;"-->
+              <!--                         @click="tableData.collResultHead.visible = false">确认-->
+              <!--              </el-button>-->
+              <!--              <el-button size="mini" style="float: right;margin-right: 12px;"-->
+              <!--                         @click="tableData.collResultHead.visible = false">取消-->
+              <!--              </el-button>-->
             </div>
 
             <span slot="reference" style="width:100%;height: 30px;display:block;line-height: 30px;cursor: pointer">
@@ -491,723 +491,694 @@
 </template>
 
 <script>
-export default {
-  name: "DecisionTableConfig",
-  data() {
-    return {
-      menuVisible: false,
-      headerMenuVisible: false,
-      currentRow: null,
-      currentColumn: null,
-      id: null,
-      strategyType: 1,
-      loading: false,
-      tableData: {
-        collConditionHeads: [],
-        collResultHead: {
-          type: null,
-          valueType: null,
-          visible: false,
-          defaultAction: {
-            type: null,
-            variableValue: null,
-            enableDefaultAction: 1,
-            value: undefined,
-            valueName: null,
-          },
+    export default {
+        name: "DecisionTableConfig",
+        data() {
+            return {
+                menuVisible: false,
+                headerMenuVisible: false,
+                currentRow: null,
+                currentColumn: null,
+                id: null,
+                strategyType: 1,
+                loading: false,
+                tableData: {
+                    collConditionHeads: [],
+                    collResultHead: {
+                        type: null,
+                        valueType: null,
+                        visible: false,
+                        defaultAction: {
+                            type: null,
+                            variableValue: null,
+                            enableDefaultAction: 1,
+                            value: undefined,
+                            valueName: null,
+                        },
+                    },
+                    rows: [{
+                        id: null,
+                        priority: null,
+                        conditions: [],
+                        result: {
+                            value: undefined,
+                            valueName: null,
+                            variableValue: null,
+                            valueType: null,
+                            type: null,
+                        }
+                    }]
+                },
+                leftSelect: {
+                    loading: false,
+                    options: [],
+                    query: {
+                        name: null,
+                    }
+                },
+                symbolSelect: {
+                    options: [],
+                }
+            }
         },
-        rows: [{
-          id: null,
-          priority: null,
-          conditions: [],
-          result: {
-            value: undefined,
-            valueName: null,
-            variableValue: null,
-            valueType: null,
-            type: null,
-          }
-        }]
-      },
-      leftSelect: {
-        loading: false,
-        options: [],
-        query: {
-          name: null,
+        created() {
+        },
+        methods: {
+            viewConfig(config) {
+                return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
+            },
+            getConditionHeadInfo() {
+
+            },
+            getNewColl() {
+                return {
+                    "name": "条件",
+                    "visible": false,
+                    "symbol": null,
+                    "leftValue": {
+                        "type": null,
+                        "value": undefined,
+                        "valueName": null,
+                        "variableValue": null,
+                        "valueType": null
+                    }
+                };
+            },
+            addOneColumnToTheLeft() {
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index, 0, this.getNewColl());
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let conditions = this.tableData.rows[i].conditions;
+                    for (let j = 0; j < conditions.length; j++) {
+                        if (j === index) {
+                            const newCondition = {
+                                value: undefined,
+                                valueName: null,
+                                variableValue: null,
+                                valueType: null,
+                                type: null,
+                            };
+                            conditions.splice(index, 0, newCondition);
+                            break;
+                        }
+                    }
+                }
+            },
+            removeColumn() {
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index, 1);
+            },
+            addAColumnToTheRight() {
+                let index = this.currentColumn.index;
+                this.tableData.collConditionHeads.splice(index + 1, 0, this.getNewColl());
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let conditions = this.tableData.rows[i].conditions;
+                    for (let j = 0; j < conditions.length; j++) {
+                        if (j === index) {
+                            const newCondition = {
+                                value: undefined,
+                                valueName: null,
+                                variableValue: null,
+                                valueType: null,
+                                type: null,
+                            };
+                            conditions.splice(index + 1, 0, newCondition);
+                            break;
+                        }
+                    }
+                }
+            },
+            getNewRow(row) {
+                return {
+                    id: 1,
+                    priority: 1,
+                    conditions: Array.from(row.conditions).map(m => ({
+                        value: undefined,
+                        valueName: null,
+                        valueType: null,
+                        variableValue: null,
+                        type: null,
+                    })),
+                    result: {
+                        value: undefined,
+                        valueName: null,
+                        variableValue: null,
+                        valueType: null,
+                        type: null,
+                    }
+                };
+            },
+            addRowOn() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i, 0, this.getNewRow(this.tableData.rows[i]));
+                        return;
+                    }
+                }
+            },
+            removeRow() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i, 1);
+                        return;
+                    }
+                }
+            },
+            addRowBelow() {
+                for (let i = 0; i < this.tableData.rows.length; i++) {
+                    if (this.tableData.rows[i] === this.currentRow) {
+                        this.tableData.rows.splice(i + 1, 0, this.getNewRow(this.tableData.rows[i]));
+                        return;
+                    }
+                }
+            },
+            cellClick(row, column, cell, event) {
+            },
+            headerRightClick(column, event) {
+                event.preventDefault(); //关闭浏览器右键默认事件
+                if (column.property === "condition") {
+                    this.menuVisible = false;
+                    this.headerMenuVisible = true; // 显示模态窗口，跳出自定义菜单栏
+                    this.currentColumn = column;
+                    var menu = document.querySelector('.headerMenu');
+                    this.styleMenu(menu, event)
+                }
+            },
+            rightClick(row, column, event) {
+                this.headerMenuVisible = false;
+                this.menuVisible = true; // 显示模态窗口，跳出自定义菜单栏
+                event.preventDefault(); //关闭浏览器右键默认事件
+                this.currentRow = row;
+                var menu = document.querySelector('.menu');
+                this.styleMenu(menu, event)
+            },
+            foo() {
+                // 取消鼠标监听事件 菜单栏
+                this.menuVisible = false;
+                this.headerMenuVisible = false;
+                document.removeEventListener('click', this.foo) // 关掉监听，
+            },
+            styleMenu(menu, event) {
+                if (event.clientX > 1800) {
+                    menu.style.left = event.clientX - 100 + 'px'
+                } else {
+                    menu.style.left = event.clientX + 1 + 'px'
+                }
+                document.addEventListener('click', this.foo); // 给整个document新增监听鼠标事件，点击任何位置执行foo方法
+                if (event.clientY > 700) {
+                    menu.style.top = event.clientY - 30 + 'px'
+                } else {
+                    menu.style.top = event.clientY - 10 + 'px'
+                }
+            },
+            /**
+             * 优先级默认值0
+             * @param value
+             * @param row
+             */
+            handlePriorityChange(value, row) {
+                if (value === undefined || value === '') {
+                    row.priority = 0;
+                }
+            },
+            handlePopover(cch) {
+                this.symbolSelect.options = [];
+                if (cch.leftValue.valueType != null) {
+                    this.symbolSelect.options = this.$common.getSymbolByValueType(cch.leftValue.valueType);
+                }
+            },
+            update() {
+                let collConditionHeadsLength = this.tableData.collConditionHeads.length;
+                for (let i = 0; i < collConditionHeadsLength; i++) {
+                    let collConditionHead = this.tableData.collConditionHeads[i];
+                    if (collConditionHead.leftValue.type == null) {
+                        continue;
+                    }
+                    collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
+                }
+                if (this.tableData.collResultHead.type != null) {
+                    this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
+                }
+                if (this.tableData.collResultHead.defaultAction.type != null) {
+                    this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+                }
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let row = this.tableData.rows[i];
+                    if (row.result.type == null) {
+                        continue;
+                    }
+                    row.result.type = row.result.type > 1 ? 2 : row.result.type;
+                    for (let j = 0; j < row.conditions.length; j++) {
+                        let condition = row.conditions[j];
+                        condition.type = condition.type > 1 ? 2 : condition.type;
+                    }
+                }
+                this.$axios.post("/ruleEngine/decisionTable/updateDecisionTable", {
+                    "id": this.id,
+                    "strategyType": this.strategyType,
+                    "tableData": this.tableData
+                }).then(res => {
+                    let da = res.data;
+                    if (da) {
+                        this.$message({
+                            showClose: true,
+                            message: '保存成功',
+                            type: 'success'
+                        });
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            nextStep() {
+                let collConditionHeadsLength = this.tableData.collConditionHeads.length;
+                for (let i = 0; i < collConditionHeadsLength; i++) {
+                    let collConditionHead = this.tableData.collConditionHeads[i];
+                    if (collConditionHead.leftValue.type == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件类型不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (collConditionHead.leftValue.value == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件值不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (collConditionHead.symbol == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '表头第' + (i + 1) + '列条件运算符不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
+                }
+                if (this.tableData.collResultHead.type == null) {
+                    this.$message({
+                        showClose: true,
+                        message: '表头结果类型不能为空',
+                        type: 'warning'
+                    });
+                    return;
+                }
+                this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
+                if (this.tableData.collResultHead.defaultAction.type != null) {
+                    this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+                }
+                let rowsLength = this.tableData.rows.length;
+                for (let i = 0; i < rowsLength; i++) {
+                    let row = this.tableData.rows[i];
+                    if (row.result.type == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '单元格第' + (i + 1) + '行结果值类型不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    if (row.result.value == null) {
+                        this.$message({
+                            showClose: true,
+                            message: '单元格第' + (i + 1) + '行结果值不能为空',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    row.result.type = row.result.type > 1 ? 2 : row.result.type;
+                    for (let j = 0; j < row.conditions.length; j++) {
+                        let condition = row.conditions[j];
+                        condition.type = condition.type > 1 ? 2 : condition.type;
+                    }
+                }
+
+                this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
+                    "id": this.id,
+                    "strategyType": this.strategyType,
+                    "tableData": this.tableData
+                }).then(res => {
+                    let da = res.data;
+                    if (da) {
+                        this.$router.push({
+                            path: '/DecisionTableViewAndTest',
+                            query: {decisionTableId: this.id}
+                        });
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            previous() {
+                this.$router.push({path: '/DecisionTableDefinition', query: {decisionTableId: this.id}});
+            },
+            getValueTypeByType(type) {
+                if (type === 5) {
+                    return "STRING";
+                } else if (type === 6) {
+                    return "BOOLEAN";
+                } else if (type === 7) {
+                    return "NUMBER";
+                } else if (type === 8) {
+                    return "COLLECTION";
+                }
+            },
+            valueTypeChange(da) {
+                da.value = undefined;
+                da.valueName = null;
+                // 如果是变量或者元素
+                if (da.type === 1 || da.type === 0) {
+                    da.valueType = null;
+                }
+                this.leftSelect.options = [];
+            },
+            actionValueTypeChange(da) {
+                da.defaultAction.type = null;
+                da.defaultAction.value = null;
+                da.defaultAction.valueType = null;
+                da.defaultAction.valueName = null;
+                da.value = undefined;
+                da.valueName = null;
+                this.tableData.rows.forEach((f) => {
+                    f.result = {
+                        value: undefined,
+                        valueName: null,
+                        variableValue: null,
+                        valueType: null,
+                        type: null,
+                    };
+                });
+            },
+            leftValueTypeChange(index, valueType) {
+                let cch = this.tableData.collConditionHeads[index];
+                cch.leftValue.value = undefined;
+                cch.leftValue.variableValue = null;
+                cch.leftValue.valueName = null;
+                this.leftSelect.options = [];
+                // 选择变量或者元素不会出发删除单元格数据
+                if (valueType == null) {
+                    return;
+                }
+                // 变更运算符
+                this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
+                if (cch.leftValue.valueType !== valueType) {
+                    // 条件头修改后，此列下所有单元格清空
+                    this.tableData.rows.forEach((f) => {
+                        this.$set(f.conditions, index, {
+                            value: null,
+                            valueName: null,
+                            valueType: null,
+                            variableValue: null,
+                            type: null,
+                        });
+                    });
+                    cch.symbol = null;
+                }
+                cch.leftValue.valueType = valueType;
+            },
+            isRightTypeSelectView(valueType, cch) {
+                if (cch.leftValue.valueType === null) {
+                    return false;
+                }
+                if (cch.leftValue.valueType === valueType) {
+                    return true;
+                }
+                // 如果左值为集合时
+                if (cch.leftValue.valueType === 'COLLECTION') {
+                    if (cch.symbol === null) {
+                        return true;
+                    }
+                    // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+                    return cch.symbol === 'CONTAIN' || cch.symbol === 'NOT_CONTAIN';
+                }
+            },
+            conditionCollSelectClick(item, cch) {
+                cch.valueType = item.valueType;
+                cch.value = item.id;
+                cch.valueName = item.name;
+                cch.variableValue = item.variableValue;
+            },
+            symbolSelectClick(name, index) {
+                let collConditionHead = this.tableData.collConditionHeads[index];
+                let cch = collConditionHead.leftValue;
+                if (cch.valueType !== "COLLECTION") {
+                    return;
+                }
+                // 如果现在为
+                if (name === "EQ" || name === "IN" || name === "NOT_IN") {
+                    // 清除匹配不上的
+                    this.tableData.rows.filter((f) => {
+                        // 如果右值为eq in notIN 左面只能为COLLECTION
+                        let condition = f.conditions[index];
+                        return !(condition.valueType === null || condition.valueType === "COLLECTION");
+                        // 剩余全部清除
+                    }).forEach((f) => {
+                        this.$set(f.conditions, index, {
+                            value: null,
+                            valueName: null,
+                            valueType: null,
+                            variableValue: null,
+                            type: null,
+                        });
+                    });
+                }
+            },
+            leftSelectClick(item, index) {
+                let collConditionHead = this.tableData.collConditionHeads[index];
+                let cch = collConditionHead.leftValue;
+                // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
+                if (cch.valueType !== item.valueType) {
+                    this.tableData.rows.forEach((f) => {
+                        this.$set(f.conditions, index, {
+                            value: null,
+                            valueName: null,
+                            valueType: null,
+                            variableValue: null,
+                            type: null,
+                        });
+                    });
+                } else {
+                    // 清除运算符
+                    collConditionHead.symbol = null;
+                }
+                // 变更运算符
+                this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
+                cch.valueType = item.valueType;
+                cch.value = item.id;
+                cch.valueName = item.name;
+                // 函数时显示函数名称
+                if (item.type !== 3) {
+                    cch.variableValue = item.value;
+                }
+            },
+            getConditionNamePrefix(type) {
+                if (type === 0) {
+                    return "元素";
+                }
+                if (type === 1) {
+                    return "变量";
+                }
+                if (type >= 2) {
+                    return "固定值";
+                }
+            },
+            leftRemoteMethod(query, type, valueType, symbol) {
+                if (query !== '') {
+                    this.leftSelect.loading = true;
+                    this.leftSelect.options = [];
+                    this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query,
+                            "valueType": this.getRValueType(valueType, symbol)
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.leftSelect.options = res.data.rows;
+                        }
+                        this.leftSelect.loading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.leftSelect.options = [];
+                }
+            },
+            getType(type, valueType) {
+                if (type > 1) {
+                    if (valueType === "COLLECTION") {
+                        return 8;
+                    } else if (valueType === "STRING") {
+                        return 5;
+                    } else if (valueType === "BOOLEAN") {
+                        return 6;
+                    } else if (valueType === "NUMBER") {
+                        return 7;
+                    }
+                }
+                return type;
+            },
+            getDecisionTableConfig() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/decisionTable/getDecisionTableConfig", {
+                    "id": this.id
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.id = da.id;
+                        this.name = da.name;
+                        this.code = da.code;
+                        this.description = da.description;
+                        this.strategyType = da.strategyType;
+                        {
+                            let collConditionHeadsLength = da.tableData.collConditionHeads.length;
+                            for (let i = 0; i < collConditionHeadsLength; i++) {
+                                let collConditionHead = da.tableData.collConditionHeads[i];
+                                if (collConditionHead.leftValue.type == null) {
+                                    continue;
+                                }
+                                collConditionHead.leftValue.type = this.getType(collConditionHead.leftValue.type, collConditionHead.leftValue.valueType);
+                            }
+                            if (da.tableData.collResultHead.type != null) {
+                                da.tableData.collResultHead.type = this.getType(da.tableData.collResultHead.type, da.tableData.collResultHead.valueType);
+                            }
+                            if (da.tableData.collResultHead.defaultAction.type != null) {
+                                da.tableData.collResultHead.defaultAction.type = this.getType(da.tableData.collResultHead.defaultAction.type, da.tableData.collResultHead.defaultAction.valueType);
+                            }
+                            let rowsLength = da.tableData.rows.length;
+                            for (let i = 0; i < rowsLength; i++) {
+                                let row = da.tableData.rows[i];
+                                if (row.result.type == null) {
+                                    continue;
+                                }
+                                row.result.type = this.getType(row.result.type, row.result.valueType);
+                                for (let j = 0; j < row.conditions.length; j++) {
+                                    let condition = row.conditions[j];
+                                    condition.type = this.getType(condition.type, condition.valueType);
+                                }
+                            }
+                        }
+                        this.tableData = da.tableData;
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getRValueType(valueType, symbol) {
+                if (valueType == null) {
+                    return [];
+                }
+                // 如果左值为集合时
+                if (valueType === 'COLLECTION' && symbol != null) {
+                    // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+                    if (symbol === 'CONTAIN' || symbol === 'NOT_CONTAIN') {
+                        return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION"];
+                    }
+                } else {
+                    return new Array(valueType);
+                }
+            },
+        },
+        mounted() {
+            this.id = this.$route.query.decisionTableId;
+            this.getDecisionTableConfig();
         }
-      },
-      symbolSelect: {
-        options: [],
-      }
     }
-  },
-  created() {
-  },
-  methods: {
-    viewConfig(config) {
-      return config.variableValue != null ? config.variableValue : (config.valueName == null ? config.value : config.valueName);
-    },
-    getConditionHeadInfo() {
-
-    },
-    getNewColl() {
-      return {
-        "name": "条件",
-        "visible": false,
-        "symbol": null,
-        "leftValue": {
-          "type": null,
-          "value": undefined,
-          "valueName": null,
-          "variableValue": null,
-          "valueType": null
-        }
-      };
-    },
-    addOneColumnToTheLeft() {
-      let index = this.currentColumn.index;
-      this.tableData.collConditionHeads.splice(index, 0, this.getNewColl());
-      let rowsLength = this.tableData.rows.length;
-      for (let i = 0; i < rowsLength; i++) {
-        let conditions = this.tableData.rows[i].conditions;
-        for (let j = 0; j < conditions.length; j++) {
-          if (j === index) {
-            const newCondition = {
-              value: undefined,
-              valueName: null,
-              variableValue: null,
-              valueType: null,
-              type: null,
-            };
-            conditions.splice(index, 0, newCondition);
-            break;
-          }
-        }
-      }
-    },
-    removeColumn() {
-      let index = this.currentColumn.index;
-      this.tableData.collConditionHeads.splice(index, 1);
-    },
-    addAColumnToTheRight() {
-      let index = this.currentColumn.index;
-      this.tableData.collConditionHeads.splice(index + 1, 0, this.getNewColl());
-      let rowsLength = this.tableData.rows.length;
-      for (let i = 0; i < rowsLength; i++) {
-        let conditions = this.tableData.rows[i].conditions;
-        for (let j = 0; j < conditions.length; j++) {
-          if (j === index) {
-            const newCondition = {
-              value: undefined,
-              valueName: null,
-              variableValue: null,
-              valueType: null,
-              type: null,
-            };
-            conditions.splice(index + 1, 0, newCondition);
-            break;
-          }
-        }
-      }
-    },
-    getNewRow(row) {
-      return {
-        id: 1,
-        priority: 1,
-        conditions: Array.from(row.conditions).map(m => ({
-          value: undefined,
-          valueName: null,
-          valueType: null,
-          variableValue: null,
-          type: null,
-        })),
-        result: {
-          value: undefined,
-          valueName: null,
-          variableValue: null,
-          valueType: null,
-          type: null,
-        }
-      };
-    },
-    addRowOn() {
-      for (let i = 0; i < this.tableData.rows.length; i++) {
-        if (this.tableData.rows[i] === this.currentRow) {
-          this.tableData.rows.splice(i, 0, this.getNewRow(this.tableData.rows[i]));
-          return;
-        }
-      }
-    },
-    removeRow() {
-      for (let i = 0; i < this.tableData.rows.length; i++) {
-        if (this.tableData.rows[i] === this.currentRow) {
-          this.tableData.rows.splice(i, 1);
-          return;
-        }
-      }
-    },
-    addRowBelow() {
-      for (let i = 0; i < this.tableData.rows.length; i++) {
-        if (this.tableData.rows[i] === this.currentRow) {
-          this.tableData.rows.splice(i + 1, 0, this.getNewRow(this.tableData.rows[i]));
-          return;
-        }
-      }
-    },
-    cellClick(row, column, cell, event) {
-    },
-    headerRightClick(column, event) {
-      event.preventDefault(); //关闭浏览器右键默认事件
-      if (column.property === "condition") {
-        this.menuVisible = false;
-        this.headerMenuVisible = true; // 显示模态窗口，跳出自定义菜单栏
-        this.currentColumn = column;
-        var menu = document.querySelector('.headerMenu');
-        this.styleMenu(menu, event)
-      }
-    },
-    rightClick(row, column, event) {
-      this.headerMenuVisible = false;
-      this.menuVisible = true; // 显示模态窗口，跳出自定义菜单栏
-      event.preventDefault(); //关闭浏览器右键默认事件
-      this.currentRow = row;
-      var menu = document.querySelector('.menu');
-      this.styleMenu(menu, event)
-    },
-    foo() {
-      // 取消鼠标监听事件 菜单栏
-      this.menuVisible = false;
-      this.headerMenuVisible = false;
-      document.removeEventListener('click', this.foo) // 关掉监听，
-    },
-    styleMenu(menu, event) {
-      if (event.clientX > 1800) {
-        menu.style.left = event.clientX - 100 + 'px'
-      } else {
-        menu.style.left = event.clientX + 1 + 'px'
-      }
-      document.addEventListener('click', this.foo); // 给整个document新增监听鼠标事件，点击任何位置执行foo方法
-      if (event.clientY > 700) {
-        menu.style.top = event.clientY - 30 + 'px'
-      } else {
-        menu.style.top = event.clientY - 10 + 'px'
-      }
-    },
-    /**
-     * 优先级默认值0
-     * @param value
-     * @param row
-     */
-    handlePriorityChange(value, row) {
-      if (value === undefined || value === '') {
-        row.priority = 0;
-      }
-    },
-    handlePopover(cch) {
-      this.symbolSelect.options = [];
-      if (cch.leftValue.valueType != null) {
-        this.symbolSelect.options = this.$common.getSymbolByValueType(cch.leftValue.valueType);
-      }
-    },
-    update() {
-      let collConditionHeadsLength = this.tableData.collConditionHeads.length;
-      for (let i = 0; i < collConditionHeadsLength; i++) {
-        let collConditionHead = this.tableData.collConditionHeads[i];
-        if (collConditionHead.leftValue.type == null) {
-          continue;
-        }
-        collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
-      }
-      if (this.tableData.collResultHead.type != null) {
-        this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
-      }
-      if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
-      }
-      let rowsLength = this.tableData.rows.length;
-      for (let i = 0; i < rowsLength; i++) {
-        let row = this.tableData.rows[i];
-        if (row.result.type == null) {
-          continue;
-        }
-        row.result.type = row.result.type > 1 ? 2 : row.result.type;
-        for (let j = 0; j < row.conditions.length; j++) {
-          let condition = row.conditions[j];
-          condition.type = condition.type > 1 ? 2 : condition.type;
-        }
-      }
-      this.$axios.post("/ruleEngine/decisionTable/updateDecisionTable", {
-        "id": this.id,
-        "strategyType": this.strategyType,
-        "tableData": this.tableData
-      }).then(res => {
-        let da = res.data;
-        if (da) {
-          this.$message({
-            showClose: true,
-            message: '保存成功',
-            type: 'success'
-          });
-        }
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
-    nextStep() {
-      let collConditionHeadsLength = this.tableData.collConditionHeads.length;
-      for (let i = 0; i < collConditionHeadsLength; i++) {
-        let collConditionHead = this.tableData.collConditionHeads[i];
-        if (collConditionHead.leftValue.type == null) {
-          this.$message({
-            showClose: true,
-            message: '表头第' + (i + 1) + '列条件类型不能为空',
-            type: 'warning'
-          });
-          return;
-        }
-        if (collConditionHead.leftValue.value == null) {
-          this.$message({
-            showClose: true,
-            message: '表头第' + (i + 1) + '列条件值不能为空',
-            type: 'warning'
-          });
-          return;
-        }
-        if (collConditionHead.symbol == null) {
-          this.$message({
-            showClose: true,
-            message: '表头第' + (i + 1) + '列条件运算符不能为空',
-            type: 'warning'
-          });
-          return;
-        }
-        collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
-      }
-      if (this.tableData.collResultHead.type == null) {
-        this.$message({
-          showClose: true,
-          message: '表头结果类型不能为空',
-          type: 'warning'
-        });
-        return;
-      }
-      this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
-      if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
-      }
-      let rowsLength = this.tableData.rows.length;
-      for (let i = 0; i < rowsLength; i++) {
-        let row = this.tableData.rows[i];
-        if (row.result.type == null) {
-          this.$message({
-            showClose: true,
-            message: '单元格第' + (i + 1) + '行结果值类型不能为空',
-            type: 'warning'
-          });
-          return;
-        }
-        if (row.result.value == null) {
-          this.$message({
-            showClose: true,
-            message: '单元格第' + (i + 1) + '行结果值不能为空',
-            type: 'warning'
-          });
-          return;
-        }
-        row.result.type = row.result.type > 1 ? 2 : row.result.type;
-        for (let j = 0; j < row.conditions.length; j++) {
-          let condition = row.conditions[j];
-          condition.type = condition.type > 1 ? 2 : condition.type;
-        }
-      }
-
-      this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
-        "id": this.id,
-        "strategyType": this.strategyType,
-        "tableData": this.tableData
-      }).then(res => {
-        let da = res.data;
-        if (da) {
-          this.$router.push({
-            path: '/DecisionTableViewAndTest',
-            query: {decisionTableId: this.id}
-          });
-        }
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
-    previous() {
-      this.$router.push({path: '/DecisionTableDefinition', query: {decisionTableId: this.id}});
-    },
-    getValueTypeByType(type) {
-      if (type === 5) {
-        return "STRING";
-      } else if (type === 6) {
-        return "BOOLEAN";
-      } else if (type === 7) {
-        return "NUMBER";
-      } else if (type === 8) {
-        return "COLLECTION";
-      }
-    },
-    valueTypeChange(da) {
-      da.value = undefined;
-      da.valueName = null;
-      // 如果是变量或者元素
-      if (da.type === 1 || da.type === 0) {
-        da.valueType = null;
-      }
-      this.leftSelect.options = [];
-    },
-    actionValueTypeChange(da) {
-      da.defaultAction.type = null;
-      da.defaultAction.value = null;
-      da.defaultAction.valueType = null;
-      da.defaultAction.valueName = null;
-      da.value = undefined;
-      da.valueName = null;
-      this.tableData.rows.forEach((f) => {
-        f.result = {
-          value: undefined,
-          valueName: null,
-          variableValue: null,
-          valueType: null,
-          type: null,
-        };
-      });
-    },
-    leftValueTypeChange(index, valueType) {
-      let cch = this.tableData.collConditionHeads[index];
-      cch.leftValue.value = undefined;
-      cch.leftValue.variableValue = null;
-      cch.leftValue.valueName = null;
-      // 变更运算符
-      this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
-      this.leftSelect.options = [];
-      // 选择变量或者元素不会出发删除单元格数据
-      if (valueType == null) {
-        return;
-      }
-      if (cch.leftValue.valueType !== valueType) {
-        // 条件头修改后，此列下所有单元格清空
-        this.tableData.rows.forEach((f) => {
-          this.$set(f.conditions, index, {
-            value: null,
-            valueName: null,
-            valueType: null,
-            variableValue: null,
-            type: null,
-          });
-        });
-      } else {
-        // 变更运算符
-        this.symbolSelect.options = this.$common.getSymbolByValueType(this.getValueTypeByType(cch.leftValue.type));
-        cch.symbol = null;
-      }
-      cch.leftValue.valueType = valueType;
-      cch.symbol = null;
-      cch.leftValue.valueType = valueType;
-      // 条件头修改后，此列下所有单元格清空
-      this.tableData.rows.forEach((f) => {
-        this.$set(f.conditions, index, {
-          value: null,
-          valueName: null,
-          valueType: null,
-          variableValue: null,
-          type: null,
-        });
-      });
-    },
-    isRightTypeSelectView(valueType, cch) {
-      if (cch.leftValue.valueType === null) {
-        return false;
-      }
-      if (cch.leftValue.valueType === valueType) {
-        return true;
-      }
-      // 如果左值为集合时
-      if (cch.leftValue.valueType === 'COLLECTION') {
-        if (cch.symbol === null) {
-          return true;
-        }
-        // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
-        return cch.symbol === 'CONTAIN' || cch.symbol === 'NOT_CONTAIN';
-      }
-    },
-    conditionCollSelectClick(item, cch) {
-      cch.valueType = item.valueType;
-      cch.value = item.id;
-      cch.valueName = item.name;
-      cch.variableValue = item.variableValue;
-    },
-    symbolSelectClick(name, index) {
-      let collConditionHead = this.tableData.collConditionHeads[index];
-      let cch = collConditionHead.leftValue;
-      if (cch.valueType !== "COLLECTION") {
-        return;
-      }
-      // 如果现在为
-      if (name === "EQ" || name === "IN" || name === "NOT_IN") {
-        // 清除匹配不上的
-        this.tableData.rows.filter((f) => {
-          // 如果右值为eq in notIN 左面只能为COLLECTION
-          let condition = f.conditions[index];
-          return !(condition.valueType === null || condition.valueType === "COLLECTION");
-          // 剩余全部清除
-        }).forEach((f) => {
-          this.$set(f.conditions, index, {
-            value: null,
-            valueName: null,
-            valueType: null,
-            variableValue: null,
-            type: null,
-          });
-        });
-      }
-    },
-    leftSelectClick(item, index) {
-      let collConditionHead = this.tableData.collConditionHeads[index];
-      let cch = collConditionHead.leftValue;
-      // 条件头修改后，此列下所有单元格清空，如果valueType没有修改，则不会执行以下代码
-      if (cch.valueType !== item.valueType) {
-        this.tableData.rows.forEach((f) => {
-          this.$set(f.conditions, index, {
-            value: null,
-            valueName: null,
-            valueType: null,
-            variableValue: null,
-            type: null,
-          });
-        });
-      } else {
-        // 清除运算符
-        collConditionHead.symbol = null;
-        // 变更运算符
-        this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
-      }
-      // 清除运算符
-      collConditionHead.symbol = null;
-      cch.valueType = item.valueType;
-      cch.value = item.id;
-      cch.valueName = item.name;
-      // 函数时显示函数名称
-      if (item.type !== 3) {
-        cch.variableValue = item.value;
-      }
-      // 变更运算符
-      this.symbolSelect.options = this.$common.getSymbolByValueType(item.valueType);
-      // 条件头修改后，此列下所有单元格清空
-      this.tableData.rows.forEach((f) => {
-        this.$set(f.conditions, index, {
-          value: null,
-          valueName: null,
-          valueType: null,
-          variableValue: null,
-          type: null,
-        });
-      });
-    },
-    getConditionNamePrefix(type) {
-      if (type === 0) {
-        return "元素";
-      }
-      if (type === 1) {
-        return "变量";
-      }
-      if (type >= 2) {
-        return "固定值";
-      }
-    },
-    leftRemoteMethod(query, type, valueType, symbol) {
-      if (query !== '') {
-        this.leftSelect.loading = true;
-        this.leftSelect.options = [];
-        this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
-          "page": {
-            "pageSize": 10,
-            "pageIndex": 1
-          },
-          "query": {
-            "name": query,
-            "valueType": this.getRValueType(valueType, symbol)
-          },
-          "orders": []
-        }).then(res => {
-          if (res.data != null) {
-            this.leftSelect.options = res.data.rows;
-          }
-          this.leftSelect.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      } else {
-        this.leftSelect.options = [];
-      }
-    },
-    getType(type, valueType) {
-      if (type > 1) {
-        if (valueType === "COLLECTION") {
-          return 8;
-        } else if (valueType === "STRING") {
-          return 5;
-        } else if (valueType === "BOOLEAN") {
-          return 6;
-        } else if (valueType === "NUMBER") {
-          return 7;
-        }
-      }
-      return type;
-    },
-    getDecisionTableConfig() {
-      this.loading = true;
-      this.$axios.post("/ruleEngine/decisionTable/getDecisionTableConfig", {
-        "id": this.id
-      }).then(res => {
-        let da = res.data;
-        if (da != null) {
-          this.id = da.id;
-          this.name = da.name;
-          this.code = da.code;
-          this.description = da.description;
-          this.strategyType = da.strategyType;
-          {
-            let collConditionHeadsLength = da.tableData.collConditionHeads.length;
-            for (let i = 0; i < collConditionHeadsLength; i++) {
-              let collConditionHead = da.tableData.collConditionHeads[i];
-              if (collConditionHead.leftValue.type == null) {
-                continue;
-              }
-              collConditionHead.leftValue.type = this.getType(collConditionHead.leftValue.type, collConditionHead.leftValue.valueType);
-            }
-            if (da.tableData.collResultHead.type != null) {
-              da.tableData.collResultHead.type = this.getType(da.tableData.collResultHead.type, da.tableData.collResultHead.valueType);
-            }
-            if (da.tableData.collResultHead.defaultAction.type != null) {
-              da.tableData.collResultHead.defaultAction.type = this.getType(da.tableData.collResultHead.defaultAction.type, da.tableData.collResultHead.defaultAction.valueType);
-            }
-            let rowsLength = da.tableData.rows.length;
-            for (let i = 0; i < rowsLength; i++) {
-              let row = da.tableData.rows[i];
-              if (row.result.type == null) {
-                continue;
-              }
-              row.result.type = this.getType(row.result.type, row.result.valueType);
-              for (let j = 0; j < row.conditions.length; j++) {
-                let condition = row.conditions[j];
-                condition.type = this.getType(condition.type, condition.valueType);
-              }
-            }
-          }
-          this.tableData = da.tableData;
-        }
-        this.loading = false;
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
-    getRValueType(valueType, symbol) {
-      if (valueType == null) {
-        return [];
-      }
-      // 如果左值为集合时
-      if (valueType === 'COLLECTION' && symbol != null) {
-        // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
-        if (symbol === 'CONTAIN' || symbol === 'NOT_CONTAIN') {
-          return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION"];
-        }
-      } else {
-        return new Array(valueType);
-      }
-    },
-  },
-  mounted() {
-    this.id = this.$route.query.decisionTableId;
-    this.getDecisionTableConfig();
-  }
-}
 </script>
 <style>
-.box-card-header .el-input__inner {
-  border: none;
-  height: 36px;
-  font-size: 16px;
-  color: #303133;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
+  .box-card-header .el-input__inner {
+    border: none;
+    height: 36px;
+    font-size: 16px;
+    color: #303133;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
 
-.el-input-number .el-input__inner {
-  text-align: left;
-}
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
 
-.stepp .el-step__title.is-process {
-  font-weight: 400;
-  color: #C0C4CC;
-}
+  .stepp .el-step__title.is-process {
+    font-weight: 400;
+    color: #C0C4CC;
+  }
 
-.stepp .el-step__icon-inner {
-  color: #C0C4CC;
-}
+  .stepp .el-step__icon-inner {
+    color: #C0C4CC;
+  }
 
-#decisionTableConfig .el-table th {
-  padding: 10px 0 10px 0;
-}
+  #decisionTableConfig .el-table th {
+    padding: 10px 0 10px 0;
+  }
 
-#decisionTableConfig .el-table td {
-  padding: 8px 0 8px 0;
-}
+  #decisionTableConfig .el-table td {
+    padding: 8px 0 8px 0;
+  }
 
-.box-card-header .el-input__inner {
-  border: none;
-  height: 36px;
-  font-size: 16px;
-  color: #303133;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
+  .box-card-header .el-input__inner {
+    border: none;
+    height: 36px;
+    font-size: 16px;
+    color: #303133;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
 </style>
 <style scoped>
 
-.box-card-header {
-  margin-top: -20px;
-  line-height: 46px;
-  height: 24px;
-}
+  .box-card-header {
+    margin-top: -20px;
+    line-height: 46px;
+    height: 24px;
+  }
 
 
-.contextmenu__item {
-  display: block;
-  line-height: 34px;
-  text-align: center;
-}
+  .contextmenu__item {
+    display: block;
+    line-height: 34px;
+    text-align: center;
+  }
 
-.contextmenu__item:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
+  .contextmenu__item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
 
-.headerMenu, .menu {
-  position: absolute;
-  background-color: #fff;
-  width: 100px;
-  font-size: 13px;
-  color: #444040;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  white-space: nowrap;
-  z-index: 1000;
-}
+  .headerMenu, .menu {
+    position: absolute;
+    background-color: #fff;
+    width: 100px;
+    font-size: 13px;
+    color: #444040;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    white-space: nowrap;
+    z-index: 1000;
+  }
 
-.contextmenu__item:hover {
-  cursor: pointer;
-  /*background: #409eff;*/
-  /*border-color: #409eff;*/
-  /*color: #fff;*/
-}
+  .contextmenu__item:hover {
+    cursor: pointer;
+    /*background: #409eff;*/
+    /*border-color: #409eff;*/
+    /*color: #fff;*/
+  }
 
-.conditionRowFrom .el-form-item, .resultRow .el-form-item {
-  margin-bottom: 0;
-}
+  .conditionRowFrom .el-form-item, .resultRow .el-form-item {
+    margin-bottom: 0;
+  }
 </style>
 
