@@ -252,7 +252,8 @@
                 });
                 let requestJson = {
                     "id": this.id,
-                    "ruleCode": this.code,
+                    "status": 2,
+                    "code": this.code,
                     "workspaceCode": this.workspaceCode,
                     "param": params
                 };
@@ -294,7 +295,7 @@
                 this.loading = true;
                 this.$axios.post("/ruleEngine/decisionTable/view", {
                     "id": this.id,
-                    "type": 2
+                    "status": 2
                 }).then(res => {
                     let da = res.data;
                     if (da != null) {
