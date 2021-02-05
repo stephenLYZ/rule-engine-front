@@ -965,7 +965,6 @@
                             type: null,
                         });
                     });
-                } else {
                     // 清除运算符
                     collConditionHead.symbol = null;
                 }
