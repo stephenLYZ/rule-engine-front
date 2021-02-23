@@ -156,9 +156,21 @@
                     <el-option label="false" value="false"/>
                   </el-select>
                 </div>
+
                 <div v-else-if="param.valueType==='COLLECTION'">
                   <el-input type="textarea" :autosize="{ minRows: 2,maxRows:6}" v-model="param.value"/>
                 </div>
+
+                <el-date-picker
+                  v-else-if="param.valueType==='DATE'"
+                  v-model="param.value"
+                  type="datetime"
+                  value-format="timestamp"
+                  placeholder="选择日期时间"
+                  align="right"
+                  :picker-options="$common.datePickerOptions()">
+                </el-date-picker>
+
                 <el-input v-model="param.value" v-else max="1000"/>
               </el-form-item>
             </el-form>

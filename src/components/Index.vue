@@ -34,6 +34,12 @@
                       style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
                       后期版本普通规则如果发布后则不能修改返回值类型，规则集条件以及结果可以引用普通规则！
                     </el-dropdown-item>
+
+                    <el-dropdown-item
+                      style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;margin-bottom: 6px;">
+                      日期配置待完善！
+                    </el-dropdown-item>
+
                     <el-dropdown-item
                       style="line-height: 20px;text-align: left;padding: 4px 10px;word-break:break-all;">
                       欢迎有兴趣人可以来编写文档，贡献一份力量！

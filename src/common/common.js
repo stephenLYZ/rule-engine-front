@@ -75,6 +75,45 @@ export function getSymbolByValueType(valueType) {
         "name": "CONTAIN",
         "symbol": "contain"
       }, {"explanation": "不包含", "name": "NOT_CONTAIN", "symbol": "not contain"}];
+    case "DATE":
+      return [{"explanation": "大于", "name": "GT", "symbol": ">"}, {
+        "explanation": "小于",
+        "name": "LT",
+        "symbol": "<"
+      }, {"explanation": "等于", "name": "EQ", "symbol": "=="}, {
+        "explanation": "不等于",
+        "name": "NE",
+        "symbol": "!="
+      }, {"explanation": "大于等于", "name": "GE", "symbol": ">="}, {
+        "explanation": "小于等于",
+        "name": "LE",
+        "symbol": "<="
+      }];
+  }
+}
+
+export function datePickerOptions() {
+  return {
+    shortcuts: [{
+      text: '今天',
+      onClick(picker) {
+        picker.$emit('pick', new Date());
+      }
+    }, {
+      text: '昨天',
+      onClick(picker) {
+        const date = new Date();
+        date.setTime(date.getTime() - 3600 * 1000 * 24);
+        picker.$emit('pick', date);
+      }
+    }, {
+      text: '一周前',
+      onClick(picker) {
+        const date = new Date();
+        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+        picker.$emit('pick', date);
+      }
+    }]
   }
 }
 

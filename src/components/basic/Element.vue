@@ -32,6 +32,7 @@
             <el-option label="布尔" value="BOOLEAN"/>
             <el-option label="数值" value="NUMBER"/>
             <el-option label="集合" value="COLLECTION"/>
+            <el-option label="日期" value="DATE"/>
           </el-select>
         </el-form-item>
 
