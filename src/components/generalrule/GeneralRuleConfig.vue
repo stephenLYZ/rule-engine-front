@@ -124,7 +124,7 @@
                     <el-date-picker
                       v-else-if="action.type===6" v-model="action.value" :disabled="action.type==null"
                       type="datetime"
-                      value-format="timestamp"
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       placeholder="选择日期时间"
                       align="right"
                       :picker-options="$common.datePickerOptions()">
@@ -215,7 +215,7 @@
                       v-else-if="defaultAction.type===6" v-model="defaultAction.value"
                       :disabled="defaultAction.type==null"
                       type="datetime"
-                      value-format="timestamp"
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       placeholder="选择日期时间"
                       align="right"
                       :picker-options="$common.datePickerOptions()">

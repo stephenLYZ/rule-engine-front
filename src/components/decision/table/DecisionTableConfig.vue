@@ -123,7 +123,7 @@
                     v-model="tableData.collConditionHeads[index].leftValue.value"
                     :disabled="tableData.collConditionHeads[index].leftValue.type==null"
                     type="datetime"
-                    value-format="timestamp"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     placeholder="选择日期时间"
                     align="right"
                     :picker-options="$common.datePickerOptions()">
@@ -251,7 +251,7 @@
                   v-model="scope.row.conditions[index].value"
 
                   type="datetime"
-                  value-format="timestamp"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间"
                   align="right"
                   :picker-options="$common.datePickerOptions()">
@@ -372,7 +372,7 @@
                     :disabled="tableData.collResultHead.defaultAction.type==null"
                     v-model="tableData.collResultHead.defaultAction.value"
                     type="datetime"
-                    value-format="timestamp"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     placeholder="选择日期时间"
                     align="right"
                     :picker-options="$common.datePickerOptions()">
@@ -465,7 +465,7 @@
                   v-else-if="scope.row.result.type===9" v-model="scope.row.result.value"
                   :disabled="scope.row.result.type==null"
                   type="datetime"
-                  value-format="timestamp"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间"
                   align="right"
                   :picker-options="$common.datePickerOptions()">

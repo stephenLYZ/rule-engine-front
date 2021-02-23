@@ -57,7 +57,7 @@
                   v-else-if="form.config.leftValue.type===9" v-model="form.config.leftValue.value"
                   :disabled="form.config.leftValue.type==null"
                   type="datetime"
-                  value-format="timestamp"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间"
                   align="right"
                   :picker-options="$common.datePickerOptions()">
@@ -147,7 +147,7 @@
                   v-else-if="form.config.rightValue.type===9" v-model="form.config.rightValue.value"
                   :disabled="form.config.symbol==null"
                   type="datetime"
-                  value-format="timestamp"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间"
                   align="right"
                   :picker-options="$common.datePickerOptions()">
@@ -260,7 +260,7 @@
               <el-date-picker
                 v-else-if="pv.valueType==='DATE'" v-model="pv.value"
                 type="datetime"
-                value-format="timestamp"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择日期时间"
                 align="right"
                 :picker-options="$common.datePickerOptions()">

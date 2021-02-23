@@ -165,7 +165,7 @@
                   v-else-if="param.valueType==='DATE'"
                   v-model="param.value"
                   type="datetime"
-                  value-format="timestamp"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间"
                   align="right"
                   :picker-options="$common.datePickerOptions()">
