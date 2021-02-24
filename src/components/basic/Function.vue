@@ -33,6 +33,7 @@
             <el-option label="集合" value="COLLECTION"/>
             <el-option label="字符串" value="STRING"/>
             <el-option label="数值" value="NUMBER"/>
+            <el-option label="日期" value="DATE"/>
           </el-select>
         </el-form-item>
 
@@ -58,6 +59,7 @@
             <el-option label="集合" value="COLLECTION"/>
             <el-option label="字符串" value="STRING"/>
             <el-option label="数值" value="NUMBER"/>
+            <el-option label="日期" value="DATE"/>
           </el-select>
         </el-form-item>
 
@@ -66,7 +68,7 @@
           <el-col :span="3" style="margin-top: 26px;">
             <el-form-item v-for="pv in run.form.function.paramValues" :key="pv.code"
                           style="text-align: right;margin-right:10px;margin-top: 19px;overflow: hidden;white-space: nowrap;">
-              {{pv.name!==null?pv.name:pv.code}}
+              {{ pv.name !== null ? pv.name : pv.code }}
             </el-form-item>
           </el-col>
 
@@ -77,6 +79,7 @@
                 <el-option label="布尔" value="BOOLEAN"/>
                 <el-option label="数值" value="NUMBER"/>
                 <el-option label="集合" value="COLLECTION"/>
+                <el-option label="日期" value="DATE"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -90,7 +93,7 @@
                 <el-option label="false" value="false"/>
               </el-select>
               <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
-                                style="width: 100%"/>
+                               style="width: 100%"/>
               <el-input v-else v-model="pv.value"/>
             </el-form-item>
           </el-col>
@@ -167,145 +170,145 @@
 </template>
 
 <script>
-    export default {
-        name: "Function",
-        data() {
-            return {
-                run: {
-                    dialogFormVisible: false,
-                    form: {
-                        id: null,
-                        name: null,
-                        function: {
-                            paramValues: []
-                        },
-                        returnValueType: null,
-                        output: null
-                    }
-                },
-                search: {
-                    form: {
-                        name: null
-                    }
-                },
-                dialogFormVisible: false,
-                form: {
-                    name: null,
-                    returnValueType: null,
-                    description: null,
-                    executor: null,
-                    paramsJson: null
-                },
-                tableData: [],
-                loading: true,
-                page: {
-                    pageIndex: 1,
-                    pageSize: 10,
-                    total: 0
-                },
-            }
-        }, methods: {
-            exe() {
-                this.$axios.post("/ruleEngine/function/run", {
-                    "id": this.run.form.id,
-                    "paramValues": this.run.form.function.paramValues
-                }).then(res => {
-                    let da = res.data;
-                    if (da != null) {
-                        this.run.form.output = da;
-                    } else {
-                        this.run.form.output = null;
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-            addFunctionForm() {
-                alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
-            },
-            handleSizeChange(val) {
-                this.page.pageSize = val;
-                this.list();
-            },
-            handleCurrentChange(val) {
-                this.page.pageIndex = val;
-                this.list();
-            },
-            test(row) {
-                this.clearValidate();
-                this.run.form.returnValueType = row.returnValueType;
-                this.run.form.id = row.id;
-                this.run.form.name = row.name;
-                this.run.form.function.paramValues = Array.from(row.params).map(m => ({
-                    "code": m.code,
-                    "name": m.name,
-                    "value": undefined,
-                    "valueType": m.valueType,
-                }));
-                this.run.dialogFormVisible = true;
-                this.run.form.output = null;
-            },
-            clearValidate() {
-                let ref = this.$refs['runAddForm'];
-                if (ref != null) {
-                    ref.clearValidate();
-                }
-            },
-            view(row) {
-                this.$axios.post("/ruleEngine/function/get", {
-                    "id": row.id,
-                }).then(res => {
-                    let da = res.data;
-                    if (da != null) {
-                        this.form = da;
-                        this.form.paramsJson = JSON.stringify(da.params, null, 4);
-
-                        this.dialogFormVisible = true;
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-            reset(formName) {
-                this.$refs[formName].resetFields();
-                this.list();
-            },
-            list() {
-                this.loading = true;
-                this.$axios.post("/ruleEngine/function/list", {
-                    "page": {
-                        "pageSize": this.page.pageSize,
-                        "pageIndex": this.page.pageIndex
-                    },
-                    "query": this.search.form,
-                    "orders": [
-                        {
-                            "columnName": "id",
-                            "desc": true
-                        }
-                    ]
-                }).then(res => {
-                    if (res.data != null) {
-                        this.tableData = res.data.rows;
-
-                        this.page.total = res.data.page.total;
-                    } else {
-                        this.tableData = [];
-                    }
-                    this.loading = false;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            }
-        }, mounted() {
-            this.list();
+export default {
+  name: "Function",
+  data() {
+    return {
+      run: {
+        dialogFormVisible: false,
+        form: {
+          id: null,
+          name: null,
+          function: {
+            paramValues: []
+          },
+          returnValueType: null,
+          output: null
         }
+      },
+      search: {
+        form: {
+          name: null
+        }
+      },
+      dialogFormVisible: false,
+      form: {
+        name: null,
+        returnValueType: null,
+        description: null,
+        executor: null,
+        paramsJson: null
+      },
+      tableData: [],
+      loading: true,
+      page: {
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0
+      },
     }
+  }, methods: {
+    exe() {
+      this.$axios.post("/ruleEngine/function/run", {
+        "id": this.run.form.id,
+        "paramValues": this.run.form.function.paramValues
+      }).then(res => {
+        let da = res.data;
+        if (da != null) {
+          this.run.form.output = da;
+        } else {
+          this.run.form.output = null;
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    addFunctionForm() {
+      alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
+    },
+    handleSizeChange(val) {
+      this.page.pageSize = val;
+      this.list();
+    },
+    handleCurrentChange(val) {
+      this.page.pageIndex = val;
+      this.list();
+    },
+    test(row) {
+      this.clearValidate();
+      this.run.form.returnValueType = row.returnValueType;
+      this.run.form.id = row.id;
+      this.run.form.name = row.name;
+      this.run.form.function.paramValues = Array.from(row.params).map(m => ({
+        "code": m.code,
+        "name": m.name,
+        "value": undefined,
+        "valueType": m.valueType,
+      }));
+      this.run.dialogFormVisible = true;
+      this.run.form.output = null;
+    },
+    clearValidate() {
+      let ref = this.$refs['runAddForm'];
+      if (ref != null) {
+        ref.clearValidate();
+      }
+    },
+    view(row) {
+      this.$axios.post("/ruleEngine/function/get", {
+        "id": row.id,
+      }).then(res => {
+        let da = res.data;
+        if (da != null) {
+          this.form = da;
+          this.form.paramsJson = JSON.stringify(da.params, null, 4);
+
+          this.dialogFormVisible = true;
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    reset(formName) {
+      this.$refs[formName].resetFields();
+      this.list();
+    },
+    list() {
+      this.loading = true;
+      this.$axios.post("/ruleEngine/function/list", {
+        "page": {
+          "pageSize": this.page.pageSize,
+          "pageIndex": this.page.pageIndex
+        },
+        "query": this.search.form,
+        "orders": [
+          {
+            "columnName": "id",
+            "desc": true
+          }
+        ]
+      }).then(res => {
+        if (res.data != null) {
+          this.tableData = res.data.rows;
+
+          this.page.total = res.data.page.total;
+        } else {
+          this.tableData = [];
+        }
+        this.loading = false;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, mounted() {
+    this.list();
+  }
+}
 </script>
 <style>
-  .el-input-number .el-input__inner {
-    text-align: left;
-  }
+.el-input-number .el-input__inner {
+  text-align: left;
+}
 </style>
 <style scoped>
 
