@@ -68,8 +68,8 @@
             return {
                 logining: false,
                 ruleForm: {
-                    username: '',
-                    password: '',
+                    username: 'lq',
+                    password: '123',
                 },
                 rules: {
                     username: [{required: true, message: '请输入账号', trigger: 'blur'}],
