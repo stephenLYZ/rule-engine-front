@@ -79,8 +79,11 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="140">
+        align="right"
+        width="170">
         <template slot-scope="scope">
+          <el-button @click="change(scope.row)" type="text" size="small" v-if="scope.row.id!==currentWorkspaceId">切换
+          </el-button>
           <el-button @click="authorization(scope.row)" type="text" size="small">授权</el-button>
           <el-button @click="editRow(scope.row)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteRow(scope.row)" type="text" size="small">删除</el-button>
@@ -101,118 +104,137 @@
 </template>
 
 <script>
-  export default {
-    name: "Workspace",
-    data() {
-      return {
-        loading: false,
-        tableData: [],
-        page: {
-          pageIndex: 1,
-          pageSize: 10,
-          total: 0
+export default {
+  name: "Workspace",
+  data() {
+    return {
+      loading: false,
+      tableData: [],
+      page: {
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0
+      },
+      search: {
+        form: {
+          name: null,
+          code: null,
+        }
+      },
+      currentWorkspaceId: null,
+      edit: {
+        form: {
+          id: null,
+          name: null,
+          code: null,
+          description: null,
+          accessKeyId: null,
+          accessKeySecret: null,
         },
-        search: {
-          form: {
-            name: null,
-            code: null,
-          }
-        },
-        edit: {
-          form: {
-            id: null,
-            name: null,
-            code: null,
-            description: null,
-            accessKeyId: null,
-            accessKeySecret: null,
-          },
-          rules: {},
-          dialogFormVisible: false
-        },
-      }
-    },
-    methods: {
-      updateWorkspace(formName) {
-        alert("敬请期待")
+        rules: {},
+        dialogFormVisible: false
       },
-      reset(formName) {
-        this.$refs[formName].resetFields();
-        this.list();
-      },
-      authorization() {
-        // 给某些用户授此工作空间权限
-        alert("敬请期待，自己新建的工作空间默认只能管理与自己可以查看，一般情况需要授权别人才可以访问")
-      },
-      add() {
-        alert("敬请期待")
-      },
-      handleSizeChange(val) {
-        this.page.pageSize = val;
-        this.list();
-      },
-      handleCurrentChange(val) {
-        this.page.pageIndex = val;
-        this.list();
-      },
-      editRow(row) {
-        this.edit.form.id = row.id;
-        this.edit.form.name = row.name;
-        this.edit.form.code = row.code;
-        this.edit.form.description = row.description;
-        this.$axios.post("/workspace/accessKey", {
-          "param": row.code
-        }).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.edit.form.accessKeyId = da.accessKeyId;
-            this.edit.form.accessKeySecret = da.accessKeySecret;
-            this.edit.dialogFormVisible = true;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      deleteRow(row) {
-        // 如果有在使用了，则不能删除
-        alert("敬请期待")
-      },
-      list() {
-        this.loading = true;
-        this.$axios.post("/workspace/list", {
-          "page": {
-            "pageSize": this.page.pageSize,
-            "pageIndex": this.page.pageIndex
-          },
-          "query": this.search.form,
-          "orders": [
-            {
-              "columnName": "id",
-              "desc": true
-            }
-          ]
-        }).then(res => {
-          if (res.data != null) {
-            this.tableData = res.data.rows;
-            this.page.total = res.data.page.total;
-          } else {
-            this.tableData = [];
-          }
-          this.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-          this.loading = false;
-        });
-      }
-    },
-    created() {
-      this.list();
     }
+  },
+  methods: {
+    change(row) {
+      this.$workspaceApi.changeWorkspace(row.id).then(res => {
+        if (res.data != null) {
+          this.$message({
+            showClose: true,
+            message: '切换成功',
+            type: 'success'
+          });
+          this.currentWorkspaceId = row.id;
+        }
+      });
+    },
+    updateWorkspace(formName) {
+      alert("敬请期待")
+    },
+    reset(formName) {
+      this.$refs[formName].resetFields();
+      this.list();
+    },
+    authorization() {
+      // 给某些用户授此工作空间权限
+      alert("敬请期待，自己新建的工作空间默认只能管理与自己可以查看，一般情况需要授权别人才可以访问")
+    },
+    add() {
+      alert("敬请期待")
+    },
+    handleSizeChange(val) {
+      this.page.pageSize = val;
+      this.list();
+    },
+    handleCurrentChange(val) {
+      this.page.pageIndex = val;
+      this.list();
+    },
+    editRow(row) {
+      this.edit.form.id = row.id;
+      this.edit.form.name = row.name;
+      this.edit.form.code = row.code;
+      this.edit.form.description = row.description;
+      this.$axios.post("/workspace/accessKey", {
+        "param": row.code
+      }).then(res => {
+        let da = res.data;
+        if (da != null) {
+          this.edit.form.accessKeyId = da.accessKeyId;
+          this.edit.form.accessKeySecret = da.accessKeySecret;
+          this.edit.dialogFormVisible = true;
+        }
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    deleteRow(row) {
+      // 如果有在使用了，则不能删除
+      alert("敬请期待")
+    },
+    list() {
+      this.loading = true;
+      this.$axios.post("/workspace/list", {
+        "page": {
+          "pageSize": this.page.pageSize,
+          "pageIndex": this.page.pageIndex
+        },
+        "query": this.search.form,
+        "orders": [
+          {
+            "columnName": "id",
+            "desc": true
+          }
+        ]
+      }).then(res => {
+        if (res.data != null) {
+          this.tableData = res.data.rows;
+          this.page.total = res.data.page.total;
+        } else {
+          this.tableData = [];
+        }
+        this.loading = false;
+      }).catch(function (error) {
+        console.log(error);
+        this.loading = false;
+      });
+    }
+  },
+  created() {
+    // 标记问题 this.loading 等待this.$workspaceApi.currentWorkspace()与this.list()走完时执行为true
+    this.$workspaceApi.currentWorkspace().then(res => {
+      if (res.data != null) {
+        this.currentWorkspaceId = res.data.id;
+      }
+    });
+    this.list();
   }
+}
 </script>
 
 <style scoped>
-  #Workspace {
+#Workspace {
 
-  }
+}
 </style>
