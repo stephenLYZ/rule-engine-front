@@ -767,23 +767,25 @@ export default {
       }
     },
     update() {
-      let collConditionHeadsLength = this.tableData.collConditionHeads.length;
+      // 不改变当前表格原有数据
+      let tableData = this.$common.deepClone(this.tableData);
+      let collConditionHeadsLength = tableData.collConditionHeads.length;
       for (let i = 0; i < collConditionHeadsLength; i++) {
-        let collConditionHead = this.tableData.collConditionHeads[i];
+        let collConditionHead = tableData.collConditionHeads[i];
         if (collConditionHead.leftValue.type == null) {
           continue;
         }
         collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
       }
-      if (this.tableData.collResultHead.type != null) {
-        this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
+      if (tableData.collResultHead.type != null) {
+        tableData.collResultHead.type = tableData.collResultHead.type > 1 ? 2 : tableData.collResultHead.type;
       }
-      if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+      if (tableData.collResultHead.defaultAction.type != null) {
+        tableData.collResultHead.defaultAction.type = tableData.collResultHead.defaultAction.type > 1 ? 2 : tableData.collResultHead.defaultAction.type;
       }
-      let rowsLength = this.tableData.rows.length;
+      let rowsLength = tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
-        let row = this.tableData.rows[i];
+        let row = tableData.rows[i];
         if (row.result.type == null) {
           continue;
         }
@@ -796,7 +798,7 @@ export default {
       this.$axios.post("/ruleEngine/decisionTable/updateDecisionTable", {
         "id": this.id,
         "strategyType": this.strategyType,
-        "tableData": this.tableData
+        "tableData": tableData
       }).then(res => {
         let da = res.data;
         if (da) {
@@ -811,9 +813,11 @@ export default {
       });
     },
     nextStep() {
-      let collConditionHeadsLength = this.tableData.collConditionHeads.length;
+      // 不改变当前表格原有数据
+      let tableData = this.$common.deepClone(this.tableData);
+      let collConditionHeadsLength = tableData.collConditionHeads.length;
       for (let i = 0; i < collConditionHeadsLength; i++) {
-        let collConditionHead = this.tableData.collConditionHeads[i];
+        let collConditionHead = tableData.collConditionHeads[i];
         if (collConditionHead.leftValue.type == null) {
           this.$message({
             showClose: true,
@@ -840,7 +844,7 @@ export default {
         }
         collConditionHead.leftValue.type = collConditionHead.leftValue.type > 1 ? 2 : collConditionHead.leftValue.type;
       }
-      if (this.tableData.collResultHead.type == null) {
+      if (tableData.collResultHead.type == null) {
         this.$message({
           showClose: true,
           message: '表头结果类型不能为空',
@@ -848,13 +852,13 @@ export default {
         });
         return;
       }
-      this.tableData.collResultHead.type = this.tableData.collResultHead.type > 1 ? 2 : this.tableData.collResultHead.type;
-      if (this.tableData.collResultHead.defaultAction.type != null) {
-        this.tableData.collResultHead.defaultAction.type = this.tableData.collResultHead.defaultAction.type > 1 ? 2 : this.tableData.collResultHead.defaultAction.type;
+      tableData.collResultHead.type = tableData.collResultHead.type > 1 ? 2 : tableData.collResultHead.type;
+      if (tableData.collResultHead.defaultAction.type != null) {
+        tableData.collResultHead.defaultAction.type = tableData.collResultHead.defaultAction.type > 1 ? 2 : tableData.collResultHead.defaultAction.type;
       }
-      let rowsLength = this.tableData.rows.length;
+      let rowsLength = tableData.rows.length;
       for (let i = 0; i < rowsLength; i++) {
-        let row = this.tableData.rows[i];
+        let row = tableData.rows[i];
         if (row.result.type == null) {
           this.$message({
             showClose: true,
@@ -881,7 +885,7 @@ export default {
       this.$axios.post("/ruleEngine/decisionTable/generationRelease", {
         "id": this.id,
         "strategyType": this.strategyType,
-        "tableData": this.tableData
+        "tableData": tableData
       }).then(res => {
         let da = res.data;
         if (da) {
