@@ -467,9 +467,14 @@ export default {
       }
     },
     exe() {
+      // update
+      const params = {};
+      this.run.condition.paramValues.forEach((e) => {
+        params[e.code] = e.value === undefined ? '' : e.value;
+      });
       this.$axios.post("/ruleEngine/condition/run", {
         "id": this.run.condition.id,
-        "paramValues": this.run.condition.paramValues
+        "params": params
       }).then(res => {
         let da = res.data;
         if (da != null) {
