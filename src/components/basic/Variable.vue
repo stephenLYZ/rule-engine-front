@@ -96,6 +96,7 @@
               <el-date-picker
                 v-else-if="pv.type===9" v-model="pv.value" :disabled="pv.type==null"
                 type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择日期时间"
                 align="right"
                 :picker-options="$common.datePickerOptions()"></el-date-picker>

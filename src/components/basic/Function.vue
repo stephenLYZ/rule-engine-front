@@ -92,6 +92,15 @@
                 <el-option label="true" value="true"/>
                 <el-option label="false" value="false"/>
               </el-select>
+
+              <el-date-picker
+                v-else-if="pv.valueType==='DATE'" v-model="pv.value"
+                type="datetime"
+                placeholder="选择日期时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                align="right"
+                :picker-options="$common.datePickerOptions()"></el-date-picker>
+
               <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
                                style="width: 100%"/>
               <el-input v-else v-model="pv.value"/>

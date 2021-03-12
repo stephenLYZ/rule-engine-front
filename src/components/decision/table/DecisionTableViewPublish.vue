@@ -65,16 +65,17 @@
                   </el-select>
                 </div>
 
-                <el-date-picker
-                  v-else-if="param.valueType==='DATE'"
-                  v-model="param.value"
-
-                  type="datetime"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  placeholder="选择日期时间"
-                  align="right"
-                  :picker-options="$common.datePickerOptions()">
-                </el-date-picker>
+                <div v-else-if="param.valueType==='DATE'">
+                  <el-date-picker
+                    v-model="param.value"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    placeholder="选择日期时间"
+                    align="right"
+                    style="width: 100%"
+                    :picker-options="$common.datePickerOptions()">
+                  </el-date-picker>
+                </div>
 
                 <div v-else-if="param.valueType==='COLLECTION'">
                   <el-input type="textarea" :autosize="{ minRows: 2,maxRows:6}" v-model="param.value"/>
