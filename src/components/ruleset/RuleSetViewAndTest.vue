@@ -69,9 +69,7 @@
                     </div>
                   </div>
                 </el-card>
-                <span v-if="ruleSet.length===0">
-                  <span style="color: #606266;font-size: 14px;">返回</span>
-                </span>
+                <span v-if="ruleSet.length===0" style="color: #606266;font-size: 14px;">返回</span>
                 <span v-else>
                   <br>
                   <span style="color: #606266;font-size: 14px;">否则返回</span>

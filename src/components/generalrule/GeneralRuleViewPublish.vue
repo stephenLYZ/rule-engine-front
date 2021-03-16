@@ -21,67 +21,66 @@
               <div slot="header" class="box-card-header">
                 <span>配置信息</span>
               </div>
-              <div>
-
-                <el-timeline>
-                  <el-timeline-item
-                    style="padding-bottom: 0"
-                    color="#afd792"
-                    :size="cgi===0?'large':'normal'"
-                    v-for="(cg, cgi) in conditionGroup" :key="cg.id">
-                    <span style="color: #606266;font-size: 14px;" v-if="0===cgi">如果</span>
-                    <span style="color: #606266;font-size: 14px;" v-else>或者</span>
-                    <div v-for="(c,ci) in cg.conditionGroupCondition" style="margin-left: 20px;">
-                      <el-tag class="item" type="info" effect="plain" style="margin-top: 2px">
-                        <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                          {{ getConditionNamePrefix(c.condition.config.leftValue.type) }}
-                        </el-tag>
-                        <span style="color: #606266">
+              <el-timeline>
+                <el-timeline-item
+                  style="padding-bottom: 0"
+                  color="#afd792"
+                  :size="cgi===0?'large':'normal'"
+                  v-for="(cg, cgi) in conditionGroup" :key="cg.id">
+                  <span style="color: #606266;font-size: 14px;" v-if="0===cgi">如果</span>
+                  <span style="color: #606266;font-size: 14px;" v-else>或者</span>
+                  <div v-for="(c,ci) in cg.conditionGroupCondition" style="margin-left: 20px;">
+                    <el-tag class="item" type="info" effect="plain" style="margin-top: 2px">
+                      <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                        {{ getConditionNamePrefix(c.condition.config.leftValue.type) }}
+                      </el-tag>
+                      <span style="color: #606266">
                           {{ viewConfig(c.condition.config.leftValue) }}
                         </span>
 
-                        &nbsp;
-                        <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                          {{ c.condition.config.symbol }}
-                        </el-tag>
-
-                        &nbsp;
-                        <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
-                          {{ getConditionNamePrefix(c.condition.config.rightValue.type) }}
-                        </el-tag>
-                        <span style="color: #606266">
-                          {{ viewConfig(c.condition.config.rightValue) }}
-                        </span>
+                      &nbsp;
+                      <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                        {{ c.condition.config.symbol }}
                       </el-tag>
 
-                      <br>
-                      <span
-                        style="color: #606266;font-size: 14px;">   {{ cg.conditionGroupCondition.length - 1 === ci ? '' : '并且' }}</span>
-                    </div>
-                  </el-timeline-item>
-                </el-timeline>
+                      &nbsp;
+                      <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+                        {{ getConditionNamePrefix(c.condition.config.rightValue.type) }}
+                      </el-tag>
+                      <span style="color: #606266">
+                          {{ viewConfig(c.condition.config.rightValue) }}
+                        </span>
+                    </el-tag>
 
+                    <br>
+                    <span
+                      style="color: #606266;font-size: 14px;">   {{
+                        cg.conditionGroupCondition.length - 1 === ci ? '' : '并且'
+                      }}</span>
+                  </div>
+                </el-timeline-item>
+              </el-timeline>
 
-                <span style="color: #606266;font-size: 14px;">返回</span>
-                <br>
-                <div style="margin-left: 20px;">
-                  <el-alert :closable="false" type="success" style="padding: 6px 0 8px 0">
-                    {{ action.variableValue != null ? action.variableValue : (action.valueName === '' ? '空' : action.valueName) }}
-                  </el-alert>
-                </div>
-
-                <span style="color: #606266;font-size: 14px;">否则返回</span>
-                <br>
-                <div style="margin-left: 20px;">
-                  <el-alert :closable="false" type="warning" style="padding: 6px 0 8px 0">
-                    {{ defaultAction.enableDefaultAction === 0 ? (defaultAction.variableValue != null ? defaultAction.variableValue : (defaultAction.valueName === '' ? '空' : defaultAction.valueName)) : 'null' }}
-                  </el-alert>
-                </div>
-
+              <span style="color: #606266;font-size: 14px;">返回</span>
+              <div style="margin-left: 20px;">
+                <el-alert :closable="false" type="success" style="padding: 6px 0 8px 0">
+                  {{
+                    action.variableValue != null ? action.variableValue : (action.valueName === '' ? '空' : action.valueName)
+                  }}
+                </el-alert>
               </div>
+              <span v-if="conditionGroup.length!==0">
+                    <span style="color: #606266;font-size: 14px;">否则返回</span>
+                    <br>
+                    <div style="margin-left: 20px;">
+                      <el-alert :closable="false" type="warning" style="padding: 6px 0 8px 0">
+                        {{
+                          defaultAction.enableDefaultAction === 0 ? (defaultAction.variableValue != null ? defaultAction.variableValue : (defaultAction.valueName === '' ? '空' : defaultAction.valueName)) : 'null'
+                        }}
+                      </el-alert>
+                    </div>
+                </span>
             </el-card>
-
-
           </el-col>
           <el-col :span="1">&nbsp;</el-col>
         </el-row>
