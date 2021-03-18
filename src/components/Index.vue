@@ -203,9 +203,18 @@
     color: #333;
     text-align: left;
     line-height: 200px;
-    height: 1200px;
+    height: calc(100vh - 60px);
+    overflow: scroll;
+    border-right: solid 1px #e6e6e6;
   }
 
+  .el-main {
+    height: calc(100vh - 60px);
+  }
+
+  .el-menu-vertical-aside {
+    border-right: transparent;
+  }
 
   body > .el-container {
     margin-bottom: 40px;
