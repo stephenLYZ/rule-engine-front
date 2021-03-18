@@ -30,6 +30,7 @@
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
+      height="calc(100vh - 260px)"
       :default-sort="{prop: 'id', order: 'descending'}">
       <el-table-column
         prop="id"
