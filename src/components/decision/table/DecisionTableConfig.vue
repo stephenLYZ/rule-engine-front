@@ -1151,9 +1151,8 @@ export default {
         if (symbol === 'CONTAIN' || symbol === 'NOT_CONTAIN') {
           return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION", "DATE"];
         }
-      } else {
-        return new Array(valueType);
       }
+      return new Array(valueType);
     },
   },
   mounted() {

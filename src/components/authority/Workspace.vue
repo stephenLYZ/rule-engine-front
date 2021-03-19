@@ -48,6 +48,7 @@
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
+      height="calc(100vh - 260px)"
       :default-sort="{prop: 'id', order: 'descending'}">
       <el-table-column
         prop="id"
@@ -67,20 +68,20 @@
         width="200">
       </el-table-column>
       <el-table-column
+        prop="description"
+        label="说明">
+      </el-table-column>
+      <el-table-column
         prop="createTime"
         sortable
         width="180"
         label="创建日期">
       </el-table-column>
       <el-table-column
-        prop="description"
-        label="说明">
-      </el-table-column>
-      <el-table-column
         fixed="right"
         label="操作"
         align="right"
-        width="170">
+        width="175">
         <template slot-scope="scope">
           <el-button @click="change(scope.row)" type="text" size="small" v-if="scope.row.id!==currentWorkspaceId">切换
           </el-button>

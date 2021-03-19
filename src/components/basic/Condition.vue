@@ -290,6 +290,7 @@
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
+      height="calc(100vh - 260px)"
       :default-sort="{prop: 'id', order: 'descending'}">
       <el-table-column
         prop="id"
@@ -695,8 +696,8 @@ export default {
             "pageIndex": 1
           },
           "query": {
-            "name": query,
-            "valueType": (this.form.config.leftValue.valueType === 'COLLECTION') ? null : new Array(this.form.config.leftValue.valueType)
+            "name": query, // 严重bug修复
+            "valueType": this.getRValueType(this.form.config.leftValue.valueType, this.form.config.symbol)
           },
           "orders": []
         }).then(res => {
@@ -710,6 +711,19 @@ export default {
       } else {
         this.rightSelect.options = [];
       }
+    },
+    getRValueType(valueType, symbol) {
+      if (valueType == null) {
+        return [];
+      }
+      // 如果左值为集合时
+      if (valueType === 'COLLECTION' && symbol != null) {
+        // 并且 只有左值为COLLECTION 运算符为CONTAIN/NOT_CONTAIN 返回所有的类型
+        if (symbol === 'CONTAIN' || symbol === 'NOT_CONTAIN') {
+          return ["STRING", "NUMBER", "BOOLEAN", "COLLECTION", "DATE"];
+        }
+      }
+      return new Array(valueType);
     },
     edit(row) {
       this.clearValidate();
